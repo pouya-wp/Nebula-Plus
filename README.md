@@ -60,7 +60,7 @@
 
 ###
 
-<p align="left">• If you have not already, follow the Zen Live Editing guide to first create your chrome folder: https://docs.zen-browser.app/guides/live-editing<br><br>• Download the userChrome.css file and paste it into your chrome folder.<br><br>• Restart the browser to see if the UI has changed.<br><br>• Go to about:config in Zen and search for "browser.tabs.allow_transparent_browser". If the option is visible, set it to "true". If not, click the "+" icon and set it to "boolean".</p>
+<p align="left">• If you have not already, follow the Zen Live Editing guide to first create your chrome folder: https://docs.zen-browser.app/guides/live-editing<br><br>• Download the userChrome.css file and paste it into your chrome folder.<br><br>• Restart the browser to see if the UI has changed.<br><br>• Go to about:config in Zen and search for "browser.tabs.allow_transparent_browser". If the option is visible, set it to "true". If not, click the "+" icon and set it to "boolean".<br><br>• Install the wallpapers (optional)</p>
 
 ###
 
