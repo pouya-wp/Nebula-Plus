@@ -39,7 +39,8 @@
 ###
 
 <div align="center">
-  <img height="400" src="[https://i.ibb.co/V0w598Gy/Screenshot-2025-03-06-202041.png](https://i.ibb.co/V0w598Gy/Screenshot-2025-03-06-202041.png)"  />
+  <img height="400" src="![Screenshot 2025-03-06 202041](https://github.com/user-attachments/assets/f197109a-0894-4cde-b939-9439ae5b5973)"
+  />
 </div>
 
 ###
