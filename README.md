@@ -1,4 +1,4 @@
-<h1 align="center">Nebula</h1>
+![Screenshot 2025-03-06 202041](https://github.com/user-attachments/assets/79761e2e-6d9f-44e6-aae5-a2923d34af4a)<h1 align="center">Nebula</h1>
 
 ###
 
@@ -54,3 +54,5 @@
 <h2 align="left">Features</h2>
 
 ###
+
+![Screenshot 2025-03-06 202041](https://github.com/user-attachments/assets/72fff7a3-e6b5-4ae6-98de-25990eee5870)
