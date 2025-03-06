@@ -38,22 +38,6 @@
 
 ###
 
-<div align="center">
-  <img height="400" src="https://i.ibb.co/V0w598Gy/Screenshot-2025-03-06-202041.png"  />
-</div>
-
-###
-
-<div align="center">
-  <img height="400" src="https://i.ibb.co/MDrCX4n5/Screenshot-2025-03-06-202115.png"  />
-</div>
-
-###
-
-<div align="center">
-  <img height="400" src="https://i.ibb.co/p6cHSKpP/Screenshot-2025-03-06-202250.png"  />
-</div>
-
 ###
 
 <h2 align="left">Features</h2>
