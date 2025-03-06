@@ -1,4 +1,4 @@
-![Screenshot 2025-03-06 202041](https://github.com/user-attachments/assets/79761e2e-6d9f-44e6-aae5-a2923d34af4a)<h1 align="center">Nebula</h1>
+<h1 align="center">Nebula</h1>
 
 ###
 
