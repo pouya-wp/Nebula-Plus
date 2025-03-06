@@ -144,6 +144,7 @@ p, h1, h2, h3 {
 <div align="center">
 <img height="400" src="https://github.com/user-attachments/assets/8121a9a4-e8ed-4c4e-8ed0-92bd775438bb" />
 </div>
+
 ###
 
 <h3 align="left">5. Add the extension Zen Internet by Sameerasw (Optional)</h3>
