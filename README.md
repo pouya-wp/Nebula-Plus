@@ -154,3 +154,19 @@ p, h1, h2, h3 {
 <p align="left">• this extension makes web pages transparent<br>https://addons.mozilla.org/en-US/firefox/addon/zen-internet/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search</p>
 
 ###
+
+<h2 align="left">Re-distribution info:</h2>
+
+###
+
+<p align="left">You are totally free to make forks of this or put this in your chrome file and create or modify it according to yourself. It is suggested to credit me if you use my theme. Thanks for using Nebula 🫶🏻</p>
+
+###
+
+<h2 align="left">Credits:</h2>
+
+###
+
+<h5 align="left">• https://github.com/Tanay-Kar/Lacuna<br><br>• https://github.com/greeeen-dev/natsumi-browser<br><br>• https://github.com/sameerasw/my-internet<br><br>• https://github.com/TheBigWazz/Pineapple-Fried<br><br>------------------------------------------<br>Kindly let me know if i missed some :))</h5>
+
+###
