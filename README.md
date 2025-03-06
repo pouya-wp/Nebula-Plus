@@ -12,27 +12,28 @@
 
 ###
 
-<p align="left">Nebula is a minimal theme made for zen browser which adds lot of new animations, glass like blur, UI changes and more. It is inspired by glassmorphism and minimal gradients.<br><br>This is my personal userChrome which i made to personalize Zen by my own liking. ❤️<br>If some of you don't like the design choices i made, you can edit the userChrome yourself if you know how to code and if you don't, you can use chatGPT to customize it as per your preference.</p>
+<p align="left">Nebula is a minimal theme made for Zen Browser which adds a lot of new animations, glass-like blur, UI changes, and more. It is inspired by glassmorphism and minimal gradients.<br><br>This is my personal userChrome which I made to personalize Zen to my own liking. ❤️<br>If some of you don't like the design choices I made, you can edit the userChrome yourself if you know how to code, and if you don't, you can use ChatGPT to customize it as per your preference.</p>
 
 ###
 
 <h2 align="left">Showcase :))</h2>
-<div align="center">
-  <img src="https://github.com/user-attachments/assets/7dc9251f-2cba-445e-b100-9d1be8bd53e6" width="500">
-  <img src="https://github.com/user-attachments/assets/361dc025-cb19-4982-a047-1e79f61042b8" width="500">
-  <img src="https://github.com/user-attachments/assets/0a69ff9a-0226-452a-8bde-a21929f4a590" width="500">
-  <img src="https://github.com/user-attachments/assets/75ccfbfc-5260-47ad-ba99-40113fe94b07" width="500">
-  <img src="https://github.com/user-attachments/assets/06381256-4f99-41e9-a21e-22a29c3f481f" width="500">
-  <img src="https://github.com/user-attachments/assets/5fa8923e-7a3d-471a-8256-1f72528926a4" width="500">
-  
 
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/7dc9251f-2cba-445e-b100-9d1be8bd53e6" width="400">
+  <img src="https://github.com/user-attachments/assets/361dc025-cb19-4982-a047-1e79f61042b8" width="400">
+  <img src="https://github.com/user-attachments/assets/0a69ff9a-0226-452a-8bde-a21929f4a590" width="400">
+  <img src="https://github.com/user-attachments/assets/75ccfbfc-5260-47ad-ba99-40113fe94b07" width="400">
+  <img src="https://github.com/user-attachments/assets/06381256-4f99-41e9-a21e-22a29c3f481f" width="400">
+  <img src="https://github.com/user-attachments/assets/5fa8923e-7a3d-471a-8256-1f72528926a4" width="400">
 </div>
+
+###
 
 <h2 align="left">Features:</h2>
 
 ###
 
-<p align="left">• Clean Animations<br> => PS: github is not letting me upload videos above 10MB so you can try the mod to experience the animations!<br><br>• Better UI (glass look)<br><br>• Better customize toolbar</p>
+<p align="left">• Clean Animations<br> => PS: GitHub is not letting me upload videos above 10MB, so you can try the mod to experience the animations!<br><br>• Better UI (glass look)<br><br>• Better customized toolbar</p>
 
 ###
 
@@ -42,7 +43,7 @@
 
 ###
 
-<p align="left">• Lots of new animations<br> => PS: github is not letting me upload videos above 10MB so you can try the mod to experience the animations!</p>
+<p align="left">• Lots of new animations<br> => PS: GitHub is not letting me upload videos above 10MB, so you can try the mod to experience the animations!</p>
 
 ###
 
@@ -54,7 +55,7 @@
 
 ###
 
-<p align="left">• If you have not already, follow the Zen Live Editing guide to first create your chrome folder. https://docs.zen-browser.app/guides/live-editing<br><br>• Download the userChrome.css file and paste it into your chrome folder.<br><br>• Restart the browser to see if the UI has changed.<br><br>• Go to about:config in Zen and search for "browser.tabs.allow_transparent_browser", if the option is visible then set it to true, if not then click the "+" icon and set it to "boolean".</p>
+<p align="left">• If you have not already, follow the Zen Live Editing guide to first create your chrome folder: https://docs.zen-browser.app/guides/live-editing<br><br>• Download the userChrome.css file and paste it into your chrome folder.<br><br>• Restart the browser to see if the UI has changed.<br><br>• Go to about:config in Zen and search for "browser.tabs.allow_transparent_browser". If the option is visible, set it to "true". If not, click the "+" icon and set it to "boolean".</p>
 
 ###
 
@@ -62,7 +63,7 @@
 
 ###
 
-<p align="left">• To get real backdrop filter transparency, go to "https://github.com/MicaForEveryone/MicaForEveryone" and install that app<br><br>• Click the "+ Add new Rule" at the bottom left and "Add process rule" "zen".</p>
+<p align="left">• To get real backdrop filter transparency, go to "https://github.com/MicaForEveryone/MicaForEveryone" and install the app.<br><br>• Click the "+ Add new Rule" at the bottom left and "Add process rule" for "zen".</p>
 
 ###
 
@@ -72,7 +73,7 @@
 
 ###
 
-<p align="left">• Change the Backdrop type to Acrylic and enable blur behind in advanced options<br><br>• Restart zen and see how it looks</p>
+<p align="left">• Change the Backdrop type to Acrylic and enable blur behind in advanced options.<br><br>• Restart Zen and see how it looks.</p>
 
 ###
 
@@ -80,7 +81,7 @@
 
 ###
 
-<p align="left">• Go to "https://addons.mozilla.org/en-US/firefox/addon/bonjourr-startpage/" and install this extension<br><br>• The newtab must be replaced by this now, on the bottom right you will see a settings button for newtab. Change the settings to these</p>
+<p align="left">• Go to "https://addons.mozilla.org/en-US/firefox/addon/bonjourr-startpage/" and install this extension.<br><br>• The new tab must be replaced by this now. On the bottom right, you will see a settings button for new tab. Change the settings to these:</p>
 
 ###
 
@@ -102,14 +103,15 @@
 
 ###
 
-<p align="left">• In the section where it says add custom CSS, add this code:<br><br>
+<p align="left">• In the section where it says "Add custom CSS", add this code:</p>
+
 ```css
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&display=swap');
 
 body, h1, h2, h3, h4, h5, h6, p, span, div {
     font-family: 'Comfortaa', sans-serif !important;
     font-weight: 300 !important; /* Light weight for a sleek and modern feel */
-    letter-spacing: em; /* Slight spacing for better readability */
+    letter-spacing: 0.025em; /* Slight spacing for better readability */
     font-smooth: always;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -117,7 +119,7 @@ body, h1, h2, h3, h4, h5, h6, p, span, div {
 }
 
 h1 {
-    font-weight: 00 !important; /* Slightly bolder headlines */
+    font-weight: 400 !important; /* Slightly bolder headlines */
     letter-spacing: 0.025em;
 }
 
@@ -131,7 +133,3 @@ p {
 p, h1, h2, h3 {
     text-shadow: 0 0 1px rgba(255, 255, 255, 0.2);
 }
-
-</p>
-
-###
