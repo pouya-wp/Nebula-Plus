@@ -16,21 +16,47 @@
 
 ###
 
-<h2 align="left">Showcase</h2>
+<h2 align="left">Showcase :))</h2>
 
 ###
 
 <div align="center">
-  <img height="200" src="https://i.imgflip.com/65efzo.gif"  />
+  <img height="400" src="https://i.ibb.co/jvVnVDcq/Screenshot-2025-03-06-202211.png"  />
 </div>
 
 ###
 
-<p align="left">✨ Creating bugs since ...<br>📚 I'm currently learning ...<br>🎯 Goals: ...<br>🎲 Fun fact: ...</p>
+<div align="center">
+  <img height="400" src="https://i.ibb.co/fV2WQbM2/Screenshot-2025-03-06-202004.png"  />
+</div>
 
 ###
 
-<h2 align="left">I code with</h2>
+<div align="center">
+  <img height="400" src="https://i.ibb.co/5X6BHGXT/Screenshot-2025-03-06-202154.png"  />
+</div>
+
+###
+
+<div align="center">
+  <img height="400" src="https://i.ibb.co/V0w598Gy/Screenshot-2025-03-06-202041.png"  />
+</div>
+
+###
+
+<div align="center">
+  <img height="400" src="https://i.ibb.co/MDrCX4n5/Screenshot-2025-03-06-202115.png"  />
+</div>
+
+###
+
+<div align="center">
+  <img height="400" src="https://i.ibb.co/p6cHSKpP/Screenshot-2025-03-06-202250.png"  />
+</div>
+
+###
+
+<h2 align="left">Features</h2>
 
 ###
 
@@ -54,30 +80,10 @@
 
 ###
 
+<p align="left">✨ Creating bugs since ...<br>📚 I'm currently learning ...<br>🎯 Goals: ...<br>🎲 Fun fact: ...</p>
+
+###
+
 <h2 align="left">About me</h2>
-
-###
-
-<div align="center">
-  <img height="200" src="https://i.imgflip.com/65efzo.gif"  />
-</div>
-
-###
-
-<div align="center">
-  <img height="200" src="https://i.imgflip.com/65efzo.gif"  />
-</div>
-
-###
-
-<div align="center">
-  <img height="200" src="https://i.imgflip.com/65efzo.gif"  />
-</div>
-
-###
-
-<div align="center">
-  <img height="200" src="https://i.imgflip.com/65efzo.gif"  />
-</div>
 
 ###
