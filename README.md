@@ -103,10 +103,35 @@
 ###
 
 <p align="left">• In the section where it says add custom CSS, add this code:<br><br>
-```
-<br>
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&display=swap');<br><br>body, h1, h2, h3, h4, h5, h6, p, span, div {<br>    font-family: 'Comfortaa', sans-serif !important;<br>    font-weight: 300 !important; /* Light weight for a sleek and modern feel */<br>    letter-spacing: em; /* Slight spacing for better readability */<br>    font-smooth: always;<br>    -webkit-font-smoothing: antialiased;<br>    -moz-osx-font-smoothing: grayscale;<br>    color: #e0e0e0; /* Soft white for a modern touch */<br>}<br><br>h1 {<br>    font-weight: 00 !important; /* Slightly bolder headlines */<br>    letter-spacing: 0.025em;<br>}<br><br>p {<br>    font-weight: 300 !important;<br>    line-height: 1.6;<br>    letter-spacing: 0.015em;<br>}<br><br>/* Optional: Add a soft glow effect for a smooth aesthetic */<br>p, h1, h2, h3 {<br>    text-shadow: 0 0 1px rgba(255, 255, 255, 0.2);<br>	}<br>
-```
+```css
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&display=swap');
+
+body, h1, h2, h3, h4, h5, h6, p, span, div {
+    font-family: 'Comfortaa', sans-serif !important;
+    font-weight: 300 !important; /* Light weight for a sleek and modern feel */
+    letter-spacing: em; /* Slight spacing for better readability */
+    font-smooth: always;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #e0e0e0; /* Soft white for a modern touch */
+}
+
+h1 {
+    font-weight: 00 !important; /* Slightly bolder headlines */
+    letter-spacing: 0.025em;
+}
+
+p {
+    font-weight: 300 !important;
+    line-height: 1.6;
+    letter-spacing: 0.015em;
+}
+
+/* Optional: Add a soft glow effect for a smooth aesthetic */
+p, h1, h2, h3 {
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
 </p>
 
 ###
