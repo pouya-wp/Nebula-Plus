@@ -18,11 +18,11 @@
 
 <h2 align="left">Showcase :))</h2>
 <div align="center">
-![Screenshot 2025-03-06 202211](https://github.com/user-attachments/assets/7dc9251f-2cba-445e-b100-9d1be8bd53e6)
-![Screenshot 2025-03-06 202004](https://github.com/user-attachments/assets/361dc025-cb19-4982-a047-1e79f61042b8)
-![Screenshot 2025-03-06 202041](https://github.com/user-attachments/assets/0a69ff9a-0226-452a-8bde-a21929f4a590)
-![Screenshot 2025-03-06 202115](https://github.com/user-attachments/assets/75ccfbfc-5260-47ad-ba99-40113fe94b07)
-![Screenshot 2025-03-06 202250](https://github.com/user-attachments/assets/5fa8923e-7a3d-471a-8256-1f72528926a4)
+  <img src="https://github.com/user-attachments/assets/7dc9251f-2cba-445e-b100-9d1be8bd53e6" width="400">
+  <img src="https://github.com/user-attachments/assets/361dc025-cb19-4982-a047-1e79f61042b8" width="400">
+  <img src="https://github.com/user-attachments/assets/0a69ff9a-0226-452a-8bde-a21929f4a590" width="400">
+  <img src="https://github.com/user-attachments/assets/75ccfbfc-5260-47ad-ba99-40113fe94b07" width="400">
+  <img src="https://github.com/user-attachments/assets/5fa8923e-7a3d-471a-8256-1f72528926a4" width="400">
 </div>
 
 ###
