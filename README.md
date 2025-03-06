@@ -170,3 +170,5 @@ p, h1, h2, h3 {
 <h5 align="left">• https://github.com/Tanay-Kar/Lacuna<br><br>• https://github.com/greeeen-dev/natsumi-browser<br><br>• https://github.com/sameerasw/my-internet<br><br>• https://github.com/TheBigWazz/Pineapple-Fried<br><br>------------------------------------------<br>Kindly let me know if i missed some :))</h5>
 
 ###
+
+<h5 align="left"> NOTE: There might be some issues with this theme, please report them to me if you experience something unusual, i will try to fix/clarify it. Also this mod has only been tested by me on a windows 11 computer so if Linux and MacOS versions are not working properly then i can't really do anything about it :( </h5>
