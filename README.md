@@ -81,6 +81,18 @@
 <p align="left">• Change the Backdrop type to Acrylic and enable blur behind in advanced options.<br><br>• Restart Zen and see how it looks.</p>
 
 ###
+<h3 align="left">2. Install kwin-effects-forceblur (ONLY FOR KDE LINUX)</h3>
+
+###
+<p align="left">• To get real backdrop filter transparency, go to "https://github.com/esjeon/kwin-forceblur" and install the app.<br><br>• It's required to install 'kwin-effects-forceblur' from AUR then go to System Settings -> Windows -> Desktop Effecs, disable Blur and enable Better Blur and in Better Blur settings go to 'Force blur' tab and add 'zen' to list of classes of windows. Here is the blur configuration: </p>
+
+###
+
+<div align="center">
+  <img height="300" src="https://github.com/user-attachments/assets/8a19fcdd-acf9-4540-9833-ae0be3cce363"  />
+</div>
+
+###
 
 <h3 align="left">3. Add the Firefox extension Bonjourrr</h3>
 
