@@ -1,44 +1,46 @@
 /* ==== Animations (Sameerasw) ================================================================================= */
-#tabbrowser-tabpanels > hbox:not([zen-split="true"]):not(:has(.zen-glance-background)){
-	transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
-	scale: 0.9 !important;
-	opacity: 0;
-/* 	left: -5vw; */
-}
-#tabbrowser-tabpanels > hbox.deck-selected:not([zen-split="true"]){
-	scale: 1 !important;
-	opacity: 1 !important;
-/* 	left: 0 !important; */
+/* Tab panels animation */
+#tabbrowser-tabpanels > hbox:not([zen-split="true"]):not(:has(.zen-glance-background)) {
+    transition: opacity 0.3s ease-out, scale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
+    scale: 0.9 !important;
+    opacity: 0;
 }
 
-/* website view animations */
-#browser:not(:has(.zen-glance-background)) #tabbrowser-tabpanels{
-	transition: all 0.5s !important;
+#tabbrowser-tabpanels > hbox.deck-selected:not([zen-split="true"]) {
+    scale: 1 !important;
+    opacity: 1 !important;
+}
+
+/* Website view animations */
+#browser:not(:has(.zen-glance-background)) #tabbrowser-tabpanels {
+    transition: opacity 0.5s ease-out !important;
 }
 
 /* Loading tab animation */
-tab[busy]{
-	scale: 0.95 !important;
-	.tab-background{
-		opacity: 0.3 !important;
-	}
-} 
-
-/* ctrl tab visuals and animations */
-#ctrlTab-panel{
-	--panel-background: var(--lwt-accent-color) !important;
-    transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.1) 0.2s !important;
-	scale: 0.7;
+tab[busy] {
+    scale: 0.95 !important;
 }
 
-#ctrlTab-panel:has(.ctrlTab-preview:not([hidden="true"])){
-	scale: 1 !important;
+tab[busy] .tab-background {
+    opacity: 0.3 !important;
 }
 
-slot:nth-child(1){
-		border-radius: 1em !important;
-	padding: 0 !important; 
-	}
+/* Ctrl+Tab panel animations */
+#ctrlTab-panel {
+    --panel-background: var(--lwt-accent-color) !important;
+    transition: opacity 0.1s ease-out, scale 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.1) 0.2s !important;
+    scale: 0.7;
+}
+
+#ctrlTab-panel:has(.ctrlTab-preview:not([hidden="true"])) {
+    scale: 1 !important;
+}
+
+/* Slot styling */
+slot:nth-child(1) {
+    border-radius: 1em !important;
+    padding: 0 !important;
+}
 
 /* === BETTER CUSTOMIZE TOOLBAR ============================================================================================ */
 
@@ -201,45 +203,52 @@ browser[transparent='true'] {
   --attention-dot-color: transparent !important;
 }
 
-/* ------------------------- Natsumi Stuff -------------------------- */
-.tabbrowser-tab[pinned]:not([zen-essentials="true"]) {
-    .tab-background {
-      background-color: light-dark(rgba(255,255,255,0.25), rgba(0,0,0,0.18)) !important;
-      box-shadow: 0 -1px 8px rgba(0, 0, 0, 0) !important;
-      border-radius: 12px !important;
-      position: relative !important;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
-    }
-  
-    &:hover .tab-background {
-      background-color: light-dark(rgba(255,255,255,0.45), rgba(0,0,0,0.45)) !important;
-      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
-    }
-    &[selected="true"] .tab-background,
-    &[visuallyselected="true"] .tab-background {
-      background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.55)) !important;
-      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
-    }
-  }
-.tabbrowser-tab:not([pinned]) {
-  .tab-background {
-      box-shadow: 0 -1px 8px rgba(0, 0, 0, 0) !important;
-      border-radius: 12px !important;
-      position: relative !important;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
-    }
-  
-    &:hover .tab-background {
-      background-color: light-dark(rgba(255,255,255,0.4), rgba(0,0,0,0.4)) !important;
-      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
-    }
-    &[selected="true"] .tab-background,
-    &[visuallyselected="true"] .tab-background {
-      background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.35)) !important;
-      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
-    }
-  }
-  /* ------------------------------------------------- */
+#identity-icon-label[value="Extension (Bonjourr · Minimalist Startpage)"] {
+    display: none !important;
+}
+
+/* ------------------------- Tabs Styling -------------------------- */
+
+/* Pinned tab styling */
+.tabbrowser-tab[pinned]:not([zen-essentials="true"]) .tab-background {
+    background-color: light-dark(rgba(255,255,255,0.25), rgba(0,0,0,0.18)) !important;
+    border-radius: 12px !important;
+    position: relative !important;
+    transition: background-color 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), 
+                box-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
+}
+
+.tabbrowser-tab[pinned]:not([zen-essentials="true"]):hover .tab-background {
+    background-color: light-dark(rgba(255,255,255,0.45), rgba(0,0,0,0.45)) !important;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
+}
+
+.tabbrowser-tab[pinned][selected="true"] .tab-background,
+.tabbrowser-tab[pinned][visuallyselected="true"] .tab-background {
+    background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.55)) !important;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* Unpinned tab styling */
+.tabbrowser-tab:not([pinned]) .tab-background {
+    border-radius: 12px !important;
+    position: relative !important;
+    transition: background-color 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), 
+                box-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
+}
+
+.tabbrowser-tab:not([pinned]):hover .tab-background {
+    background-color: light-dark(rgba(255,255,255,0.4), rgba(0,0,0,0.4)) !important;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
+}
+
+.tabbrowser-tab:not([pinned])[selected="true"] .tab-background,
+.tabbrowser-tab:not([pinned])[visuallyselected="true"] .tab-background {
+    background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.35)) !important;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
+}
+
+/*-------------------------- Natsumi Essentials & Pinned ----------------------------------*/
 @media (-moz-bool-pref: "uc.pins.bg") {
   :root {
     --pins-bg-percentage: 10% !important; /* Reduce white mix to make it darker */
@@ -249,8 +258,15 @@ browser[transparent='true'] {
     background-color: color-mix(in srgb, black var(--pins-bg-percentage), transparent) !important;
   }
 
+  /* Combine selectors to reduce repetition */
+  .tabbrowser-tab[pinned]:not([zen-essential="true"]) .tab-stack .tab-background {
+    transition: background-color 0.2s ease-in-out !important;
+  }
+
   /* Darker on Hover */
-  .tabbrowser-tab[pinned]:not([zen-essential="true"]):hover .tab-stack .tab-background {
+  .tabbrowser-tab[pinned]:not([zen-essential="true"]):hover .tab-stack .tab-background,
+  .tabbrowser-tab[pinned]:not([zen-essential="true"])[selected="true"]:hover .tab-stack .tab-background,
+  .tabbrowser-tab[pinned]:not([zen-essential="true"])[multiselected="true"]:hover .tab-stack .tab-background {
     background-color: color-mix(in srgb, black calc(var(--pins-bg-percentage) + 5%), transparent) !important;
   }
 
@@ -259,14 +275,9 @@ browser[transparent='true'] {
   .tabbrowser-tab[pinned]:not([zen-essential="true"])[multiselected="true"] .tab-stack .tab-background {
     background-color: color-mix(in srgb, black calc(var(--pins-bg-percentage) + 15%), transparent) !important;
   }
-
-  /* Even Darker when Selected + Hover */
-  .tabbrowser-tab[pinned]:not([zen-essential="true"])[selected="true"]:hover .tab-stack .tab-background,
-  .tabbrowser-tab[pinned]:not([zen-essential="true"])[multiselected="true"]:hover .tab-stack .tab-background {
-    background-color: color-mix(in srgb, black calc(var(--pins-bg-percentage) + 18%), transparent) !important;
-  }
 }
-/* ------------------------------------------------ */
+
+/* ----------------------- Natsumi Tabs ------------------------- */
 
 #zen-workspaces-button {
   border-radius: 8px !important;
@@ -489,7 +500,6 @@ browser[transparent='true'] {
     }
   }
 }
-
 /* === COMPACT SIDEBAR ===================================================================================================== */
 
 .urlbarView-row[type="search"] {
@@ -497,65 +507,48 @@ browser[transparent='true'] {
 }
 
 :root[zen-compact-mode="true"] #urlbar[open] {
-    width: 50vw !important;
-    max-width: 600px !important;
-    left: calc(50vw) !important;
-    transform: translateX(-50%) translateY(-50%) scale(1.2) !important;
+  width: 50vw !important;
+  max-width: 600px !important;
+  left: 50vw !important;
+  transform: translate(-50%, -50%) scale(1.2) !important;
 }
 
 /* Set compact sidebar width equal to normal sidebar width */
-:root[zen-compact-mode="true"] #sidebar {
-    width: var(--sidebar-width) !important;
-    min-width: var(--sidebar-width) !important;
-    max-width: var(--sidebar-width) !important;
-}
-
-/* Ensure the variable is set to match the normal sidebar */
 :root {
-    --sidebar-width: 300px; /* Change this to match the default sidebar width */
+  --sidebar-width: 300px; /* Change this to match the default sidebar width */
 }
 
-:root[zen-compact-mode="true"]:not([customizing]):not([inDOMFullscreen="true"]) {
-  #navigator-toolbox {
-    transition-delay: -0.002s !important;
-  }
+:root[zen-compact-mode="true"] #sidebar {
+  width: var(--sidebar-width) !important;
+  min-width: var(--sidebar-width) !important;
 }
 
-/* If the compact sidebar is on the right side, adjust accordingly */
-:root[zen-compact-mode="true"][zen-right-side="true"]:not([customizing]):not([inDOMFullscreen="true"]) {
-  #navigator-toolbox {
-    /* Add specific styling for right-side compact mode here if needed */
-  }
+/* Reduce unnecessary transitions */
+:root[zen-compact-mode="true"]:not([customizing]):not([inDOMFullscreen="true"]) #navigator-toolbox {
+  transition-delay: -0.002s !important;
 }
 
 /* === BLUR COMPACT SIDEBAR ================================================================================================ */
 /* Based on code by https://github.com/Tanay-Kar */
 
-:root[zen-compact-mode="true"] {
-  #navigator-toolbox #titlebar {
-    @media (-moz-bool-pref: "lacuna.sidebar.compact-transparent") {
-      background: light-dark(#00000022,#00000044) !important;
-    }
-    border: none !important;
-  }
-  #navigator-toolbox:not(:has(#urlbar[zen-floating-urlbar='true'][open])) #titlebar {
-    backdrop-filter: blur(20px) !important;
-    background: rgba(9, 9, 9, 0.325) !important;
+:root[zen-compact-mode="true"] #navigator-toolbox #titlebar {
+  border: none !important;
+
+  @media (-moz-bool-pref: "lacuna.sidebar.compact-transparent") {
+    background: light-dark(#00000022, #00000044) !important;
   }
 }
 
-
+:root[zen-compact-mode="true"] #navigator-toolbox:not(:has(#urlbar[zen-floating-urlbar='true'][open])) #titlebar {
+  backdrop-filter: blur(10px) !important;
+  background: rgba(0, 0, 0, 0.3) !important;
 }
-/* -------removes scrollbar in tab panel and also adds fade effect -------- */ 
-#zen-tabs-wrapper {
-}
 
+/* === GENERAL SIDEBAR ====================================================================================================== */
+/* Removes scrollbar in tab panel and adds fade effect */
 #zen-tabs-wrapper {
     mask-image: linear-gradient(to bottom, black 90%, transparent 100%) !important;
     -webkit-mask-image: linear-gradient(to bottom, black 97%, transparent 100%) !important;
-}
-
-#zen-tabs-wrapper {
     scrollbar-width: none !important;
     -ms-overflow-style: none !important;
     overflow-y: auto !important;
@@ -568,82 +561,94 @@ browser[transparent='true'] {
 /* === FLOATING URL BAR ANIMATION/BLUR ===================================================================================== */
 /* Add blur when URL bar is opened */
 #urlbar[open] {
-    margin-top: 3px !important;
-    padding-top: 6px !important;
+  margin-top: 3px !important;
+  padding-top: 6px !important;
+  position: fixed !important;
+  top: 20% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 50vw !important;
+  max-width: 600px !important;
+  min-height: 72px !important;
+  z-index: 9999 !important;
+  border-radius: 13px !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+  box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.35) !important;
+  backdrop-filter: blur(7px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  transition: height 0.2s ease-out !important;
 }
-/*--------------*/
 
+/* Expand results downward */
+#urlbar[open] #urlbar-results {
+  position: relative !important;
+  width: 100% !important;
+  top: 100% !important;
+  max-height: 400px !important;
+  overflow-y: auto !important;
+  opacity: 1 !important;
+  transition: max-height 0.2s ease-out !important;
+}
+
+/* Blur background when url bar opens */
 #browser:has(#urlbar[open]) .browserContainer {
-    pointer-events: none;
-    filter: blur(2rem) brightness(70%) saturate(180%) !important;
-    backdrop-filter: blur(2rem) contrast(90%) brightness(30%) !important;
-    opacity: 0.85 !important;
-  	transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
-	  scale: 1.09 !important;
-  	opacity: 0;
-    will-change: filter, backdrop-filter, opacity !important;
+  pointer-events: none;
+  filter: blur(2rem) brightness(70%) saturate(180%) !important;
+  backdrop-filter: blur(2rem) contrast(90%) brightness(30%) !important;
+  opacity: 0.85 !important;
+  scale: 1.11 !important;
+  transition: filter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), 
+              opacity 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), 
+              backdrop-filter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), 
+              scale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
 }
 
 /* Remove blur when URL bar is closed */
 .browserContainer {
-    filter: blur(0px) brightness(100%) saturate(100%) !important;
-    backdrop-filter: blur(0px) !important;
-    opacity: 1 !important;
-  	transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
-  }
+  filter: blur(0px) brightness(100%) saturate(100%) !important;
+  backdrop-filter: blur(0px) !important;
+  opacity: 1 !important;
+  scale: 1 !important;
+  transition: filter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), 
+              opacity 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), 
+              backdrop-filter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), 
+              scale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
+}
 
-/* Make background of floating URL bar blur */
+/* Floating urlbar background */
 #urlbar-background {
-    background: rgba(0, 0, 0, 0.46) !important;
-    border-radius: 12px !important;
-    border: 0px solid rgba(255, 255, 255, 0.1) !important;
-    padding: 10px !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
-    transition: background 0.3s ease, box-shadow 0.3s ease !important;
+  background: rgba(0, 0, 0, 0.46) !important;
+  border-radius: 12px !important;
+  padding: 10px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+  transition: background 0.25s ease, box-shadow 0.25s ease !important;
 }
 
-#urlbar-background:hover {
-    background: rgba(50, 50, 50, 0.6) !important;
-    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.4), 0 12px 40px rgba(0, 0, 0, 0.3) !important;
-}
-
-/* Floating URL bar styling */
-#urlbar[open] {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) scale(1) !important; /* Scale set to 1 */
-    width: 50vw !important;
-    max-width: 600px !important;
-    z-index: 9999 !important;
-    border-radius: 13px !important;
-    background: rgba(0, 0, 0, 0.3) !important;
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.4) !important;
-    backdrop-filter: blur(7px) !important;
-}
-
-/* Fix for compact sidebar mode: Force URL bar to center properly when clicked */
+/* compact mode fixes for urlbar */
+/* Force URL bar to center properly when clicked */
 #browser[sidebar="compact"] #urlbar[open] {
-    left: 50% !important;
-    transform: translate(-50%, -50%) scale(1) !important;
-}
-
-#urlbar[open] #urlbar-results {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+  left: 50% !important;
+  transform: translateX(-50%) scale(1) !important;
 }
 
 /* Adjust zoom button position */
 #urlbar-zoom-button {
-    position: relative !important;
-    left: 30px !important;
+  left: 30px !important;
 }
 #urlbar[open] #urlbar-zoom-button {
-    left: 0px !important; /* Reset position when URL bar is open */
+  left: 0 !important;
 }
+
 /* Scale down URL bar in compact mode */
 :root[zen-compact-mode="true"] #urlbar[open] {
-    transform: translateX(-50%) translateY(-50%) scale(1) !important;
+  transform: translateX(-50%) scale(1) !important;
+}
+
+/* Hide all results after the 6th one */
+#urlbar[open] #urlbar-results>*:nth-child(n+6) {
+  display: none !important;
 }
 
 /* === BUTTONS ABOVE URL BAR =============================================================================================== */
@@ -742,28 +747,32 @@ browser[transparent='true'] {
 /* ESSENTIAL COLOR WITH SHADOW, SPACING & ROUNDED EDGES */
 #zen-essentials-container .tabbrowser-tab {
   .tab-background {
-    background-color: light-dark(rgba(255,255,255,0.25), rgba(0,0,0,0.35)) !important;
+    background-color: light-dark(rgba(255, 255, 255, 0.25), rgba(0, 0, 0, 0.35)) !important;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
     border-radius: 11px !important;
-    margin: px !important; /* Added spacing between buttons */
-    position: relative; /* Ensures pseudo-elements align correctly */
+    margin: 2px !important; /* Kept as you had it */
+    position: relative !important;
   }
 
   &:hover .tab-background {
-    background-color: light-dark(rgba(255,255,255,0.45), rgba(0,0,0,0.45)) !important;
-    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.75) !important;
+    background-color: light-dark(rgba(255, 255, 255, 0.45), rgba(0, 0, 0, 0.45)) !important;
+    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.75) !important; /* Keeping original hover effect */
   }
 
   @media (-moz-bool-pref: "zen.theme.essentials-favicon-bg") {
-      .tab-background {
-      &::after {
-        left: -0% !important;
-        top: -10% !important;
-        width: 100% !important;
-        height: 100% !important;
-        filter: blur(20px) saturate(120%) brightness(110%) contrast(100%)!important;
-      }
-
+    .tab-background::after {
+      content: "" !important;
+      position: absolute !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      filter: blur(20px) saturate(120%) brightness(110%) contrast(100%) !important;
+      display: block !important;
+      z-index: -1 !important;
+    }
+  }
+}
 /* === NORMAL TAB CUSTOMIZATION ============================================================================================ */
 
 /* Hides the splitter/resize bar, but still functional */
@@ -783,38 +792,36 @@ browser[transparent='true'] {
   pointer-events: auto !important;
 }
 
-/*Transition for tab background */
+/* Smooth cubic-bezier transition for tab background with a slight "overshoot" effect */
 .tabbrowser-tab .tab-background {
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
   box-shadow: none !important;
 }
 
-@media (-moz-bool-pref: "lacuna.tab.pined-tabs-bg"){
-  .tabbrowser-tab[pinned]:not([zen-essential="true"]){
-    .tab-background {
-      background-color: light-dark(rgba(255,255,255,0.25),rgba(0,0,0,0.25)) !important;
-    }
+@media (-moz-bool-pref: "lacuna.tab.pined-tabs-bg") {
+  .tabbrowser-tab[pinned]:not([zen-essential="true"]) .tab-background {
+    background-color: light-dark(rgba(255, 255, 255, 0.25), rgba(0, 0, 0, 0.25)) !important;
+    transition: background-color 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
+  }
 
-    &:hover .tab-background {
-      background-color: light-dark(rgba(255,255,255,0.45),rgba(0,0,0,0.45)) !important;
-    }
+  .tabbrowser-tab[pinned]:not([zen-essential="true"]):hover .tab-background {
+    background-color: light-dark(rgba(255, 255, 255, 0.45), rgba(0, 0, 0, 0.45)) !important;
   }
 }
 
-/*When tabs are selected/active */
-.tabbrowser-tab .tab-background:is([selected], [multiselected]) {
+/* When tabs are selected/active */
+.tabbrowser-tab[selected] .tab-background,
+.tabbrowser-tab[multiselected] .tab-background {
   background-color: light-dark(
     color-mix(in srgb, #fefefe 45%, transparent),
     color-mix(in srgb, #000000 35%, transparent)
   ) !important;
+  transition: background-color 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
 }
 
+/* Close icon hover effect with the same "overshoot" transition */
 .close-icon:hover {
-  transition: 0.5s !important;
-  background-color: color-mix(
-    in srgb,
-    currentColor 20%,
-    transparent
-  ) !important;
+  transition: background-color 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
+  background-color: color-mix(in srgb, currentColor 20%, transparent) !important;
 }
 
