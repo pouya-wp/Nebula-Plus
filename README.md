@@ -13,7 +13,7 @@
 
 ###
 
-<h2 align="left">What is Nebula?</h2>
+<h2 align="left">✨What is Nebula?</h2>
 
 ###
 
