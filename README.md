@@ -34,11 +34,12 @@
 
 ###
 
-<h2 align="left">Features:</h2>
+<h2 align="left">💫Features:</h2>
 
 ###
 
 <p align="left">• Smooth, Clean Animations – Everything feels fluid and modern<br> => PS: GitHub is not letting me upload videos above 10MB, so you can try the mod to experience the animations!<br><br>• Glass-Like UI – A sleek, transparent look for a premium feel<br><br>• Redesigned Toolbar – More refined, with better spacing and aesthetics<br>• Enhanced UI Elements – Thoughtful tweaks to improve usability</b></p>
+<p align="left"> 💡 Want to make Nebula your own? Modify the Nebula files to customize it further! Make sure to share your personal Nebula look on Reddit/Discord. 🚀
 
 ###
 
