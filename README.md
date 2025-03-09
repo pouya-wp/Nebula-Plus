@@ -21,7 +21,7 @@
 
 ###
 
-<h2 align="left">Showcase :))</h2>
+<h2 align="left">🪐Showcase :))</h2>
 
 <div align="center">
   <img src="https://github.com/user-attachments/assets/7dc9251f-2cba-445e-b100-9d1be8bd53e6" width="400">
