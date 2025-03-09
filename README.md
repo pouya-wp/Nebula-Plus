@@ -38,7 +38,7 @@
 
 ###
 
-<p align="left">• Clean Animations<br> => PS: GitHub is not letting me upload videos above 10MB, so you can try the mod to experience the animations!<br><br>• Better UI (glass look)<br><br>• Better customized toolbar</p>
+<p align="left">• Smooth, Clean Animations – Everything feels fluid and modern<br> => PS: GitHub is not letting me upload videos above 10MB, so you can try the mod to experience the animations!<br><br>• Glass-Like UI – A sleek, transparent look for a premium feel<br><br>• Redesigned Toolbar – More refined, with better spacing and aesthetics<br>• Enhanced UI Elements – Thoughtful tweaks to improve usability</b></p>
 
 ###
 
