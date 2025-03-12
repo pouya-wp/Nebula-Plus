@@ -1,7 +1,7 @@
 /* === GENERAL BROWSER UI ================================================================================================== */
 
 #browser {
-    background: rgba(10, 10, 10, 0.2) !important; /* Increased opacity */
+    background: rgba(10, 10, 10, 0.1) !important; /* Increased opacity */
 }
 browser[transparent='true'] {
   background: rgba(255, 255, 255, 0) !important;

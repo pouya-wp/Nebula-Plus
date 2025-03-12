@@ -22,7 +22,7 @@
         top: 0 !important;
         width: 100% !important;
         height: 100% !important;
-        filter: blur(20px) saturate(120%) brightness(110%) contrast(100%) !important;
+        filter: blur(20px) saturate(170%) brightness(105%) contrast(105%) !important;
         display: block !important;
         z-index: -1 !important;
       }

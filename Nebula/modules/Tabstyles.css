@@ -1,45 +1,42 @@
 
 /* ------------------------- Tabs Styling -------------------------- */
-
-/* Pinned tab styling */
-.tabbrowser-tab[pinned]:not([zen-essentials="true"]) .tab-background {
-    background-color: light-dark(rgba(255,255,255,0.25), rgba(0,0,0,0.18)) !important;
-    border-radius: 12px !important;
-    position: relative !important;
-    transition: background-color 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), 
-                box-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
-  }
+.tabbrowser-tab[pinned]:not([zen-essentials="true"]) {
+    .tab-background {
+      background-color: light-dark(rgba(255,255,255,0.25), rgba(0,0,0,0.18)) !important;
+      box-shadow: 0 -1px 8px rgba(0, 0, 0, 0) !important;
+      border-radius: 12px !important;
+      position: relative !important;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
+    }
   
-  .tabbrowser-tab[pinned]:not([zen-essentials="true"]):hover .tab-background {
-    background-color: light-dark(rgba(255,255,255,0.45), rgba(0,0,0,0.45)) !important;
-    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
+    &:hover .tab-background {
+      background-color: light-dark(rgba(255,255,255,0.45), rgba(0,0,0,0.45)) !important;
+      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
+    }
+    &[selected="true"] .tab-background,
+    &[visuallyselected="true"] .tab-background {
+      background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.55)) !important;
+      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
+    }
   }
+.tabbrowser-tab:not([pinned]) {
+  .tab-background {
+      box-shadow: 0 -1px 8px rgba(0, 0, 0, 0) !important;
+      border-radius: 12px !important;
+      position: relative !important;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
+    }
   
-  .tabbrowser-tab[pinned][selected="true"] .tab-background,
-  .tabbrowser-tab[pinned][visuallyselected="true"] .tab-background {
-    background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.55)) !important;
-    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
+    &:hover .tab-background {
+      background-color: light-dark(rgba(255,255,255,0.4), rgba(0,0,0,0.4)) !important;
+      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
+    }
+    &[selected="true"] .tab-background,
+    &[visuallyselected="true"] .tab-background {
+      background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.35)) !important;
+      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
+    }
   }
-  
-  /* Unpinned tab styling */
-  .tabbrowser-tab:not([pinned]) .tab-background {
-    border-radius: 12px !important;
-    position: relative !important;
-    transition: background-color 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), 
-                box-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
-  }
-  
-  .tabbrowser-tab:not([pinned]):hover .tab-background {
-    background-color: light-dark(rgba(255,255,255,0.4), rgba(0,0,0,0.4)) !important;
-    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
-  }
-  
-  .tabbrowser-tab:not([pinned])[selected="true"] .tab-background,
-  .tabbrowser-tab:not([pinned])[visuallyselected="true"] .tab-background {
-    background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.35)) !important;
-    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
-  }
-  
   /*-------------------------- Natsumi Essentials & Pinned ----------------------------------*/
   @media (-moz-bool-pref: "uc.pins.bg") {
   :root {
@@ -291,4 +288,4 @@
       }
     }
   }
-  }
+ }
