@@ -43,12 +43,6 @@
 
 ###
 
-<div align="left">
-  <img height="300" src="https://github.com/user-attachments/assets/36c3121a-4c0e-4061-8110-d1d55a6f688f"  />
-</div>
-
-###
-
 <p align="left">• Lots of new animations<br> => PS: GitHub is not letting me upload videos above 10MB, so you can try the mod to experience the animations!</p>
 
 ###
