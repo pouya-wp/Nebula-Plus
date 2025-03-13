@@ -58,7 +58,7 @@
 
 ###
 
-<h2 align="left">Installation:</h2>
+<h2 align="left">☄️ Installation:</h2>
 
 ###
 
