@@ -58,10 +58,6 @@
 
 ###
 
-<p align="left">• Lots of new animations<br> => PS: GitHub is not letting me upload videos above 10MB, so you can try the mod to experience the animations!</p>
-
-###
-
 <h2 align="left">Installation:</h2>
 
 ###
