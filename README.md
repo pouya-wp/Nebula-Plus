@@ -39,7 +39,7 @@
 ###
 
 • **Smooth, Clean Animations** – Enjoy a fluid and modern browsing experience.  
-  ◦ *PS: GitHub has a 10MB limit on video uploads, so try the mod to see the animations in action!*  
+  ◦ *PS: GitHub has a 10MB limit on video uploads, try the mod to experience it.*  
 
 • **Glass-Like UI** – A sleek, transparent design for a premium feel.  
 
@@ -49,14 +49,10 @@
   ◦ Compact Sidebar  
   ◦ Bookmarks Sidebar  
   ◦ Zen Web Panels  
-  ◦ Findbar (Ctrl+F)  
+  ◦ Findbar 
 
-• **Improved Picture-in-Picture & PDF Viewer** – A better media experience with enhanced usability.  
+• **Improved Picture-in-Picture & PDF Viewer** – A better media experience with enhanced usability. (Credit to Natsumi)  
 
-• **Bug Fixes & Enhancements**  
-  ◦ Fixed animation trigger issues.  
-  ◦ Cleaned up the URL bar for a sharper look.  
-  ◦ Resolved hover shadow issues on tabs.  
 
 💡 *Want to personalize Nebula?* Modify the files to make it your own! Don't forget to share your custom Nebula look on Reddit or Discord.
 
