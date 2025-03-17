@@ -46,26 +46,21 @@
     }
     
   /*----------- makes background dark and have shadow------------------------- */
-  >toolbarbutton:not([id="tabs-newtab-button"]),
-  >toolbaritem {
-    background-color: light-dark(rgba(255,255,255,0.25), rgba(0,0,0,0.35)) !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
-    border-radius: 9.5px !important;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
-  }
-  
-  >toolbarbutton:not([id="tabs-newtab-button"]):hover,
-  >toolbaritem:hover {
-    background-color: light-dark(rgba(255,255,255,0.45), rgba(0,0,0,0.45)) !important;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4)!important;
-  }
-  
-  >toolbarbutton:not([id="tabs-newtab-button"]):is([open], [checked]),
-  >toolbaritem:has(toolbarbutton:is([open], [checked])) {
-    background-color: light-dark(
-      color-mix(in srgb, #ffffff 65%, transparent),
-      color-mix(in srgb, #000000 55%, transparent)
-    ) !important;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4) !important;
-  }
+ /* Matches pinned extensions shadow effect to essentials */
+>toolbarbutton:not([id="tabs-newtab-button"]),
+>toolbaritem {
+  background-color: light-dark(rgba(255,255,255,0.25), rgba(0,0,0,0.4)) !important;
+  box-shadow: 0 0px 3px rgba(0, 0, 0, 0.12) !important; /* Matches essentials */
+  border-radius: 11px !important; /* Same as essentials */
+  margin: 0px !important;
+  position: relative !important;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+>toolbarbutton:not([id="tabs-newtab-button"]):hover,
+>toolbaritem:hover {
+  background-color: light-dark(rgba(255,255,255,0.45), rgba(0,0,0,0.5)) !important;
+  box-shadow: 0 0px 3px rgba(0, 0, 0, 0.95) !important; /* Matches essentials */
+}
+
   

@@ -72,7 +72,7 @@ findbar {
     border-bottom: none !important;
 
     & #sidebar-close {
-      display: none !important;
+      !important;
     }
   }
 }

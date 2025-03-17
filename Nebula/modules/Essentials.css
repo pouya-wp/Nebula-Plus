@@ -31,28 +31,36 @@ their author(s) have been provided above the used code.
 #zen-essentials-container .tabbrowser-tab {
     .tab-background {
       background-color: light-dark(rgba(255, 255, 255, 0.25), rgba(0, 0, 0, 0.35)) !important;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+      box-shadow: 0 0px 3px rgba(0, 0, 0, 0.12) !important;
       border-radius: 11px !important;
-      margin: 2px !important; /* Kept as you had it */
+      margin: 2px !important;
       position: relative !important;
     }
   
     &:hover .tab-background {
       background-color: light-dark(rgba(255, 255, 255, 0.45), rgba(0, 0, 0, 0.45)) !important;
-      box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.75) !important; /* Keeping original hover effect */
+      box-shadow: 0 0px 3px rgba(0, 0, 0, 0.95) !important;
     }
   
     @media (-moz-bool-pref: "zen.theme.essentials-favicon-bg") {
       .tab-background::after {
         content: "" !important;
         position: absolute !important;
-        left: 0 !important;
+        left:0  !important;
         top: 0 !important;
         width: 100% !important;
         height: 100% !important;
-        filter: blur(20px) saturate(170%) brightness(105%) contrast(105%) !important;
+      
         display: block !important;
         z-index: -1 !important;
       }
     }
   }
+/* makes essentials have fixed width of 60px (from superpins) */
+:root {
+  --essentials-width: 60px !important;
+}
+
+#zen-essentials-container {
+  grid-template-columns: repeat(auto-fit, minmax(var(--essentials-width), auto)) !important;
+}
