@@ -1,4 +1,4 @@
-<h1 align="center">🌌Nebula</h1>
+<h1 align="center">Nebula</h1>
 <div align="center">
     <a href="https://zen-browser.app/">
         <img width="120" alt="zen-badge-dark" src="https://github.com/user-attachments/assets/d6ab3ddf-6630-4062-92d0-22497d2a3f9a" />
