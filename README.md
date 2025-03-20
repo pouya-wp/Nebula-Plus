@@ -34,30 +34,6 @@
 
 ###
 
-<h2 align="left">💫Features:</h2>
-
-###
-
-• **Smooth, Clean Animations** – Enjoy a fluid and modern browsing experience.  
-  ◦ *PS: GitHub has a 10MB limit on video uploads, try the mod to experience it.*  
-
-• **Glass-Like UI** – A sleek, transparent design for a premium feel.  
-
-• **Refined Toolbar** – Improved spacing and aesthetics for a more polished look.  
-
-• **Blurred Sidebars & Panels** – Added smooth blur effects to:  
-  ◦ Compact Sidebar  
-  ◦ Bookmarks Sidebar  
-  ◦ Zen Web Panels  
-  ◦ Findbar 
-
-• **Improved Picture-in-Picture & PDF Viewer** – A better media experience with enhanced usability. (Credit to Natsumi)  
-
-
-💡 *Want to personalize Nebula?* Modify the files to make it your own! Don't forget to share your custom Nebula look on Reddit or Discord.
-
-###
-
 <h2 align="left">☄️ Installation:</h2>
 
 ###
