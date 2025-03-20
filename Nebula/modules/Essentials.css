@@ -64,3 +64,9 @@ their author(s) have been provided above the used code.
 #zen-essentials-container {
   grid-template-columns: repeat(auto-fit, minmax(var(--essentials-width), auto)) !important;
 }
+.collapsed-toolbar .essential-item {
+    justify-content: center; /* Ensures items are centered */
+    align-items: center;
+    margin: auto; /* Adjust if needed */
+}
+

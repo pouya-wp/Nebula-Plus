@@ -91,36 +91,71 @@ their author(s) have been provided above the used code.
   }
 }
 
-/* ---------------------------------------------------------------------------------- */
+/* -------------------------------- Containers ------------------------------------------- */
 .tab-context-line {
   display: none !important;
 }
-
-/* Gradient for tabs with context line (container tabs) */
+/* Ensure container tabs have a relative position */
 .tabbrowser-tab[usercontextid] .tab-background {
   position: relative !important;
+  overflow: hidden !important;
+  border-radius: inherit !important;
+  background-color: color-mix(in srgb, var(--identity-tab-color, #ff8a00) 8%, transparent) !important; /* 0.12 opacity */
+  transition: background-color 0.3s ease-out !important; /* Smooth transition */
+  filter: blur(0.5px);
 }
 
-/* Apply default color gradient only to container tabs using ::after */
+/* When hovered or selected: Restore full background opacity */
+.tabbrowser-tab[usercontextid]:hover .tab-background,
+.tabbrowser-tab[usercontextid][visuallyselected] .tab-background {
+  background-color: var(--identity-tab-color, #ff8a00) !important;
+}
+
+/* Define the gradient animation */
+@keyframes container-gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 200% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Gradient layer (Hidden initially) */
 .tabbrowser-tab[usercontextid] .tab-background::after {
   content: "";
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
-  width: 100% !important; 
+  width: 100% !important;
   height: 100% !important;
-  background: linear-gradient(to right, var(--identity-tab-color, rgba(0, 0, 255, 0.5)), transparent 40%) !important;
-  opacity: 0.7 !important;
-  clip-path: inset(0 0 0 0) !important;
-  transition: opacity 0.3s ease, width 0.3s ease, background 0.3s ease, clip-path 0.3s ease !important;
-  z-index: 2 !important; 
+
+  /* Dynamic gradient (Appears only on hover) */
+  background: linear-gradient(45deg, 
+    var(--identity-tab-color, #ff8a00) 15%, 
+    #e52e71 35%, 
+    #7f00ff 55%, 
+    #00c9ff 75%, 
+    var(--identity-tab-color, #ff8a00) 100%
+  ) !important;
+  
+  background-size: 300% 300% !important;
+  background-position: 0% 50%;
+  
+  opacity: 0 !important; /* Fully hidden by default */
+  filter: blur(15px) !important;
+  transition: opacity 0.3s ease-out, filter 0.3s ease-out, background-position 4s linear !important;
+  z-index: -1 !important;
+  border-radius: inherit !important;
 }
 
-/* Shorter gradient for non-selected tabs */
-.tabbrowser-tab[usercontextid]:not([selected]):not([visuallyselected]) .tab-background::after {
-  width: 20% !important;
+/* When hovered: Gradient appears and animates */
+.tabbrowser-tab[usercontextid]:hover .tab-background::after {
+  opacity: 0.8 !important; /* Bright and vibrant */
+  filter: blur(15px) !important; /* Softer glow */
+  
+  /* Move the background for a flowing effect */
+  background-position: 200% 50% !important;
 }
 
+/* ------------------- Close button -------------------- */
 /* Red gradient when hovering over close or reset button */
 .tabbrowser-tab .tab-background::before {
   content: "" !important;
@@ -139,8 +174,9 @@ their author(s) have been provided above the used code.
 /* On hover over close/reset button: hide default gradient, show red gradient */
 .tabbrowser-tab:has(.tab-close-button:hover, .tab-reset-button:hover) .tab-background::after {
   opacity: 0 !important;
+  transition: 1s ease-out;
 }
-
+/* show red gradient when hover on cross and contaier tab */
 .tabbrowser-tab:has(.tab-close-button:hover, .tab-reset-button:hover) .tab-background::before {
   opacity: 0.7 !important;
   clip-path: inset(0 0 0 0);
@@ -150,7 +186,7 @@ their author(s) have been provided above the used code.
 .tabbrowser-tab[pinned]:not([zen-essentials="true"]) {
     .tab-background {
       background-color: light-dark(rgba(255,255,255,0.25), rgba(0,0,0,0.18)) !important;
-      box-shadow: 0 -1px 8px rgba(0, 0, 0, 0) !important;
+      box-shadow: 0 0px 8px rgba(0, 0, 0, 0) !important;
       border-radius: 12px !important;
       position: relative !important;
       transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
@@ -158,17 +194,17 @@ their author(s) have been provided above the used code.
   
     &:hover .tab-background {
       background-color: light-dark(rgba(255,255,255,0.45), rgba(0,0,0,0.45)) !important;
-      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
+      box-shadow: 0 0px 3px rgba(0, 0, 0, 0.55) !important;
     }
     &[selected="true"] .tab-background,
     &[visuallyselected="true"] .tab-background {
       background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.55)) !important;
-      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
+      box-shadow: 0 0px 3px rgba(0, 0, 0, 0.55) !important;
     }
   }
 .tabbrowser-tab:not([pinned]) {
   .tab-background {
-      box-shadow: 0 -1px 8px rgba(0, 0, 0, 0) !important;
+      box-shadow: 0 0px 8px rgba(0, 0, 0, 0) !important;
       border-radius: 12px !important;
       position: relative !important;
       transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
@@ -176,12 +212,12 @@ their author(s) have been provided above the used code.
   
     &:hover .tab-background {
       background-color: light-dark(rgba(255,255,255,0.4), rgba(0,0,0,0.4)) !important;
-      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
+      box-shadow: 0 0px 3px rgba(0, 0, 0, 0.55) !important;
     }
     &[selected="true"] .tab-background,
     &[visuallyselected="true"] .tab-background {
       background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.35)) !important;
-      box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.55) !important;
+      box-shadow: 0 0px 3px rgba(0, 0, 0, 0.55) !important;
     }
   }
 

@@ -28,7 +28,6 @@ their author(s) have been provided above the used code.
 */
 
 /* ==== Natsumi PiP ==== */
-
 @media not (-moz-bool-pref: "natsumi.pip.disabled") {
   @-moz-document url("chrome://global/content/pictureinpicture/player.xhtml") {
     /*noinspection CssInvalidFunction*/
@@ -471,5 +470,17 @@ their author(s) have been provided above the used code.
         }
       }
     }
+  }
+}
+
+@-moz-document url("chrome://global/content/pictureinpicture/player.xhtml") {
+  .player-holder {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    background: transparent !important;
+  }
+
+  html {
+    background: transparent !important;
   }
 }

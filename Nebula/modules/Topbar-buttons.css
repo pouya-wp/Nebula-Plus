@@ -44,3 +44,22 @@ their author(s) have been provided above the used code.
     filter: invert(1);
   }
 }
+/* ---------- Windows close buttons ----------- */
+.titlebar-close {
+    transition: background-color 0.3s ease-out, transform 0.2s ease-in-out;
+}
+
+.titlebar-close:hover {
+    background-color: rgba(255, 0, 0, 0.8);
+    transform: scale(1);
+}
+.titlebar-min,
+.titlebar-max {
+    transition: background-color 0.3s ease-out, transform 0.2s ease-out;
+}
+
+.titlebar-min:hover,
+.titlebar-max:hover {
+    background-color: rgba(200, 200, 200, 0.2);
+    transform: scale(1);
+}
