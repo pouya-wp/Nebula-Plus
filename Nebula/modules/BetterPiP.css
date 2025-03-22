@@ -145,6 +145,12 @@ their author(s) have been provided above the used code.
         &#close::before {
           content: url("chrome://browser/skin/zen-icons/close.svg") !important;
         }
+        
+        &#minimize::before {
+          content: url("chrome://browser/skin/zen-icons/unpin.svg") !important;
+        }
+
+
 
         &#unpip::before {
           content: url("chrome://browser/skin/zen-icons/screen.svg") !important;
@@ -158,8 +164,8 @@ their author(s) have been provided above the used code.
           }
         }
 
-        &#close:hover, &#unpip:hover {
-          background-color: #000000 !important; /* Dark on hover */
+        &#close:hover, &#unpip:hover, &#minimize:hover {
+          background-color: #222222 !important; /* Dark on hover */
         }
       }
 
