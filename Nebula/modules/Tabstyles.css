@@ -1,124 +1,31 @@
-/*
+/* Credit: Natsumi v3 by greeeen-dev */
 
-Natsumi Browser - A userchrome for Zen Browser that makes things flow.
-
-Copyright (c) 2024-present Green (@greeeen-dev)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-Natsumi Browser uses code from others. The link to the original projects or
-their author(s) have been provided above the used code.
-
-*/
-.tab-reset-pin-button { 
+.tab-reset-pin-button {
   /* makes pinned tab reset (back to pinned url) button have adjusted roundness */
   border-top-left-radius: 12px !important;
   border-bottom-left-radius: 12px !important;
-}
-
-/* Animations for essentials and stuff */
-#zen-main-app-wrapper:not(:has(#zen-welcome)) {
-  .tabbrowser-tab {
-    scale: unset !important;
-
-    &[zen-glance-tab] {
-      box-shadow: none !important;
-
-      .tab-label-container {
-        display: none !important;
-      }
-    }
-
-    .tab-stack {
-      transition: transform 0.2s ease !important;
-    }
-
-    .tab-background, .tab-icon-stack, .tab-label-container {
-      transition: opacity 0.2s ease !important;
-    }
-
-    .tab-background {
-      transition: background 0.3s ease, box-shadow 0.3s ease, border 0.3s ease !important;
-      overflow: hidden !important;
-      position: relative !important;
-
-      &::before {
-        transition: opacity 0.3s ease, width 0.3s ease, background 0.3s ease;
-        opacity: 0;
-      }
-
-      &::after {
-        content: "";
-        position: absolute;
-        width: 100%;
-        height: var(--tab-min-height);
-        opacity: 0;
-        transition: opacity 0.3s ease-out;    
-      }
-    }
-
-    &[selected]:not([zen-glance-tab="true"]), &[visuallyselected]:not([zen-glance-tab="true"]) {
-      & > .tab-stack > .tab-background {
- 
-        &::after {
-          width: 100%;
-          opacity: 1;
-        }
-      }
-    }
-
-    &:active {
-      .tab-stack {
-        transform: scale(0.95, 0.95) !important;
-      }
-    }
-  }
 }
 
 /* -------------------------------- Containers ------------------------------------------- */
 .tab-context-line {
   display: none !important;
 }
+
 /* Ensure container tabs have a relative position */
 .tabbrowser-tab[usercontextid] .tab-background {
   position: relative !important;
   overflow: hidden !important;
   border-radius: inherit !important;
-  background-color: color-mix(in srgb, var(--identity-tab-color, #ff8a00) 8%, transparent) !important; /* 0.12 opacity */
-  transition: background-color 0.3s ease-out !important; /* Smooth transition */
-  filter: blur(0.5px);
 }
 
-/* When hovered or selected: Restore full background opacity */
-.tabbrowser-tab[usercontextid]:hover .tab-background,
-.tabbrowser-tab[usercontextid][visuallyselected] .tab-background {
-  background-color: var(--identity-tab-color, #ff8a00) !important;
-}
-
-/* Define the gradient animation */
-@keyframes container-gradient-flow {
+/* Glow Animation */
+@keyframes container-glow {
   0% { background-position: 0% 50%; }
-  50% { background-position: 200% 50%; }
+  50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
 
-/* Gradient layer (Hidden initially) */
+/* Enhance existing container tab color */
 .tabbrowser-tab[usercontextid] .tab-background::after {
   content: "";
   position: absolute !important;
@@ -126,34 +33,28 @@ their author(s) have been provided above the used code.
   left: 0 !important;
   width: 100% !important;
   height: 100% !important;
-
-  /* Dynamic gradient (Appears only on hover) */
+  
+  /* Use container tab's assigned color */
   background: linear-gradient(45deg, 
-    var(--identity-tab-color, #ff8a00) 15%, 
-    #e52e71 35%, 
-    #7f00ff 55%, 
-    #00c9ff 75%, 
-    var(--identity-tab-color, #ff8a00) 100%
+    var(--identity-tab-color, rgba(0, 0, 255, 0.5)) 30%, 
+    rgba(255, 255, 255, 0.1) 70%
   ) !important;
-  
+
   background-size: 300% 300% !important;
-  background-position: 0% 50%;
-  
-  opacity: 0 !important; /* Fully hidden by default */
-  filter: blur(15px) !important;
-  transition: opacity 0.3s ease-out, filter 0.3s ease-out, background-position 4s linear !important;
+  opacity: 0.12 !important;
+  filter: blur(5px) !important; /* Soft glow */
+  transition: opacity 0.3, filter 0.3s ease-in-out !important;
   z-index: -1 !important;
   border-radius: inherit !important;
 }
 
-/* When hovered: Gradient appears and animates */
+/* Only animate glow when hovering */
 .tabbrowser-tab[usercontextid]:hover .tab-background::after {
-  opacity: 0.8 !important; /* Bright and vibrant */
-  filter: blur(15px) !important; /* Softer glow */
-  
-  /* Move the background for a flowing effect */
-  background-position: 200% 50% !important;
+  opacity: 0.25 !important; /* More visible glow */
+  filter: blur(5px) !important; /* Stronger glow */
+  animation: container-glow 5s infinite linear;
 }
+
 
 /* ------------------- Close button -------------------- */
 /* Red gradient when hovering over close or reset button */
@@ -220,66 +121,80 @@ their author(s) have been provided above the used code.
       box-shadow: 0 0px 3px rgba(0, 0, 0, 0.55) !important;
     }
   }
+/* ------------------------Gradient while hovering-------------------------------- */
+.tabbrowser-tab {
+  position: relative;
+  overflow: hidden;
+  border-radius: 13px;
+}
+
+.tabbrowser-tab::before {
+  content: "";
+  position: absolute;
+  inset: 0.5px; /* Shrinks the effect area */
+  background: linear-gradient(
+    45deg,
+    #000000,
+    #222222,
+    #444444,
+    #ffffff, /* White highlight */
+    #222222,
+    #000000
+  );
+  background-size: 400% 400%;
+  border-radius: 12px !important; /* Slightly smaller than tab */
+  clip-path: inset(0 round 13px);
+  animation: tab-hover-gradient 6s linear infinite;
+  animation-play-state: paused;
+  opacity: 0;
+  filter: blur(10px) brightness(1);
+  transition: opacity 0.4s ease-in-out;
+  pointer-events: none;
+}
+
+/* Show gradient when hovering over the tab */
+.tabbrowser-tab:hover::before {
+  animation-play-state: running;
+  opacity: 0.5;
+}
+
+/* Hide gradient when hovering over tab with hovered close or reset button */
+.tabbrowser-tab:has(.tab-close-button:hover, .tab-reset-button:hover)::before {
+  opacity: 0;
+}
+
+/* Gradient animation keyframes */
+@keyframes tab-hover-gradient {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 50% 0%; }
+  50% { background-position: 100% 50%; }
+  75% { background-position: 50% 100%; }
+  100% { background-position: 0% 50%; }
+}
+#zen-essentials-container .tabbrowser-tab[selected]::before {
+  opacity: 0 !important;
+}
+
+#zen-essentials-container .tabbrowser-tab[selected]:active::before {
+  opacity: 0.5 !important; /* Adjust if needed */
+}
+
+.tabbrowser-tab::before {
+  transition: opacity 0.7s ease-in-out, transform 0.2s;
+}
+
+/* Smoother press effect */
+.tabbrowser-tab:active::before {
+  transform: scale(0.96, 0.95) !important;
+}
+
+
+/* Exclude tabs inside #zen-essentials-container */
+#zen-essentials-container .tabbrowser-tab:active::before {
+  transform: none !important;
+}
 
 /* ----------------------- Natsumi Workspace buttons ------------------------- */
 #zen-workspaces-button .subviewbutton {
   font-size: 12px !important;
 }
-
-/* ================= ESSENTIALS & STUFF ====================== */
-
-#zen-main-app-wrapper:not(:has(#zen-welcome)) {
-  /* Tab click animations */
-  #tabbrowser-tabs:not([movingtab]) {
-    .tabbrowser-tab {
-      transition: scale 0.2s ease !important;
-    }
-
-    .tabbrowser-tab:active {
-      scale: 0.96 !important;
-    }
-
-    .tabbrowser-tab:has(.tab-close-button:hover) {
-      scale: 1 !important;
-    }
-  }
-
-
-    /* Split view tabs */
-    tab-group[split-view-group] {
-      .tabbrowser-tab {
-        & > .tab-stack > .tab-background {
-          &::after {
-            mask-image: linear-gradient(to right, black, transparent 60%);
-          }
-        }
-      }
-    }
-  }
-
-  #zen-essentials-container {
-    overflow: visible !important;
-
-    /*noinspection CssInvalidFunction*/
-    .tabbrowser-tab {
-      overflow: visible !important;
-
-      &[selected], &[visuallyselected] {
-        .tab-icon-image {
-          filter: drop-shadow(0px 0px 4px rgba(0, 0, 0, 0.5));
-        }
-
-        & > .tab-stack > .tab-background {
-          border: none !important;
-
-          &::before {
-            opacity: 0 !important;
-          }
-
-          &::after {
-            filter: saturate(180%) blur(13.5px) !important;
-          }
-        }
-      }
-    }
-  }

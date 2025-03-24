@@ -1,3 +1,5 @@
+/* Credit: Natsumi v3 by greeeen-dev */
+
 /* ------------------ Media Player (new 1.10b) ----------------------- */
 /* ==== "Miniplayer (Modified Natsumi)" ==== */
 #zen-media-controls-toolbar > toolbaritem {
@@ -39,7 +41,14 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(45deg, #ff8a00, #e52e71, #7f00ff, #00c9ff, #ff8a00);
+      background: linear-gradient(45deg,  
+    #000000,  
+    #222222,  
+    #444444,  
+    #ffffff, /* White highlight */
+    #222222,  
+    #000000  
+);
       background-size: 400% 400%;
       opacity: 0; /* Hidden by default */
       filter: blur(30px);

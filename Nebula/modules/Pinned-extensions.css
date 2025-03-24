@@ -1,3 +1,5 @@
+/* Credit: Pinned extensions mod from discord */
+
 /* === PINNED EXTENSIONS (Keeps Dark Background & Shadow) ==================================================================================== */
 #TabsToolbar-customization-target {
   display: flex !important;
@@ -70,9 +72,59 @@
     box-shadow: 0 0px 3px rgba(0, 0, 0, 0.95) !important;
   }
 }
+/* -------- Hover animation gradient -------- */
+.unified-extensions-item {
+    position: relative !important;
+    overflow: hidden !important;
+    border-radius: 11px !important;
+}
 
+/* Gradient hover effect */
+.unified-extensions-item::before {
+    content: "";
+    position: absolute;
+    inset: -1px; /* Shrinks the effect area */
+    background: linear-gradient(
+        45deg,
+        #000000,
+        #222222,
+        #444444,
+        #ffffff, /* White highlight */
+        #222222,
+        #000000
+    );
+    background-size: 400% 400%;
+    border-radius: 10px !important; /* Slightly smaller than button */
+    clip-path: inset(0 round 11px);
+    animation: ext-hover-gradient 6s linear infinite;
+    animation-play-state: paused;
+    opacity: 0;
+    filter: blur(10px) brightness(0.58);
+    transition: opacity 0.4s ease-in-out;
+    pointer-events: none;
+}
 
-/* ============ COMPACT EXTENSIONS ================== */
+/* Show gradient when hovering over the pinned extension */
+.unified-extensions-item:hover::before {
+    animation-play-state: running;
+    opacity: 0.5;
+}
+
+/* Hide gradient when hovering over close/reset buttons (if applicable) */
+.unified-extensions-item:has(.close-button:hover, .reset-button:hover)::before {
+    opacity: 0;
+}
+
+/* Gradient animation keyframes */
+@keyframes ext-hover-gradient {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 50% 0%; }
+    50% { background-position: 100% 50%; }
+    75% { background-position: 50% 100%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ============ COMPACT EXTENSIONS (Credit: KiKaraage) ================== */
 #unified-extensions-view{
   
   --uei-icon-size: 20px !important;
