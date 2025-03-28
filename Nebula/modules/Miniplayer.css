@@ -4,7 +4,7 @@
 /* ==== "Miniplayer (Modified Natsumi)" ==== */
 #zen-media-controls-toolbar > toolbaritem {
   border-radius: 11px !important; /* Increased for more rounded corners */
-  box-shadow: 0 0px 9px rgba(0, 0, 0, 0.55) !important;
+  box-shadow: 0 0px 9px light-dark(rgba(255, 255, 255, 0.55),rgba(0, 0, 0, 0.55)) !important;
 }
 
 @keyframes fadein-animation {
@@ -33,7 +33,7 @@
     transition: box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out;
 
     /* Default Glass Effect */
-    background: rgba(20, 20, 20, 0.4) !important;
+    background: light-dark(rgba(235, 235, 235, 0.4),rgba(20, 20, 20, 0.4)) !important;
     backdrop-filter: blur(20px) saturate(var(--natsumi-mat-hz-saturation)) contrast(var(--natsumi-mat-hz-contrast)) !important;
 
     /* Gradient Layer (Initially Hidden) */
@@ -41,14 +41,17 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(45deg,  
-    #000000,  
-    #222222,  
-    #444444,  
-    #ffffff, /* White highlight */
-    #222222,  
-    #000000  
-);
+  background: linear-gradient(
+  45deg,
+  color-mix(in srgb, var(--zen-primary-color) 5%, black),  
+  color-mix(in srgb, var(--zen-primary-color) 30%, black),  
+  color-mix(in srgb, var(--zen-primary-color) 75%, black),  
+  color-mix(in srgb, var(--zen-primary-color) 100%, black), /* Peak highlight */
+  color-mix(in srgb, var(--zen-primary-color) 50%, black),  
+  color-mix(in srgb, var(--zen-primary-color) 15%, black)  
+  );
+
+
       background-size: 400% 400%;
       opacity: 0; /* Hidden by default */
       filter: blur(30px);
@@ -57,24 +60,25 @@
     }
 
     /* Box Shadow Effect */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 10px light-dark(rgba(255, 255, 255, 0.3),rgba(0, 0, 0, 0.3));
 
     &:hover {
-      background: rgba(20, 20, 20, 1) !important;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+        background: light-dark(rgba(235, 235, 235, 1), rgba(20, 20, 20, 1)) !important;
+        box-shadow: 0 6px 15px light-dark(rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0.5));
 
-      /* Show gradient only on hover when not playing */
-      &::before {
-        opacity: 0.3;
-        animation: glowing-gradient 8s infinite linear;
-      }
+    /* Ensure the gradient layer stays visible */
+    &::before {
+        opacity: 0.3; /* Increase opacity */
+        z-index: 0; /* Make sure it's not hidden under the main background */
+        pointer-events: none;
     }
+   }
   }
 
   /* When playing, enable animation */
   &.playing > toolbaritem::before {
     opacity: 0.65; /* Visible glow */
-    animation: glowing-gradient 13s infinite linear;
+    animation: glowing-gradient 10s infinite linear;
   }
 
   /* Enhance glow on hover when playing */

@@ -13,10 +13,6 @@
     transform: translate(-50%, -50%) scale(1.2) !important;
   }
   
-  /* Set compact sidebar width equal to normal sidebar width */
-  :root {
-    --sidebar-width: 300px; /* Change this to match the default sidebar width */
-  }
   
   :root[zen-compact-mode="true"] #sidebar {
     width: var(--sidebar-width) !important;
@@ -31,7 +27,7 @@
 /* === BLUR COMPACT SIDEBAR ================================================================================================ */
 /* Compact sidebar with blurred transparent background */
 body:has([zen-compact-mode="true"]) #titlebar {
-  background: rgba(0, 0, 0, 0.4) !important; /* Slightly lighter dark with transparency */
+  background: light-dark(rgba(255, 255, 255, 0.4),rgba(0, 0, 0, 0.4)) !important; /* Slightly lighter dark with transparency */
   backdrop-filter: blur(1rem) !important; /* Smooth blur effect */
 }
 
@@ -56,12 +52,16 @@ findbar {
   right: 20px !important;
   z-index: 1000 !important;
   min-width: 780px !important;
-  background: light-dark(rgba(0, 0, 0, 0.185), rgba(0, 0, 0, 0.1)) !important;
+background: light-dark(
+  color-mix(in srgb, rgba(255, 255, 255, 0.59), var(--zen-primary-color) 15%),
+  color-mix(in srgb, rgba(0, 0, 0, 0.51), var(--zen-primary-color) 15%)) !important;
+
+
   backdrop-filter: blur(5px) !important; /* Start with very little blur */
   border-radius: 13px !important;
   padding: 6px 10px !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6) !important;
-  border: 2px solid light-dark(rgba(255, 255, 255, 0.12), rgba(0, 0, 0, 0.3)) !important;
+  border: 2px solid light-dark(rgba(100, 100, 100, 1), rgba(0, 0, 0, 0.3)) !important;
   display: flex !important;
   align-items: center !important;
   gap: 6px !important;
@@ -106,7 +106,7 @@ findbar textbox {
 
 /* General Button Styling */
 findbar toolbarbutton {
-  background: light-dark(rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.15)) !important;
+  background: light-dark(rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0.15)) !important;
   border-radius: 6.5px !important;
   transition: background 0.2s ease, transform 0.1s ease-out !important;
 }
@@ -136,7 +136,7 @@ findbar .findbar-close {
 
 /* Hover and Active Effects */
 findbar toolbarbutton:hover {
-  background: light-dark(rgba(255, 255, 255, 0.35), rgba(0, 0, 0, 0.6)) !important;
+  background: light-dark(rgba(255, 255, 255, 0.6), rgba(0, 0, 0, 0.6)) !important;
   transform: scale(1.05) !important;
 }
 

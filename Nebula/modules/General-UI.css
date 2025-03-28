@@ -1,29 +1,31 @@
 /* === GENERAL BROWSER UI ================================================================================================== */
-
-#browser {
-    background: rgba(0,0,0,0.2) !important; /* Increased opacity */
-}
-browser[transparent='true'] {
-  background: rgba(0,0,0,0) !important;
-}
-
 :root {
   --attention-dot-color: transparent !important;
+}
+
+/* make websites rounded */
+#tabbrowser-tabpanels {
+    clip-path: inset(0 round 10px);
+}
+
+browser[transparent='true'] {
+    background: rgba(0,0,0,0) !important;
 }
 
 #identity-icon-label[value="Extension (Bonjourr · Minimalist Startpage)"] {
     display: none !important;
 }
 
+/*---- Removes the background of the icon extension box in the url bar---- */
+
+#identity-icon-box {
+  background: none !important;
+}
 /* ---- Fix for linux transparency (Credit: Zylvo) ---- */
 :root {
   --zen-themed-toolbar-bg-transparent: transparent !important;
 }
 
-/* Removes the background of the icon extension box in the url bar */
-#identity-icon-box {
-  background: none !important;
-}
 /* -------- floating statusbar (credit to the mod) --------- */
   #statuspanel {
     margin: 10px !important;
@@ -33,21 +35,22 @@ browser[transparent='true'] {
     border-radius: 11px !important;
     padding: 3px 10px !important;
     border: 1px solid var(--zen-colors-border) !important;
-    background: rgba(0, 0, 0, 0.9) !important;
+    background: light-dark(rgba(255, 255, 255, 1),rgba(0, 0, 0, 0.9)) !important;
   }
   
-/* --------------------Split view outline-------------------------- */
+/* -------------------- Split view outline -------------------------- */
 #tabbrowser-tabpanels[zen-split-view="true"] .browserSidebarContainer {
   outline: none !important; /* Remove default outline */
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0), 
-              0 4px 10px rgba(0, 0, 0, 0.3) !important; /* Add dark shadow */
+  box-shadow: 0 0 0 2px light-dark(rgba(0, 0, 0, 0), rgba(255, 255, 255, 0)), 
+              0 4px 10px light-dark(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)) !important;
   transition: box-shadow 0.35s ease !important;
 }
 
 #tabbrowser-tabpanels[zen-split-view="true"] .browserSidebarContainer.deck-selected {
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5), 
-              0 4px 10px rgba(0, 0, 0, 0.5) !important; /* Enhance shadow when selected */
+  box-shadow: 0 0 0 2px light-dark(rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5)), 
+              0 4px 10px light-dark(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)) !important;
 }
+
 /* ------------------ Split view tabs container --------------------- */
 tab-group[split-view-group="true"] {
   background-color: transparent !important;
