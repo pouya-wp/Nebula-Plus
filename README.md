@@ -132,6 +132,9 @@ p {
 p, h1, h2, h3 {
     text-shadow: 0 0 1px rgba(255, 255, 255, 0.2);
 }
+#background {background-image: none !important; background-color: transparent !important;}
+   .tabbing {background-color: transparent !important;} 
+    body {background-color: transparent !important;}
 ```
 ###
 
