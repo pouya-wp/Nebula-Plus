@@ -115,11 +115,11 @@
   
     &:hover .tab-background {
       background-color: light-dark(rgba(255,255,255,0.4), rgba(0,0,0,0.4)) !important;
-      box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.55),rgba(0, 0, 0, 0.55)) !important;
+      box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.45),rgba(0, 0, 0, 0.45)) !important;
     }
     &[selected="true"] .tab-background,
     &[visuallyselected="true"] .tab-background {
-      background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.35)) !important;
+      background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.55)) !important;
       box-shadow: 0 0px 3px rgba(0, 0, 0, 0.55) !important;
     }
   }

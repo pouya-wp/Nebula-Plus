@@ -3,16 +3,29 @@
 /* ==== Animations(tabs) ================================================================================= */
 /* Tab switch animation */
 
-#tabbrowser-tabpanels > hbox:not([zen-split="true"]):not(:has(.zen-glance-background)) {
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), filter 0.18s ease-out !important;
-  scale: 0.9 !important;
-  opacity: 0;
-  filter: blur(20px) !important;
+.browserSidebarContainer.zen-glance-background.deck-selected {
+  filter: blur(5px) brightness(50%);
+  transition: filter 0.1s ease-in-out;
 }
-#tabbrowser-tabpanels > hbox.deck-selected:not([zen-split="true"]) {
-  scale: 1 !important;
-  opacity: 1 !important;
-  filter: none !important;
+
+#tabbrowser-tabpanels > hbox:not(:has(.zen-glance-background)) {
+  &:is([zen-split]) {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), filter 0s ease-out !important;
+  }
+  &:not(.zen-glance-background):not([zen-split]) {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), filter 0.18s ease-out !important;
+    scale: 0.9 !important;
+    opacity: 0;
+    filter: blur(20px) !important;
+  }
+}
+
+#tabbrowser-tabpanels > hbox.deck-selected:not(:has(.zen-glance-background)) {
+  &:not(.zen-glance-background) {
+    scale: 1 !important;
+    opacity: 1 !important;
+    filter: none !important;
+  }
 }
 
 /* website view animations */

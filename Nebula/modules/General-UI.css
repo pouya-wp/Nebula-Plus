@@ -1,17 +1,28 @@
 /* === GENERAL BROWSER UI ================================================================================================== */
-:root {
-  --attention-dot-color: transparent !important;
+#browser {
+    background: rgba(0,0,0,0) !important; /* Increased opacity */
+}
+browser[transparent='true'] {
+  background: rgba(0,0,0,0.2) !important;
 }
 
-
-browser[transparent='true'] {
-    background: rgba(0,0,0,0) !important;
+:root {
+  --attention-dot-color: transparent !important;
 }
 
 #identity-icon-label[value="Extension (Bonjourr · Minimalist Startpage)"] {
     display: none !important;
 }
 
+/* ---- Fix for linux transparency (Credit: Zylvo) ---- */
+:root {
+  --zen-themed-toolbar-bg-transparent: transparent !important;
+}
+
+/* Removes the background of the icon extension box in the url bar */
+#identity-icon-box {
+  background: none !important;
+}
 /*---- Removes the background of the icon extension box in the url bar---- */
 
 #identity-icon-box {

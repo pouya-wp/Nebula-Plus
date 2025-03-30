@@ -188,3 +188,143 @@ findbar toolbarbutton:active {
     background-color: rgba(255, 255, 255, 0.1) !important;
   }
 }
+
+/* ================= Better Context Menu ===================== */
+menupopup {
+    --panel-border-radius: 15px !important; /* makes context menu have more border radius */
+    --panel-background: linear-gradient(
+        155deg, 
+        color-mix(in srgb, var(--zen-primary-color) 25%, light-dark(white, rgba(20,20,20,1))) 0%, 
+        light-dark(white,rgba(20,20,20,1)) 40%
+    ) !important;
+}
+
+
+:is(menu, menuitem):hover {
+    border-radius: 12px !important;
+}
+
+#tabContextMenu:has(
+    #context_reloadTab:not([hidden])
+    ):has(:is(#context_zen-add-essential, #context_zen-remove-essential):not([hidden])
+    ):has(:is(#context_pinTab, #context_unpinTab, #context_bookmarkTab):not([hidden])) {
+    
+    :nth-child(1 of menuseparator) {
+        display: flex !important;
+        visibility: visible !important;
+        order: -1 !important;
+    }
+
+    #context_reloadTab,
+    :is(#context_zen-add-essential, #context_zen-remove-essential),
+    :is(#context_pinTab, #context_unpinTab),
+    #context_bookmarkTab {
+        order: -999 !important;
+        --height: 42px;
+        width: 25% !important;
+        height: var(--height) !important;
+        background-position: center !important;
+        border-radius: 12px !important;
+        position: relative; /* Required for absolute pseudo-element */
+        overflow: hidden; /* Keeps the effect within bounds */
+        transition: box-shadow 0.4s ease-in-out; /* Smooth transition */
+
+
+        .menu-text {
+            display: none !important;
+        }
+    }
+
+    #context_zen-remove-essential {
+        margin-left: 37.5% !important;
+        margin-top: calc(0px - var(--height)) !important;
+    }
+
+    #context_zen-add-essential {
+        margin-left: 50% !important;
+        margin-top: calc(0px - var(--height)) !important;
+    }
+
+    :is(#context_pinTab, #context_unpinTab) {
+        margin-left: 25% !important;
+        margin-top: calc(0px - var(--height)) !important;
+    }
+
+    #context_bookmarkTab {
+        margin-left: 75% !important;
+        margin-top: calc(0px - var(--height)) !important;
+    }
+}
+
+/* Fixed width */
+#tabContextMenu {
+    width: 280px !important;
+}
+
+/* Hide "New Tab" */
+#context_openANewTab {
+    display: none !important;
+}
+
+menuseparator {
+
+    /* Hide first separator */
+    &:first-of-type {
+        display: none !important;
+    }
+
+    /* Reduce separator opacity */
+    &::before {
+        opacity: 0.3;
+    }
+}
+
+/* Gradient animation effect */
+#context_reloadTab::before,
+:is(#context_zen-add-essential, #context_zen-remove-essential)::before,
+:is(#context_pinTab, #context_unpinTab)::before,
+#context_bookmarkTab::before {
+    content: "";
+    position: absolute;
+    inset: 2px; /* Shrinks the effect area */
+    background: linear-gradient(
+        45deg,
+        color-mix(in srgb, var(--zen-primary-color) 5%, black),  
+        color-mix(in srgb, var(--zen-primary-color) 20%, black),  
+        color-mix(in srgb, var(--zen-primary-color) 50%, black),  
+        color-mix(in srgb, var(--zen-primary-color) 90%, black), /* Peak highlight */
+        color-mix(in srgb, var(--zen-primary-color) 50%, black),  
+        color-mix(in srgb, var(--zen-primary-color) 15%, black)  
+    );
+    background-size: 400% 400%;
+    border-radius: 12px !important;
+    clip-path: inset(-1 round 12px);
+
+    opacity: 0;
+    filter: blur(10px) brightness(1);
+    transition: opacity 0.4s ease-in-out;
+    pointer-events: none;
+}
+
+/* Hover effect - gradient animation + box shadow */
+#context_reloadTab:hover,
+:is(#context_zen-add-essential, #context_zen-remove-essential):hover,
+:is(#context_pinTab, #context_unpinTab):hover,
+#context_bookmarkTab:hover {
+    box-shadow: 0 0 3px light-dark(rgba(255, 255, 255, 0.95),rgba(0, 0, 0, 0.95));
+}
+
+#context_reloadTab:hover::before,
+:is(#context_zen-add-essential, #context_zen-remove-essential):hover::before,
+:is(#context_pinTab, #context_unpinTab):hover::before,
+#context_bookmarkTab:hover::before {
+    animation-play-state: running;
+    opacity: 0.5;
+}
+
+/* Gradient animation */
+@keyframes tab-hover-gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}

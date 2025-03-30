@@ -6,7 +6,7 @@
     .tab-background {
       background-color: light-dark(rgba(255, 255, 255, 0.35), rgba(0, 0, 0, 0.35)) !important;
       box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.12),rgba(0, 0, 0, 0.12)) !important;
-      border-radius: 11px !important;
+      border-radius: 13px !important;
     }
   
     &:hover .tab-background {
