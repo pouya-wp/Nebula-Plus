@@ -37,7 +37,9 @@
 <h2 align="left">☄️ Installation:</h2>
 
 ###
+**Quick note:** If you want a video tutorial for the installation process then it is there on a youtube video someone made about it: https://www.youtube.com/watch?v=ysXRr6GAsNc&t=9s
 
+###
 <h3 align="left">1. Installing CSS</h3>
 
 ###
