@@ -190,15 +190,15 @@ findbar toolbarbutton:active {
 }
 
 /* ================= Better Context Menu ===================== */
-menupopup {
-    --panel-border-radius: 15px !important; /* makes context menu have more border radius */
+/*menupopup {
+    --panel-border-radius: 15px !important;
     --panel-background: linear-gradient(
         155deg, 
         color-mix(in srgb, var(--zen-primary-color) 25%, light-dark(white, rgba(20,20,20,1))) 0%, 
         light-dark(white,rgba(20,20,20,1)) 40%
     ) !important;
 }
-
+*/
 
 :is(menu, menuitem):hover {
     border-radius: 12px !important;
@@ -306,12 +306,11 @@ menuseparator {
     pointer-events: none;
 }
 
-/* Hover effect - gradient animation + box shadow */
+/* Hover effect - gradient animation */
 #context_reloadTab:hover,
 :is(#context_zen-add-essential, #context_zen-remove-essential):hover,
 :is(#context_pinTab, #context_unpinTab):hover,
 #context_bookmarkTab:hover {
-    box-shadow: 0 0 3px light-dark(rgba(255, 255, 255, 0.95),rgba(0, 0, 0, 0.95));
 }
 
 #context_reloadTab:hover::before,

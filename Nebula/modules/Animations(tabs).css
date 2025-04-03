@@ -1,13 +1,35 @@
 /* Credit: Zen Internet by Sameerasw */
 
 /* ==== Animations(tabs) ================================================================================= */
-/* Tab switch animation */
-
+/* --- glance open animation --- */
 .browserSidebarContainer.zen-glance-background.deck-selected {
   filter: blur(5px) brightness(50%);
   transition: filter 0.1s ease-in-out;
 }
+/* --------------- loading blur & scale ----------------- */
+/*@media (-moz-bool-pref: "zen.view.use-single-toolbar") {
+    .browserSidebarContainer {
+        transition:
+            transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important,
+            filter 0.3s cubic-bezier(0.2, 0.8, 0.4, 1) !important;
+    }
 
+
+    #main-window:has(.tabbrowser-tab[selected][busy]) .browserSidebarContainer {
+        filter: blur(15px) !important;
+        transform: scale(0.95) !important;
+        transition-delay: 0.3s !important;
+    }
+
+  
+    #main-window:has(.tabbrowser-tab[selected]:not([busy])) .browserSidebarContainer {
+        filter: none !important;
+        transform: scale(1) !important;
+        transition-delay: 0s !important; 
+    }
+}
+*/
+/* ----------------- Tab switch animation -------------------- */
 #tabbrowser-tabpanels > hbox:not(:has(.zen-glance-background)) {
   &:is([zen-split]) {
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), filter 0s ease-out !important;

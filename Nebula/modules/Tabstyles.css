@@ -84,7 +84,9 @@
 .tab-close-button {
   border-radius: 8px !important;
 }
-
+.tab-reset-button {
+  border-radius: 8px !important;
+}
 /* ------------------------- Tabs Styling -------------------------- */
 .tabbrowser-tab[pinned]:not([zen-essentials="true"]) {
     .tab-background {
@@ -234,18 +236,4 @@
 #zen-workspaces-button {
   container-type: initial !important;
   width: auto !important;
-}
-
-/*-------------------------------------------------------------*/
-/*Animations while switching workspaces*/
-.zen-workspace-tabs-section {
-  opacity: 1;
-  filter: blur(0px);
-  transition: opacity 0.43s ease-out, filter 0.23s ease-out;
-}
-
-/* Apply blur & fade effect only when moving */
-.zen-workspace-tabs-section:not([active="true"]) {
-  opacity: 0;
-  filter: blur(15px);
 }

@@ -1,7 +1,7 @@
 /* Credit: Natsumi v3 by greeeen-dev */
 
 /* ------------------ Media Player (new 1.10b) ----------------------- */
-/* ==== "Miniplayer (Modified Natsumi)" ==== */
+
 #zen-media-controls-toolbar > toolbaritem {
   border-radius: 12px !important; /* Increased for more rounded corners */
   box-shadow: 0 0px 9px light-dark(rgba(255, 255, 255, 0.55),rgba(0, 0, 0, 0.55)) !important;
@@ -34,7 +34,7 @@
 
     /* Default Glass Effect */
     background: light-dark(rgba(235, 235, 235, 0.4),rgba(20, 20, 20, 0.4)) !important;
-    backdrop-filter: blur(20px) saturate(var(--natsumi-mat-hz-saturation)) contrast(var(--natsumi-mat-hz-contrast)) !important;
+    backdrop-filter: blur(20px) !important;
 
     /* Gradient Layer (Initially Hidden) */
     &::before {
