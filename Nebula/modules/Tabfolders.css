@@ -37,7 +37,7 @@ tab-group:not([split-view-group]) {
     --tab-group-color: transparent !important;
     margin: 0 !important;
     height: 36px !important;
-    border-radius: calc(var(--border-radius-medium) + 2px) !important;
+    border-radius: 13px !important;
     transition: transform 0.2s ease;
     transition: background-color 0.2s ease, border-radius 0.2s ease-in-out;
     @media not (-moz-bool-pref: "zen.view.sidebar-expanded") {
@@ -45,7 +45,7 @@ tab-group:not([split-view-group]) {
     }
 
     &:hover {
-      background-color: var(--tab-hover-background-color) !important;
+       background-color: light-dark(rgba(255,255,255,0.45), rgba(0,0,0,0.25)) !important;
     }
 
     &:after {
@@ -170,7 +170,7 @@ tab-group:not([split-view-group]) {
 
   &[collapsed] {
     max-height: 36px !important;
-    transition: max-height 0.3s ease-out;
+    transition: max-height 0.3s cubic-bezier(0, 1, 0, 1.07);
 
     & tab {
       transform: translateY(-30px) !important;
