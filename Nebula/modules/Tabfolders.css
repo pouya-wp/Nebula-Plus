@@ -2,6 +2,7 @@
 /* https://github.com/Anoms12/Advanced-Tab-Groups */
 /* ====== V1.6.1 ====== */
 /* Make groups workspace specific */
+
 tab-group:not([split-view-group]) {
   display: flex !important;
   flex-direction: column !important;
@@ -97,7 +98,10 @@ tab-group:not([split-view-group]) {
       }
 
       @media not (-moz-bool-pref: "tab.groups.theme-folders") {
-        background-color: var(--sidebar-text-color) !important;
+       background-color: light-dark(
+        var(--tab-group-color),
+        var(--tab-group-color-invert)
+      );
       }
 
 
@@ -411,5 +415,13 @@ tab-group:not([split-view-group]) {
 
   .tab-label-container {
     padding: 0 !important;
+  }
+}
+
+tab-group:not([split-view-group]) {
+  & .tab-group-label-container {
+    & > label {
+      margin-top: 2.8px !important;
+    }
   }
 }

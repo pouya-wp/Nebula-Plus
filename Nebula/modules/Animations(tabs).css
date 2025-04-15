@@ -1,43 +1,63 @@
 /* Credit: Zen Internet by Sameerasw */
 
 /* ==== Animations(tabs) ================================================================================= */
-/* --- glance open animation --- */
+/* --- glance open animation fix --- */
 .browserSidebarContainer.zen-glance-background.deck-selected {
   filter: blur(5px) brightness(50%);
   transition: filter 0.1s ease-in-out;
 }
 /* --------------- loading blur & scale ----------------- */
-/*@media (-moz-bool-pref: "zen.view.use-single-toolbar") {
-    .browserSidebarContainer {
-        transition:
-            transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important,
-            filter 0.3s cubic-bezier(0.2, 0.8, 0.4, 1) !important;
-    }
-
-
-    #main-window:has(.tabbrowser-tab[selected][busy]) .browserSidebarContainer {
-        filter: blur(15px) !important;
-        transform: scale(0.95) !important;
-        transition-delay: 0.3s !important;
-    }
-
+/* Default behavior (Style 1) - Applied when no preference is set or when nebula-tab-loading-animation 1 */
+@media (-moz-pref("zen.view.use-single-toolbar")) {
+  .browserSidebarContainer {
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important, 
+                filter 0.18s cubic-bezier(0.2, 0.8, 0.4, 1) !important;
+  }
   
-    #main-window:has(.tabbrowser-tab[selected]:not([busy])) .browserSidebarContainer {
-        filter: none !important;
-        transform: scale(1) !important;
-        transition-delay: 0s !important; 
-    }
+  #main-window:has(.tabbrowser-tab[selected][busy]) .browserSidebarContainer {
+    filter: blur(15px) !important;
+    transform: scale(0.975) !important;
+    transition-delay: 0.5s !important;
+  }
 }
-*/
+
+/* Style 2 - Override default when nebula-tab-loading-animation is set to 2 */
+@media (-moz-pref("zen.view.use-single-toolbar")) and (-moz-pref("nebula-tab-loading-animation", 2)) {
+  .browserSidebarContainer {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important, 
+                filter 0.3s cubic-bezier(0.2, 0.8, 0.4, 1) !important;
+  }
+  
+  #main-window:has(.tabbrowser-tab[selected][busy]) .browserSidebarContainer {
+    filter: blur(20px) !important;
+    transform: scale(0.95) !important;
+    transition-delay: 0.5s !important;
+  }
+}
+
+/* Style 0 - Disable animations when nebula-tab-loading-animation is set to 0 */
+@media (-moz-pref("zen.view.use-single-toolbar")) and (-moz-pref("nebula-tab-loading-animation", 0)) {
+  .browserSidebarContainer {
+    transition: none !important;
+  }
+  
+  #main-window:has(.tabbrowser-tab[selected][busy]) .browserSidebarContainer,
+  #main-window:has(.tabbrowser-tab[selected]:not([busy])) .browserSidebarContainer {
+    filter: none !important;
+    transform: none !important;
+    transition-delay: 0s !important;
+  }
+}
 /* ----------------- Tab switch animation -------------------- */
+/* Default behavior (Style 1) - Applied when no preference is set or when nebula-tab-switch-animation is set to 1 */
 #tabbrowser-tabpanels > hbox:not(:has(.zen-glance-background)) {
   &:is([zen-split]) {
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), filter 0s ease-out !important;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), filter 0.18s ease-out !important;
   }
   &:not(.zen-glance-background):not([zen-split]) {
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), filter 0.18s ease-out !important;
     scale: 0.9 !important;
-    opacity: 0;
+    opacity: 1;
     filter: blur(20px) !important;
   }
 }
@@ -50,6 +70,53 @@
   }
 }
 
+/* Style 2 - Override default when nebula-tab-switch-animation  is set to 2 */
+@media (-moz-pref("nebula-tab-switch-animation", 2)) {
+  #tabbrowser-tabpanels > hbox:not(:has(.zen-glance-background)) {
+    &:is([zen-split]) {
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.35), filter 0s ease-out !important;
+    }
+    &:not(.zen-glance-background):not([zen-split]) {
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.35), filter 0.18s ease-out !important;
+      scale: 0.975 !important;
+      opacity: 1;
+      filter: blur(2px) !important;
+    }
+  }
+
+  #tabbrowser-tabpanels > hbox.deck-selected:not(:has(.zen-glance-background)) {
+    &:not(.zen-glance-background) {
+      scale: 1 !important;
+      opacity: 1 !important;
+      filter: none !important;
+    }
+  }
+}
+
+/* Style 0 - Disable animations when nebula-tab-switch-animation is set to 0 */
+@media (-moz-pref("nebula-tab-switch-animation", 0)) {
+  #tabbrowser-tabpanels > hbox:not(:has(.zen-glance-background)) {
+    &:is([zen-split]),
+    &:not(.zen-glance-background):not([zen-split]) {
+      transition: none !important;
+      scale: 1 !important;
+      opacity: 1 !important;
+      filter: none !important;
+    }
+  }
+
+  #tabbrowser-tabpanels > hbox.deck-selected:not(:has(.zen-glance-background)) {
+    &:not(.zen-glance-background) {
+      scale: 1 !important;
+      opacity: 1 !important;
+      filter: none !important;
+    }
+  }
+}
+
+/* ----------------- Other animations by Zen Zero ------------------ */
+
+
 /* website view animations */
 #browser:not(:has(.zen-glance-background)) #tabbrowser-tabpanels {
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
@@ -58,8 +125,7 @@
 /* trackpad gestures*/
 tabpanels .browserStack browser {
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1) 0.1s !important;
-  /* Add initial border-radius to prevent sharp corners */
-  border-radius: 0.75em !important;
+
 }
 
 
@@ -70,7 +136,6 @@ tabpanels .browserStack browser {
   browser {
   scale: 0.95 !important;
   transform: translateX(3%) !important;
-  border-radius: 2em !important;
 }
 
 /* Next animation*/
@@ -80,12 +145,12 @@ tabpanels .browserStack browser {
   browser {
   scale: 0.95 !important;
   transform: translateX(-3%) !important;
-  border-radius: 2em !important;
+
 }
 
 /* smoothen trackpad gestures */
 .browserStack browser[style*="transform: none"] {
-  border-radius: 0.75em !important;
+
 }
 
 /* ctrl tab visuals and animations */
@@ -100,7 +165,7 @@ tabpanels .browserStack browser {
 }
 
 slot:nth-child(1) {
-  border-radius: 1em !important;
+
   padding: 0 !important;
 }
 
