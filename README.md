@@ -44,11 +44,19 @@
 
 ###
 
-<p align="left">• If you have not already, follow the Zen Live Editing guide to first create your chrome folder: https://docs.zen-browser.app/guides/live-editing<br><br>• Download the chrome ZIP file from latest Release version and paste the Nebula folder inside the chrome folder and open your userChrome.css and add the line ➡️@import "Nebula/Nebula.css";⬅️ and also open your userContent.css (or make one) and add the line ➡️@import "Nebula/Nebula-content.css";⬅️ OR if you dont want to add this line to your userChrome & userContent.css then take the userChrome.css and userContent.css file provided in the ZIP file and directly paste that one into your chrome folder.<br><br>• Restart the browser to see if the UI has changed.<br><br>• Go to about:config in Zen and search for "browser.tabs.allow_transparent_browser". If the option is visible, set it to "true". If not, click the "+" icon and set it to "boolean".<br><br>• Install the wallpapers.zip from the latest release (optional) (optional)</p>
+<p align="left">• If you have not already, follow the Zen Live Editing guide to first create your chrome folder: https://docs.zen-browser.app/guides/live-editing<br><br>• Download the chrome ZIP file from latest Release version and paste the Nebula folder inside the chrome folder and open your userChrome.css and add the line ➡️@import "Nebula/Nebula.css";⬅️ and also ➡️@import "Nebula/Nebula-config.css";⬅️ and then open your userContent.css (or make one) and add the line ➡️@import "Nebula/Nebula-content.css";⬅️ OR if you dont want to add this line to your userChrome & userContent.css then take the userChrome.css and userContent.css file provided in the ZIP file and directly paste that one into your chrome folder.<br><br>• Restart the browser to see if the UI has changed.<br><br>• Go to about:config in Zen and search for "browser.tabs.allow_transparent_browser". If the option is visible, set it to "true". If not, click the "+" icon and set it to "boolean".<br><br>• Install the wallpapers.zip from the latest release (optional) (optional)</p>
 
 ###
 
-<h3 align="left">2. Install Mica For Everyone (ONLY FOR WINDOWS 11 USERS)</h3>
+<h3 align="left">2. Customize Nebula through configs</h3>
+
+###
+
+<p align="left">• If you want different features like different styles of animations, different hover gradients like RGB, monochrome, or default presets, then go to your Nebula folder and open the newly added **Nebula-config.css**. There read through the different configuration options along with a guide on how to enable/disable them by going to about:config<br><br>• For example if you do not like the tab switch animation then you can change it to a different preset style or disable it completely! You could also change the roundness of the whole UI just by changing the default border radius value to your liking!</p>
+
+###
+
+<h3 align="left">3. Install Mica For Everyone (ONLY FOR WINDOWS 11 USERS)</h3>
 
 ###
 
@@ -65,7 +73,7 @@
 <p align="left">• Change the Backdrop type to Acrylic and enable blur behind in advanced options.<br><br>• Restart Zen and see how it looks.</p>
 
 ###
-<h3 align="left">2. Install kwin-effects-forceblur (ONLY FOR KDE LINUX)</h3>
+<h3 align="left">3. Install kwin-effects-forceblur (ONLY FOR KDE LINUX)</h3>
 
 ###
 <p align="left">• To get real backdrop filter transparency, go to "https://github.com/taj-ny/kwin-effects-forceblur" and install the app.<br><br>• It's required to install 'kwin-effects-forceblur' from AUR then go to System Settings -> Windows -> Desktop Effecs, disable Blur and enable Better Blur and in Better Blur settings go to 'Force blur' tab and add 'zen' to list of classes of windows. Here is the blur configuration: </p>
@@ -78,7 +86,7 @@
 
 ###
 
-<h3 align="left">3. Add the Firefox extension Bonjourrr</h3>
+<h3 align="left">4. Add the Firefox extension Bonjourrr</h3>
 
 ###
 
@@ -140,7 +148,7 @@ p, h1, h2, h3 {
 ```
 ###
 
-<h3 align="left">4.  Using pinned extensions</h3>
+<h3 align="left">5.  Using pinned extensions</h3>
 
 ###
 
@@ -151,7 +159,7 @@ p, h1, h2, h3 {
 
 ###
 
-<h3 align="left">5. Add the extension Zen Internet by Sameerasw (Optional)</h3>
+<h3 align="left">6. Add the extension Zen Internet by Sameerasw (Optional)</h3>
 
 ###
 
