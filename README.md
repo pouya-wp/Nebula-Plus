@@ -60,7 +60,7 @@
 
 ###
 
-<p align="left">• To get real backdrop filter transparency (note: that this method provides a better blur effect than the transparent zen extension by sameerasw), go to "https://github.com/MicaForEveryone/MicaForEveryone" and install the app.<br><br>• Click the "+ Add new Rule" at the bottom left and "Add process rule" for "zen".<br><br>• NOTE: If you have "Show Accent color on title bars and window borders" enabled in windows 11 settings, please disable it for transparency to work" 
+<p align="left">• To get real backdrop filter transparency (note: that this method provides a better blur effect than the transparent zen extension by sameerasw), go to "https://github.com/MicaForEveryone/MicaForEveryone" and install the app.<br><br>• Click the "+ Add new Rule" at the bottom left and "Add process rule" for "zen".<br><br>• **NOTE:** If you have "Show Accent color on title bars and window borders" enabled in windows 11 settings, please disable it for transparency to work" 
 </p>
 <img width="900" src="https://github.com/user-attachments/assets/e867a04e-a8ba-4795-bada-e22ca92fc657"  />
 
