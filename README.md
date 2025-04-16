@@ -37,7 +37,7 @@
 <h2 align="left">🫶🏻Thanks for the support!</h2>
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/0c6bf212-d0b9-4f34-85e8-7ae82e847b34" width="600" />
+  <img src="https://github.com/user-attachments/assets/952d32c8-95d2-47b5-8073-6d85d5c8a763" width="600" />
 </div>
 
 ###
