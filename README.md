@@ -34,7 +34,7 @@
 
 ###
 
-<h2 align="left">🫶🏻Thanks for the support! :))</h2>
+<h2 align="left">🫶🏻Thanks for the support!</h2>
 
 <div align="center">
   <img src="https://github.com/user-attachments/assets/0c6bf212-d0b9-4f34-85e8-7ae82e847b34" width="600" />
