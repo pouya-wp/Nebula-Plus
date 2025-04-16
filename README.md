@@ -40,6 +40,8 @@
   <img src="https://github.com/user-attachments/assets/952d32c8-95d2-47b5-8073-6d85d5c8a763" width="600" />
 </div>
 
+<p align="center">It is so crazy to me that Nebula has become one of the biggest mods for Zen Browser in such a short period of time! really appreciate it</p>
+
 ###
 
 <h2 align="left">☄️ Installation:</h2>
