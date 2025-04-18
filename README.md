@@ -37,7 +37,7 @@
 <h2 align="left">🫶🏻Thanks for the support!</h2>
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/0becd97f-c323-4594-a8be-01a22479237f" width="600" />
+  <img src="https://github.com/user-attachments/assets/810f1f87-05de-4032-b351-d6cc73b92495" width="600" />
 </div>
 
 <p align="center">It is so crazy to me that Nebula has become one of the biggest mods for Zen Browser in such a short period of time! really appreciate it</p>
