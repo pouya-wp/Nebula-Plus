@@ -100,7 +100,7 @@
   );
   background-size: 200% 400%;
   border-radius: calc(var(--nebula-border-radius) - 2px) !important;
-  clip-path: inset(0 round 11px);
+  clip-path: inset(0 round calc(var(--nebula-border-radius) - 2px));
   animation: ext-hover-gradient 6s linear infinite;
   animation-play-state: paused;
   opacity: 0;

@@ -147,7 +147,7 @@
   );
   background-size: 400% 400%;
   border-radius: var(--nebula-border-radius) !important; /* Slightly smaller than tab */
-  clip-path: inset(0 round 13px);
+  clip-path: inset(0 round var(--nebula-border-radius));
   animation: tab-hover-gradient 13s linear infinite;
   animation-play-state: paused;
   opacity: 0;

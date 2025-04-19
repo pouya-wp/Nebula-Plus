@@ -3,6 +3,7 @@
 /* ====== V1.6.1 ====== */
 /* Make groups workspace specific */
 
+/* fix for collapsed toolbar */
 tab-group:not([split-view-group]) {
   display: flex !important;
   flex-direction: column !important;
@@ -24,8 +25,8 @@ tab-group:not([split-view-group]) {
     }
   }
 
-  border-radius: calc(var(--border-radius-medium) + 2px) !important;
-  margin: calc(var(--zen-element-separation) / 2) 2px;
+  border-radius: var(--nebula-border-radius) !important;
+  margin: 2px 2px 2px 2px;
   transition: max-height 0.75s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden !important;
 
@@ -38,7 +39,7 @@ tab-group:not([split-view-group]) {
     --tab-group-color: transparent !important;
     margin: 0 !important;
     height: 36px !important;
-    border-radius: 13px !important;
+    border-radius: var(--nebula-border-radius) !important;
     transition: transform 0.2s ease;
     transition: background-color 0.2s ease, border-radius 0.2s ease-in-out;
     @media not (-moz-bool-pref: "zen.view.sidebar-expanded") {
@@ -193,7 +194,7 @@ tab-group:not([split-view-group]) {
       @media not (-moz-bool-pref: "zen.view.sidebar-expanded") {
         left: 8px !important;
       }
-      top: 25% !important;
+      top: 21% !important;
       width: 20px !important;
       height: 20px !important;
 
@@ -425,3 +426,4 @@ tab-group:not([split-view-group]) {
     }
   }
 }
+

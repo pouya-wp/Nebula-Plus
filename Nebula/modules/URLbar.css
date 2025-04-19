@@ -1,10 +1,52 @@
 /* ======= FLOATING URL BAR ANIMATION/BLUR ========= */
+#urlbar[open] {
+  position: relative !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+}
+
+/* Default base (shared): */
+#urlbar[open]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 8px !important;
+  background: light-dark(rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.2)); /* Base for Style 0 */
+  backdrop-filter: blur(20px);
+  z-index: -1;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* === Style 1, 2, 3 – More transparent and light === */
+@media (-moz-pref("nebula-urlbar-animation", 2)),
+       (-moz-pref("nebula-urlbar-animation", 3)) {
+  #urlbar[open]::before {
+    background: light-dark(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)) !important;
+    backdrop-filter: blur(2px) !important;
+  }
+}
+@media (-moz-pref("nebula-urlbar-animation", 1)) {
+  #urlbar[open]::before {
+    background: light-dark(rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.02)) !important;
+    backdrop-filter: blur(2px) !important;
+  }
+}
+/* === Style 4 – Much lighter background === */
+@media (-moz-pref("nebula-urlbar-animation", 4)) {
+  #urlbar[open]::before {
+    background: light-dark(rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.05)) !important;
+    backdrop-filter: blur(2px) !important;
+  }
+}
+
+/* --------------------------------------------------------------- */
 /*Style 1 – Default Animation*/
   #browser:has(#urlbar[open]) .browserContainer {
-    filter: blur(1.5rem) brightness(70%) saturate(180%) !important;
+    filter: blur(1rem) brightness(50%) saturate(180%) !important;
     opacity: 0.7 !important;
-    scale: 1.15 !important;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
+    scale: 1.075 !important;
+    transition: all 0.25s cubic-bezier(0.175, 0.385, 0.12, 1) !important;
   }
 
   .browserContainer:not(:has(#urlbar[open])) {
@@ -14,15 +56,13 @@
     transition:
       filter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35),
       opacity 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35),
-      scale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
+      scale 0.2s cubic-bezier(0.175, 0.885, 0.32, 1) !important;
   }
 
-
-
-/*Style 2 – Lighter Dim Blur*/
+/*Style 2 – Heavy scale and Blur*/
 @media (-moz-pref("nebula-urlbar-animation", 2)) {
   #browser:has(#urlbar[open]) .browserContainer {
-    filter: blur(1rem) brightness(40%) saturate(180%) !important;
+    filter: blur(1.5rem) brightness(70%) saturate(180%) !important;
     opacity: 0.7 !important;
     scale: 1.1 !important;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
@@ -35,10 +75,28 @@
     transition:
       filter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35),
       opacity 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35),
-      scale 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
+      scale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
   }
 }
 
+/*Style 3 – Desaturate and Darken*/
+@media (-moz-pref("nebula-urlbar-animation", 3)) {
+  #browser:has(#urlbar[open]) .browserContainer {
+    filter: saturate(0%) brightness(20%) !important;
+    opacity: 0.85 !important;
+    scale: 1.05 !important;
+    transition: all 0.25s cubic-bezier(0.175, 0.385, 0.12, 1) !important;
+  }
+  .browserContainer:not(:has(#urlbar[open])) {
+    filter: none !important;
+    opacity: 1 !important;
+    scale: 1 !important;
+    transition:
+      filter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35),
+      opacity 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35),
+      scale 0.2s cubic-bezier(0.175, 0.885, 0.32, 1) !important;
+  }
+}
 
 /*Style 0 – No Animation*/
 @media (-moz-pref("nebula-urlbar-animation", 0)) {
@@ -64,7 +122,7 @@
 }
 
 #urlbar[open] {
-  animation: fadeInUnblur 0.15s ease-out forwards !important;
+  animation: fadeInUnblur 0.15s ease !important;
   backdrop-filter: blur(0px) !important;
 }
 
@@ -122,7 +180,7 @@
   text-align: center !important; 
 }
 
-/*------------ URLbar loading animation --------------*/
+/*------------ URLbar loading & hover animation --------------*/
 #urlbar .urlbar-input-container {
   border-radius: var(--nebula-border-radius) !important;
   overflow: hidden;
