@@ -62,7 +62,7 @@
 
 ###
 
-<p align="left">• If you want different features like different styles of animations, different hover gradients like RGB, monochrome, or default presets, then go to your Nebula folder and open the newly added **Nebula-config.css**. There read through the different configuration options along with a guide on how to enable/disable them by going to about:config<br><br>• For example if you do not like the tab switch animation then you can change it to a different preset style or disable it completely! You could also change the roundness of the whole UI just by changing the default border radius value to your liking!</p>
+<p align="left">• If you want different features like different styles of animations, different hover gradients like RGB, monochrome, or default presets, then go to your Nebula folder and open the newly added Nebula-config.css. There read through the different configuration options along with a guide on how to enable/disable them by going to about:config<br><br>• For example if you do not like the tab switch animation then you can change it to a different preset style or disable it completely! You could also change the roundness of the whole UI just by changing the default border radius value to your liking!</p>
 
 ###
 
