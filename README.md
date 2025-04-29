@@ -109,7 +109,7 @@ zen-nebula = {
 </details>
 
 ###
-<h3 align="left">1. Installing CSS</h3>
+<h2 align="left">1. Installing CSS (Windows, MacOS, and manual Linux installation)</h2>
 
 ###
 
