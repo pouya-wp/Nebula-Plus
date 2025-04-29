@@ -52,56 +52,58 @@
 ###
 **Quick note:** If you want a video tutorial for the installation process then it is there on a youtube video someone made about it: https://www.youtube.com/watch?v=ysXRr6GAsNc&t=9s
 
-### Nix
+### 🧊 Nix
 
-This repo includes a Nix flake that exposes a home-manager module that installs Nebula for your Zen-browser declaratively.
+> ⚠️ **Note for Windows and macOS users:**  
+> This installation method is for **Linux users** using [Nix](https://nixos.org/) and **home-manager**.  
+> If you're using **Windows** or **macOS**, read the normal installation process.
 
-To enable the module, add the repo as a flake input, import the module, and enable `zen-nebula`.
+This repo includes a **Nix flake** that provides a `home-manager` module to install **Nebula** for **Zen Browser** declaratively.
 
-<details><summary>Install using your home-manager module defined within your `nixosConfigurations`:</summary>
+To enable the module, add this repo as a flake input, import the module, and enable `zen-nebula`.
+
+<details>
+<summary>📦 Install using your <code>home-manager</code> module (inside <code>nixosConfigurations</code>)</summary>
 
 ```nix
+# flake.nix
+{
+  inputs = {
+    # ---Snip---
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-  # flake.nix
+    zen-nebula.url = "github:JustAdumbPrsn/Nebula-A-Minimal-Theme-for-Zen-Browser";
+    # ---Snip---
+  };
 
-  {
+  outputs = { nixpkgs, home-manager, ... } @ inputs: {
+    nixosConfigurations.HOSTNAME = nixpkgs.lib.nixosSystem {
+      specialArgs = { inherit inputs; };
+      modules = [
+        home-manager.nixosModules.home-manager
+        {
+          # Must pass in inputs so we can access the module
+          home-manager.extraSpecialArgs = {
+            inherit inputs;
+          };
+        }
+      ];
+    };
+  };
+}
 
-      inputs = {
-         # ---Snip---
-         home-manager = {
-           url = "github:nix-community/home-manager";
-           inputs.nixpkgs.follows = "nixpkgs";
-         };
-
-         zen-nebula.url = "github:JustAdumbPrsn/Nebula-A-Minimal-Theme-for-Zen-Browser";
-         # ---Snip---
-      }
-
-      outputs = {nixpkgs, home-manager, ...} @ inputs: {
-          nixosConfigurations.HOSTNAME = nixpkgs.lib.nixosSystem {
-            specialArgs = { inherit inputs; };
-            modules = [
-            home-manager.nixosModules.home-manager
-              {
-               # Must pass in inputs so we can access the module
-                home-manager.extraSpecialArgs = {
-                  inherit inputs;
-                };
-              }
-           ];
-        };
-     }
-  }
 ```
 ```nix
-
 # home.nix
 
 imports = [ inputs.zen-nebula.homeModules.default ];
 
 zen-nebula = {
-    enable = true;
-    profile = "<firefox profile name here>";
+  enable = true;
+  profile = "<firefox profile name here>";
 };
 ```
 </details>
