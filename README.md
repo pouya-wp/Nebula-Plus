@@ -52,8 +52,9 @@
 ###
 **Quick note:** If you want a video tutorial for the installation process then it is there on a youtube video someone made about it: https://www.youtube.com/watch?v=ysXRr6GAsNc&t=9s
 
-### 🧊 Nix
-
+### 🧊 Nix Installation
+<details>
+<summary>‼️ Click here for Nix installation process</summary>
 > ⚠️ **Note for Windows and macOS users:**  
 > This installation method is for **Linux users** using [Nix](https://nixos.org/) and **home-manager**.  
 > If you're using **Windows** or **macOS**, read the normal installation process.
@@ -62,8 +63,7 @@ This repo includes a **Nix flake** that provides a `home-manager` module to inst
 
 To enable the module, add this repo as a flake input, import the module, and enable `zen-nebula`.
 
-<details>
-<summary>📦 Install using your <code>home-manager</code> module (inside <code>nixosConfigurations</code>)</summary>
+📦 Install using your <code>home-manager</code> module (inside <code>nixosConfigurations</code>)
 
 ```nix
 # flake.nix
@@ -106,9 +106,11 @@ zen-nebula = {
   profile = "<firefox profile name here>";
 };
 ```
+
 </details>
 
 ###
+
 <h2 align="left">1. Installing CSS (Windows, MacOS, and manual Linux installation)</h2>
 
 ###
