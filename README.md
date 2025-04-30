@@ -8,7 +8,7 @@
 ###
 
 <div align="center">
-  <img src="https://i.ibb.co/ZRFXDBW2/Screenshot-2025-03-06-195221.png" width="800" />
+  <img src="https://github.com/user-attachments/assets/e09859a4-ad66-483e-be67-b25d11d54298" width="800" />
 </div>
 
 ###
