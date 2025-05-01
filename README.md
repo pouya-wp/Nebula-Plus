@@ -188,7 +188,7 @@ Enjoy your new Zen experience with **Nebula**! ✨
 <h3 align="left">3. Install kwin-effects-forceblur (ONLY FOR KDE LINUX)</h3>
 
 ###
-<p align="left">• To get real backdrop filter transparency, go to "https://github.com/taj-ny/kwin-effects-forceblur" and install the app.<br><br>• It's required to install 'kwin-effects-forceblur' from AUR then go to System Settings -> Windows -> Desktop Effecs, disable Blur and enable Better Blur and in Better Blur settings go to 'Force blur' tab and add 'zen' to list of classes of windows. Here is the blur configuration: </p>
+<p align="left">• To get real backdrop filter transparency, go to "https://github.com/taj-ny/kwin-effects-forceblur" and install the app.<br><br>• It's required to install 'kwin-effects-forceblur' from AUR then go to System Settings -> Windows -> Desktop Effecs, disable Blur and enable Better Blur and in Better Blur settings go to 'Force blur' tab and add 'zen' to list of classes of windows.<br><br>• NOTE: If Zen was installed from AUR as "zen-browser-bin", then in KDE put "zen-bin" instead of "zen" for blur Here is the blur configuration: </p>
 
 ###
 
