@@ -2,7 +2,7 @@
 
 /* === ESSENTIALS ========================================================================================================== */
 /* ESSENTIAL COLOR WITH SHADOW, SPACING & ROUNDED EDGES */
-#zen-essentials-container .tabbrowser-tab {
+.zen-essentials-container .tabbrowser-tab {
     .tab-background {
       background-color: light-dark(rgba(255, 255, 255, 0.35), rgba(0, 0, 0, 0.35)) !important;
       box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.12),rgba(0, 0, 0, 0.12)) !important;
@@ -33,7 +33,7 @@
   --essentials-width: 60px !important;
 }
 
-#zen-essentials-container {
+.zen-essentials-container {
   grid-template-columns: repeat(auto-fit, minmax(var(--essentials-width), auto)) !important;
 }
 .collapsed-toolbar .essential-item {
@@ -133,8 +133,7 @@
     }
   }
 
-  #zen-essentials-container {
-    overflow: visible !important;
+  .zen-essentials-container {
 
     /*noinspection CssInvalidFunction*/
     .tabbrowser-tab {

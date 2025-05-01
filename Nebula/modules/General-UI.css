@@ -1,6 +1,6 @@
 /* === GENERAL BROWSER UI ================================================================================================== */
 #browser {
-    background: rgba(0,0,0,0) !important; /* Increased opacity */
+    background: var(--nebula-ui-tint) !important; /* Increased opacity */
 }
 browser[transparent='true'] {
   background: var(--nebula-website-tint) !important;

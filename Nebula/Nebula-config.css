@@ -45,8 +45,9 @@ without searching through the code directly */
 /* Customize the look! */
 :root {
     /* Nebula border radius (Affects tabs, Essentials, urlbar, miniplayer, extensions, workspace button)*/ 
-        --nebula-border-radius: 12px; /* This will change roundness of everything in Nebula (DEFAULT: 12px) */
-        --nebula-website-tint: rgba(0,0,0,0.2); /* Edit the color values to change the tint on transparent websites */
+        --nebula-border-radius: 13px; /* This will change roundness of everything in Nebula (DEFAULT: 12px) */
+        --nebula-website-tint: light-dark(rgba(255,255,255,0),rgba(0,0,0,0)); /* Edit the color values to change the tint on transparent websites */
+        --nebula-ui-tint: light-dark(rgba(255,255,255,0.12),rgba(0,0,0,0.12)); /* Edit the color values to change the tint of sidebar and etc. */
   }
   
   /* DO NOT ADD OTHER CSS BELOW */

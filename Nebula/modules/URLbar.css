@@ -1,7 +1,12 @@
 /* ======= FLOATING URL BAR ANIMATION/BLUR ========= */
+#urlbar-input::placeholder {
+  opacity: 0.4 !important;
+}
+
+
 #urlbar[open] {
   position: relative !important;
-  border-radius: 10px !important;
+  border-radius: 13px !important;
   overflow: hidden !important;
 }
 
@@ -44,7 +49,7 @@
 /*Style 1 – Default Animation*/
   #browser:has(#urlbar[open]) .browserContainer {
     filter: blur(1rem) brightness(50%) saturate(180%) !important;
-    opacity: 0.7 !important;
+    opacity: 1 !important;
     scale: 1.075 !important;
     transition: all 0.25s cubic-bezier(0.175, 0.385, 0.12, 1) !important;
   }
@@ -152,7 +157,7 @@
 #urlbar[open] #urlbar-background {
   background: light-dark(rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.2)) !important;
   box-shadow: 0 20px 30px light-dark(rgba(255, 255, 255, 0.35), rgba(0, 0, 0, 0.35)) !important;
-  backdrop-filter: blur(100px) !important;
+  backdrop-filter: blur(64px) !important;
 }
 
 /* URL bar zoom button position */

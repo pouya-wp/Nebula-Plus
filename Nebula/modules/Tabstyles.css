@@ -42,7 +42,7 @@
 
   background-size: 300% 300% !important;
   opacity: 0.12 !important;
-  filter: blur(5px) !important; /* Soft glow */
+  filter: blur(0px) !important; /* Soft glow */
   transition: opacity 0.3, filter 0.3s ease-in-out !important;
   z-index: -1 !important;
   border-radius: inherit !important;
@@ -51,7 +51,7 @@
 /* Only animate glow when hovering */
 .tabbrowser-tab[usercontextid]:hover .tab-background::after {
   opacity: 0.25 !important; /* More visible glow */
-  filter: blur(5px) !important; /* Stronger glow */
+  filter: blur(1px) !important; /* Stronger glow */
   animation: container-glow 5s infinite linear;
 }
 
@@ -88,25 +88,27 @@
   border-radius: calc(var(--nebula-border-radius) - 4px) !important;
 }
 /* ------------------------- Tabs Styling -------------------------- */
-.tabbrowser-tab[pinned]:not([zen-essentials="true"]) {
-    .tab-background {
-      background-color: light-dark(rgba(255,255,255,0.18), rgba(0,0,0,0.18)) !important;
-      box-shadow: 0 0px 8px light-dark(rgba(255, 255, 255, 0),rgba(0, 0, 0, 0)) !important;
-      border-radius: var(--nebula-border-radius) !important;
-      position: relative !important;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
-    }
-  
-    &:hover .tab-background {
-      background-color: light-dark(rgba(255,255,255,0.45), rgba(0,0,0,0.45)) !important;
-      box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.55),rgba(0, 0, 0, 0.55)) !important;
-    }
-    &[selected="true"] .tab-background,
-    &[visuallyselected="true"] .tab-background {
-      background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.55)) !important;
-      box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.55),rgba(0, 0, 0, 0.55)) !important;
-    }
+#vertical-pinned-tabs-container .tabbrowser-tab[pinned] {
+  .tab-background {
+    background-color: light-dark(rgba(255,255,255,0.18), rgba(0,0,0,0.18)) !important;
+    box-shadow: 0 0px 8px light-dark(rgba(255, 255, 255, 0), rgba(0, 0, 0, 0)) !important;
+    border-radius: var(--nebula-border-radius) !important;
+    position: relative !important;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
   }
+
+  &:hover .tab-background {
+    background-color: light-dark(rgba(255,255,255,0.45), rgba(0,0,0,0.45)) !important;
+    box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.55)) !important;
+  }
+
+  &[selected="true"] .tab-background,
+  &[visuallyselected="true"] .tab-background {
+    background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.55)) !important;
+    box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.55)) !important;
+  }
+}
+
 .tabbrowser-tab:not([pinned]) {
   .tab-background {
       box-shadow: 0 0px 8px light-dark(rgba(255, 255, 255, 0),rgba(0, 0, 0, 0)) !important;
@@ -122,7 +124,7 @@
     &[selected="true"] .tab-background,
     &[visuallyselected="true"] .tab-background {
       background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.55)) !important;
-      box-shadow: 0 0px 3px rgba(0, 0, 0, 0.55) !important;
+      box-shadow: 0 0px 3px light-dark(rgba(255,255,255,0.55),rgba(0, 0, 0, 0.55)) !important;
     }
   }
 /* ------------------------Gradient while hovering-------------------------------- */
@@ -229,42 +231,56 @@
   transform: none !important;
 }
 
-/* ----------------------- Workspace buttons ------------------------- */
+/* ------------------------------ Workspace buttons ------------------------------ */
 #zen-workspaces-button {
-  border-radius: calc(var(--nebula-border-radius) - 4px) !important;
-  background-color: light-dark(rgba(255,255,255,0.1), rgba(150,150,150,0.2)) !important;
-  box-shadow: 0 0 12px rgba(0,0,0,0.2) !important;
+  border-radius: calc(var(--nebula-border-radius) - 2px) !important;
+  background-color: light-dark(rgba(255,255,255,0.1), rgba(100,100,100,0.12)) !important;
+  box-shadow: 0 0 12px rgba(0,0,0,0.32) !important;
   padding: 3px !important;
+  transition: box-shadow 0.35s ease-out, background-color 0.35s ease-out;
+  
+  &:hover {
+   box-shadow: 0 2px 12px rgba(0,0,0,0.7) !important;
+   background-color: light-dark(rgba(255,255,255,0.1), rgba(0,0,0,0.12)) !important;
+  }
+  
   
   .subviewbutton {
-    border-radius: calc(var(--nebula-border-radius) - 5.5px) !important;
+    border-radius: calc(var(--nebula-border-radius) - 4.5px) !important;
     transition: background-color 0.2s ease, filter 0.3s ease, opacity 0.3s ease-out !important;
     font-size: 16px !important;
-    filter: grayscale(0%) !important;
+    filter: grayscale(100%) !important; /* Apply grayscale to all buttons by default */
+    opacity: 0.75 !important; /* Slightly reduce opacity for unselected buttons */
     --toolbarbutton-hover-background: color-mix(in srgb, var(--zen-branding-bg-reverse) 10%, transparent 90%) !important;
-
+    
     &:hover {
       background-color: light-dark(rgba(255,255,255,0.1), rgba(100,100,100,0.32)) !important;
+      filter: grayscale(40%) !important; /* Reduce grayscale on hover for better feedback */
+      opacity: 0.9 !important;
     }
-
+    
     &:hover > img, 
     &:hover > svg {
       opacity: 1 !important; /* Fade in the icon */
     }
-
+    
     &:active {
       background-color: var(--toolbarbutton-active-background) !important;
+      filter: grayscale(0%) !important; /* Further reduce grayscale when clicking */
     }
-
+    
     /* Selected (active) state with background animation */
     &[active] {
-      background-color: light-dark(rgba(255,255,255,0.42), rgba(255,255,255,0.2)) !important;
+      background-color: light-dark(rgba(255,255,255,0.42), rgba(205,205,205,0.12)) !important;
       box-shadow: 0 0 4px rgba(0,0,0,0.2) !important;
       overflow: hidden !important;
       position: relative;
+      filter: grayscale(0%) !important; /* No grayscale for selected button */
+      opacity: 1 !important; /* Full opacity for selected button */
     }
   }
 }
+
 #zen-workspaces-button {
   container-type: initial !important;
   width: auto !important;
