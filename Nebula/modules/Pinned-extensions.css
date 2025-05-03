@@ -30,7 +30,7 @@
     width: 32px !important;
     flex-grow: 1 !important;
     order: -1 !important;
-    background-color: light-dark(rgba(255,255,255,0.4), rgba(0,0,0,0.4)) !important;
+    background-color: light-dark(rgba(255,255,255,0.354), rgba(0,0,0,0.354)) !important;
     box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.2),rgba(0, 0, 0, 0.2)) !important;
     border-radius: calc(var(--nebula-border-radius) - 0.5px) !important;
     transition: background-color 0.3s ease, box-shadow 0.3s ease !important;

@@ -1,4 +1,7 @@
 /* === PLAYING/MUTE ICON APPEARANCE CUSTOMIZATION ========================================================================== */
+span[part="button"].button-background {
+  display: none !important; /* removes sound button added in 1.12t */
+}
 
 @media not (-moz-pref("lacuna.tab.default-audio-indicator")) {
     .tabbrowser-tab img {

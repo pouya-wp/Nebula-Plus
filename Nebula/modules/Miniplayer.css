@@ -3,7 +3,7 @@
 /* ------------------ Media Player Styling ----------------------- */
 #zen-media-controls-toolbar > toolbaritem {
   border-radius: var(--nebula-border-radius) !important;
-  box-shadow: 0 0px 9px light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.55)) !important;
+
   transition: border-radius 0.3s ease; /* optional for smooth transition */
 }
 
@@ -23,9 +23,12 @@
   75% { background-position: 50% 100%; }
   100% { background-position: 0% 50%; }
 }
-@keyframes urlbar-gradient {
+@keyframes miniplayer-gradient {
   0% { background-position: 0% 50%; }
-  100% { background-position: -300% 50%; }
+  25% { background-position: 50% 0%; }
+  50% { background-position: 100% 50%; }
+  75% { background-position: 50% 100%; }
+  100% { background-position: 0% 50%; }
 }
 #zen-media-current-time, #zen-media-duration {
   font-variant-numeric: tabular-nums;
@@ -37,8 +40,7 @@
     overflow: hidden;
     transition: box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out;
     /* Default Glass Effect */
-    background: light-dark(rgba(235, 235, 235, 0.4),rgba(20, 20, 20, 0.4)) !important;
-    backdrop-filter: blur(20px) !important;
+    background: light-dark(rgba(235, 235, 235, 0.4),rgba(20, 20, 20, 0.3)) !important;
     /* Gradient Layer (Initially Hidden) */
     &::before {
       content: "";
@@ -54,14 +56,13 @@
         color-mix(in srgb, var(--zen-primary-color) 15%, black)  
       );
       background-size: 400% 400%;
-      animation: urlbar-gradient 20s linear infinite;
+      animation: miniplayer-gradient 10s linear infinite;
       opacity: 0; /* Hidden by default */
-      filter: blur(30px);
+      filter: blur(10px) opacity(0.57);
       z-index: -1;
       transition: opacity 0.3s ease-in-out;
     }
-    /* Box Shadow Effect */
-    box-shadow: 0 4px 10px light-dark(rgba(255, 255, 255, 0.3),rgba(0, 0, 0, 0.3));
+    
     &:hover {
       background: light-dark(rgba(235, 235, 235, 1), rgba(20, 20, 20, 1)) !important;
       box-shadow: 0 6px 15px light-dark(rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0.5));
@@ -73,8 +74,6 @@
       }
     }
   }
-
-
 
   /* Style 0 - No gradient */
   @media (-moz-pref("nebula-glow-gradient", 0)) {
@@ -96,8 +95,8 @@
         light-dark(#dddddd, #ffffff)
       );
       background-size: 400% 400%;
-      animation: urlbar-gradient 20s linear infinite;
-      filter: blur(30px) opacity(0.7);
+   
+      filter: blur(10px) opacity(0.57);
       z-index: -1;
     }
   }
@@ -107,8 +106,8 @@
     & > toolbaritem::before {
       background: linear-gradient(45deg, #ff8a00, #e52e71, #7f00ff, #00c9ff, #ff8a00);
       background-size: 400% 400%;
-      animation: urlbar-gradient 20s linear infinite;
-      filter: blur(30px) opacity(0.7);
+     
+      filter: blur(10px) opacity(0.57);
       z-index: -1;
     }
   }
@@ -208,8 +207,8 @@
 /* Inner elements (timestamps) - With 0.2s delay */
 #zen-media-controls-toolbar .show-on-hover > * {
   opacity: 0;
-  transform: translateY(0.5rem);
-  filter: blur(8px);
+  transform: translateY(0);
+  filter: blur(0px);
   transition: opacity 0.3s ease 0.2s, transform 0.3s ease 0.2s, filter 0.3s ease 0.2s;
 }
 

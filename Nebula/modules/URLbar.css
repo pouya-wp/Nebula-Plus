@@ -3,7 +3,6 @@
   opacity: 0.4 !important;
 }
 
-
 #urlbar[open] {
   position: relative !important;
   border-radius: 13px !important;
@@ -149,7 +148,7 @@
 
 /* URL bar background - default state */
 #urlbar-background {
-  background: light-dark(rgba(255, 255, 255, 0.42), rgba(0, 0, 0, 0.42)) !important;
+  background: light-dark(rgba(255, 255, 255, 0.342), rgba(0, 0, 0, 0.342)) !important;
   box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.3)) !important;
 }
 
@@ -169,9 +168,14 @@
   left: 0 !important;
 }
 
-/* Compact mode fix */
+/* Centering fix - still bug */
+#urlbar[open],
 :root[zen-compact-mode="true"] #urlbar[open] {
-  transform: translateX(-50%) !important;
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 9999 !important;
 }
 
 /* Fix for dancing issue */
