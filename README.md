@@ -216,16 +216,32 @@ Enjoy your new Zen experience with **Nebula**! ✨
 
 body, h1, h2, h3, h4, h5, h6, p, span, div {
     font-family: 'Comfortaa', sans-serif !important;
-    font-weight: 300 !important; /* Light weight for a sleek and modern feel */
-    letter-spacing: 0.025em; /* Slight spacing for better readability */
+    font-weight: 300 !important;
+    letter-spacing: 0.015em;
     font-smooth: always;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    color: #e0e0e0; /* Soft white for a modern touch */
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* Light mode */
+@media (prefers-color-scheme: light) {
+    body, h1, h2, h3, h4, h5, h6, p, span, div {
+        color: #222222;
+        text-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
+    }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    body, h1, h2, h3, h4, h5, h6, p, span, div {
+        color: #e0e0e0;
+        text-shadow: 0 0 1px rgba(255, 255, 255, 0.2);
+    }
 }
 
 h1 {
-    font-weight: 400 !important; /* Slightly bolder headlines */
+    font-weight: 400 !important;
     letter-spacing: 0.025em;
 }
 
@@ -234,13 +250,11 @@ p {
     line-height: 1.6;
     letter-spacing: 0.015em;
 }
-
-/* Optional: Add a soft glow effect for a smooth aesthetic */
-p, h1, h2, h3 {
-    text-shadow: 0 0 1px rgba(255, 255, 255, 0.2);
+#background {
+    background-color: transparent !important;
 }
 #background {background-image: none !important; background-color: transparent !important;}
-   .tabbing {background-color: transparent !important;}
+   .tabbing {background-color: transparent !important;} 
     body {background-color: transparent !important;}
 ```
 ###
