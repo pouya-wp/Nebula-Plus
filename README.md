@@ -49,6 +49,15 @@
 
 <h2 align="left">🌙 Features:</h2>
 
+<details><summary><strong>🖌️Overhauled UI</strong></summary>
+
+
+
+
+
+
+</details>
+
 <details> <summary><strong>📽️ Animations!</strong></summary>
 
 > ✨ Nebula adds tons of new animations with customizable styles to Zen Browser, which can be changed by editing the `nebula-config.css` file inside the Nebula folder.
