@@ -100,9 +100,10 @@ tab-group:not([split-view-group]) {
 
       @media not (-moz-bool-pref: "tab.groups.theme-folders") {
        background-color: light-dark(
-        var(--tab-group-color),
+        var(--tab-group-color-invert),
         var(--tab-group-color-invert)
       );
+        filter: contrast(150%);
       }
 
 

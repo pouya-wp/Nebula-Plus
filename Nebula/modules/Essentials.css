@@ -4,14 +4,14 @@
 /* ESSENTIAL COLOR WITH SHADOW, SPACING & ROUNDED EDGES */
 .zen-essentials-container .tabbrowser-tab {
     .tab-background {
-      background-color: light-dark(rgba(255, 255, 255, 0.35), rgba(0, 0, 0, 0.35)) !important;
-      box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.12),rgba(0, 0, 0, 0.12)) !important;
+      background-color: light-dark(rgba(255, 255, 255, 0.25), rgba(0, 0, 0, 0.35)) !important;
+      box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0),rgba(0, 0, 0, 0)) !important;
       border-radius: calc(var(--nebula-border-radius) + 1px) !important;
     }
   
     &:hover .tab-background {
-      background-color: light-dark(rgba(255, 255, 255, 0.45), rgba(0, 0, 0, 0.45)) !important;
-      box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.95),rgba(0, 0, 0, 0.95)) !important;
+      background-color: light-dark(rgba(255, 255, 255, 0.345), rgba(0, 0, 0, 0.45)) !important;
+      box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.35),rgba(0, 0, 0, 0.95)) !important;
     }
   
       @media (-moz-pref("zen.theme.essentials-favicon-bg")) {
@@ -28,6 +28,7 @@
       }
     }
   }
+
 /* makes essentials have fixed width of 60px (from superpins) */
 :root {
   --essentials-width: 60px !important;

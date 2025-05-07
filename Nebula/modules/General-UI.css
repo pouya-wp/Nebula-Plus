@@ -1,9 +1,18 @@
 /* === GENERAL BROWSER UI ================================================================================================== */
-#browser {
-    background: var(--nebula-ui-tint) !important; /* Increased opacity */
+#zen-main-app-wrapper {
+  background: var(--nebula-ui-tint) !important;
 }
+
 browser[transparent='true'] {
   background: var(--nebula-website-tint) !important;
+}
+
+/* hide shadow of tabs */
+hbox.browserSidebarContainer,
+#zen-tabbox-wrapper {
+  @media (-moz-pref("nebula-tabs-no-shadow")) {
+    box-shadow: none !important;
+  }
 }
 
 :root {
@@ -13,6 +22,34 @@ browser[transparent='true'] {
 #identity-icon-label[value="Extension (Bonjourr · Minimalist Startpage)"] {
     display: none !important;
 }
+
+/* ----------- NoGaps mod ------------ */
+@media (-moz-pref("nebula-nogaps-mod")) {
+  [zen-single-toolbar="true"] {
+    #zen-appcontent-wrapper {
+      position: relative;
+    }
+
+    #zen-appcontent-navbar-container {
+      position: absolute;
+      width: 100% !important;
+      height: 48px; /* Optional: make navbar thicker */
+      backdrop-filter: blur(20px);
+      background: var(--zen-main-browser-background) !important;
+      border-bottom: 1px solid light-dark(rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.1));
+    }
+
+    #zen-tabbox-wrapper {
+      margin: 0 !important;
+    }
+
+    .browserSidebarContainer {
+      border-radius: 0px !important;
+      box-shadow: none !important;
+    }
+  }
+}
+
 
 /* ---- Fix for linux transparency (Credit: Zylvo) ---- */
 :root {

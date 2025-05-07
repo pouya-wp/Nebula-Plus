@@ -40,7 +40,7 @@
     overflow: hidden;
     transition: box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out;
     /* Default Glass Effect */
-    background: light-dark(rgba(235, 235, 235, 0.4),rgba(20, 20, 20, 0.3)) !important;
+    background: light-dark(rgba(235, 235, 235, 0.3),rgba(20, 20, 20, 0.3)) !important;
     /* Gradient Layer (Initially Hidden) */
     &::before {
       content: "";

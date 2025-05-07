@@ -30,15 +30,15 @@
     width: 32px !important;
     flex-grow: 1 !important;
     order: -1 !important;
-    background-color: light-dark(rgba(255,255,255,0.354), rgba(0,0,0,0.354)) !important;
-    box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.2),rgba(0, 0, 0, 0.2)) !important;
+    background-color: light-dark(rgba(255,255,255,0.3), rgba(0,0,0,0.354)) !important;
+    box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.12),rgba(0, 0, 0, 0)) !important;
     border-radius: calc(var(--nebula-border-radius) - 0.5px) !important;
     transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
   }
 
   .unified-extensions-item:hover {
-    background-color: light-dark(rgba(255,255,255,0.5), rgba(0,0,0,0.5)) !important;
-    box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.95),rgba(0, 0, 0, 0.95)) !important;
+    background-color: light-dark(rgba(255,255,255,0.4), rgba(0,0,0,0.5)) !important;
+    box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.5),rgba(0, 0, 0, 0.95)) !important;
   }
 
   toolbarbutton:not([id="tabs-newtab-button"]) {
@@ -104,7 +104,7 @@
   animation: ext-hover-gradient 6s linear infinite;
   animation-play-state: paused;
   opacity: 0;
-  filter: blur(20px) brightness(0.58);
+  filter: blur(20px) brightness(0.58) contrast(120%);
   transition: opacity 0.4s ease-in-out;
   pointer-events: none;
   z-index: 0;

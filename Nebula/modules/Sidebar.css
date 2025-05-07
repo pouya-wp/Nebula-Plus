@@ -1,20 +1,7 @@
-:root {
-  --sidebar-width: 18.5em !important;
-}
-
 /* === COMPACT SIDEBAR ===================================================================================================== */
-
-.urlbarView-row[type="search"] {
-    min-height: 50px !important;
+  :root {
+  --sidebar-width: 19em !important;
   }
-  
-  :root[zen-compact-mode="true"] #urlbar[open] {
-    width: 50vw !important;
-    max-width: 600px !important;
-    left: 50vw !important;
-    transform: translate(-50%, -50%) scale(1.2) !important;
-  }
-  
   
   :root[zen-compact-mode="true"] #sidebar {
     width: var(--sidebar-width) !important;
@@ -23,58 +10,92 @@
   
   /* Reduce unnecessary transitions */
   :root[zen-compact-mode="true"]:not([customizing]):not([inDOMFullscreen="true"]) #navigator-toolbox {
-    transition-delay: -0.002s !important;
   }
   
 /* === BLUR COMPACT SIDEBAR ================================================================================================ */
 /* Compact sidebar with blurred transparent background */
-/* credit: arc-h ferrocene */
 body:has([zen-compact-mode="true"]) #titlebar {
   top: calc(var(--zen-element-separation) / 1.4) !important;
   left: calc(var(--zen-element-separation) / 0.999) !important;
   background: light-dark(rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.4)) !important; /* Slightly lighter dark with transparency */
   backdrop-filter: blur(32px) saturate(140%) !important; /* Smooth blur effect */
-  
-  width: calc(var(--sidebar-width) - 0px) !important;
-  min-width: calc(var(--sidebar-width) - 8px) !important;
+
   border-radius: 11px !important;
   scale: 1 !important;
   padding: 8px !important;
-  transition: left 0.2s cubic-bezier(0.175, 0.585, 0.32, 1.1) !important;
+
   height: calc(100% - (var(--zen-element-separation) * 2.4)) !important;
   margin: calc(var(--zen-element-separation) / 2) 0 !important; 
 }
 
-#browser::after {
-  opacity: 0 !important;
-  left: 0px !important;
-  width: calc(var(--sidebar-width) - 3px) !important;
-  min-width: calc(var(--sidebar-width) - 4px) !important;
-  border-radius: 10px !important;
-  margin-right: calc(var(--zen-element-separation) / 2) 0 !important;
-  margin-left: calc((var(--zen-element-separation) / 1.5)) !important;
-  margin-top: calc(var(--zen-element-separation) / 0.85) !important;
-  margin-bottom: calc(var(--zen-element-separation) / 2) !important;
-  height: calc(100% - (var(--zen-element-separation) * 3.2)) !important;
-  top: calc(var(--zen-element-separation) / 2) !important;
-  background-color: var(--toolbar-bgcolor) !important;
-  transition: left 0.2s cubic-bezier(0.175, 0.585, 0.32, 1.1), opacity 0.2s ease, filter 0.2s ease !important;
+/* pseudo bg config */
+@media (-moz-pref("nebula-compact-mode-sidebar-bg")) {
+  body:has([zen-compact-mode="true"]) #titlebar {
+    top: calc(var(--zen-element-separation) / 1.4) !important;
+    left: calc(var(--zen-element-separation) / 0.999) !important;
+    background: light-dark(rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.4)) !important;
+    backdrop-filter: blur(32px) saturate(140%) !important;
+
+    width: calc(var(--sidebar-width) - 0px) !important;
+    min-width: calc(var(--sidebar-width) - 8px) !important;
+    border-radius: 11px !important;
+    scale: 1 !important;
+    padding: 8px !important;
+    transition: left 0.2s cubic-bezier(0.175, 0.585, 0.32, 1.1), right 0.2s cubic-bezier(0.175, 0.585, 0.32, 1.1) !important;
+    height: calc(100% - (var(--zen-element-separation) * 2.4)) !important;
+    margin: calc(var(--zen-element-separation) / 2) 0 !important;
+  }
+/* for sidebar right side */
+  :root[zen-right-side="true"] body:has([zen-compact-mode="true"]) #titlebar {
+    left: auto !important;
+    right: calc(var(--zen-element-separation) / 0.999) !important;
+  }
+
+  body:has([zen-compact-mode="true"]) #browser::after {
+    opacity: 0 !important;
+    left: 0px !important;
+    width: calc(var(--sidebar-width) - 3px) !important;
+    min-width: calc(var(--sidebar-width) - 4px) !important;
+    border-radius: 10px !important;
+    margin-right: 0 !important;
+    margin-left: calc(var(--zen-element-separation) / 1.5) !important;
+    margin-top: calc(var(--zen-element-separation) / 0.85) !important;
+    margin-bottom: calc(var(--zen-element-separation) / 2) !important;
+    height: calc(100% - (var(--zen-element-separation) * 3.2)) !important;
+    top: calc(var(--zen-element-separation) / 2) !important;
+    background-color: light-dark(rgba(200,200,200,1),rgba(50,50,50,1)) !important;
+    transition: left 0.2s, right 0.2s, opacity 0.2s ease, filter 0.2s ease !important;
+  }
+
+  :root[zen-right-side="true"] body:has([zen-compact-mode="true"]) #browser::after {
+    left: auto !important;
+    right: 0px !important;
+    margin-left: 0 !important;
+    margin-right: calc(var(--zen-element-separation) / 1.5) !important;
+  }
+
+  body:has([zen-compact-mode="true"] [zen-user-show=""], [zen-compact-mode="true"] #navigator-toolbox[zen-has-hover="true"]) #browser::after {
+    opacity: 1 !important;
+    left: var(--zen-element-separation) !important;
+  }
+
+  :root[zen-right-side="true"] body:has([zen-compact-mode="true"] [zen-user-show=""], [zen-compact-mode="true"] #navigator-toolbox[zen-has-hover="true"]) #browser::after {
+    left: auto !important;
+    right: var(--zen-element-separation) !important;
+  }
 }
 
-body:has([zen-compact-mode="true"] [zen-user-show=""], [zen-compact-mode="true"] #navigator-toolbox[zen-has-hover="true"]) #browser::after {
-  opacity: 1 !important;
-  left: var(--zen-element-separation) !important;
-}
 
 /* === GENERAL SIDEBAR ====================================================================================================== */
-/* Removes scrollbar in tab panel and adds fade effect */
-  #zen-tabs-wrapper {
-      mask-image: linear-gradient(to bottom, black 90%, transparent 100%) !important;
-      -webkit-mask-image: linear-gradient(to bottom, black 97%, transparent 100%) !important;
-      scrollbar-width: none !important;
-      -ms-overflow-style: none !important;
-      overflow-y: auto !important;
-  }
+/* scrollbar removal and smoother bottom fade for tab panel */
+#zen-tabs-wrapper {
+    mask-image: linear-gradient(to bottom, black 80%, rgba(0, 0, 0, 0.4) 95%, transparent 100%) !important;
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, rgba(0, 0, 0, 0.7) 95%, transparent 100%) !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    overflow-y: auto !important;
+    transition: mask-image 0.3s ease, -webkit-mask-image 0.3s ease;
+}
   
   #zen-tabs-wrapper::-webkit-scrollbar {
       display: none !important;
