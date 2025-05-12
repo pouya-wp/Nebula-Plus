@@ -1,31 +1,27 @@
-/* Credit: Zen Internet by Sameerasw */
-
-/* ==== Animations(tabs) ================================================================================= */
-/* --- glance open animation fix --- */
+/* ------------------------ Glance Animation ----------------------- */
 .browserSidebarContainer.zen-glance-background.deck-selected {
   filter: blur(5px) brightness(50%);
   transition: filter 0.1s ease-in-out;
 }
-/* --------------- loading blur & scale ----------------- */
-/* Default behavior (Style 1) - Applied when no preference is set or when nebula-tab-loading-animation 1 */
+
+/* ---------------------- Tab Loading Animation ---------------------- */
 .browserSidebarContainer:not([zen-split="true"]) {
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important, 
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important,
               filter 0.18s cubic-bezier(0.2, 0.8, 0.4, 1) !important;
 }
 
 #main-window:has(.tabbrowser-tab[selected][busy]) .browserSidebarContainer:not([zen-split="true"]) {
-  filter: blur(15px) brightness(60%) !important;
+  filter: blur(10px) brightness(60%) !important;
   transform: scale(0.975) !important;
   transition-delay: 0.5s !important;
+  border-radius: 8px !important;
 }
 
-/* Style 2 - Override default when nebula-tab-loading-animation is set to 2 */
 @media (-moz-pref("nebula-tab-loading-animation", 2)) {
   .browserSidebarContainer:not([zen-split="true"]) {
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important, 
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important,
                 filter 0.3s cubic-bezier(0.2, 0.8, 0.4, 1) !important;
   }
-  
   #main-window:has(.tabbrowser-tab[selected][busy]) .browserSidebarContainer:not([zen-split="true"]) {
     filter: blur(20px) brightness(60%) !important;
     transform: scale(0.95) !important;
@@ -33,13 +29,11 @@
   }
 }
 
-/* Style 3 - Override default when nebula-tab-loading-animation is set to 3 */
 @media (-moz-pref("nebula-tab-loading-animation", 3)) {
   .browserSidebarContainer:not([zen-split="true"]) {
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.935) !important, 
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.935) !important,
                 filter 0.2s cubic-bezier(0.2, 0.8, 0.4, 1.5) !important;
   }
-  
   #main-window:has(.tabbrowser-tab[selected][busy]) .browserSidebarContainer:not([zen-split="true"]) {
     filter: blur(10px) brightness(60%) !important;
     transform: scale(0.977) !important;
@@ -47,40 +41,34 @@
   }
 }
 
-/* Style 4 - Only reduce brightness without blur when nebula-tab-loading-animation is set to 4 */
 @media (-moz-pref("nebula-tab-loading-animation", 4)) {
   .browserSidebarContainer:not([zen-split="true"]) {
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important, 
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important,
                 filter all 0.2s cubic-bezier(0.2, 0.8, 0.4, 1) !important;
   }
-  
   #main-window:has(.tabbrowser-tab[selected][busy]) .browserSidebarContainer:not([zen-split="true"]) {
-    filter: saturate(0%) brightness(60%)  !important;
+    filter: saturate(0%) brightness(60%) !important;
     transform: scale(0.975) !important;
     transition-delay: 0.5s !important;
   }
 }
 
-/* Style 5 -  when nebula-tab-loading-animation is set to 4 */
 @media (-moz-pref("nebula-tab-loading-animation", 5)) {
   .browserSidebarContainer:not([zen-split="true"]) {
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important, 
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important,
                 filter all 0.2s cubic-bezier(0.2, 0.8, 0.4, 1) !important;
   }
-  
   #main-window:has(.tabbrowser-tab[selected][busy]) .browserSidebarContainer:not([zen-split="true"]) {
-    filter: saturate(0%) brightness(60%) blur(6px)  !important;
+    filter: saturate(0%) brightness(60%) blur(6px) !important;
     transform: scale(0.99) !important;
     transition-delay: 0.5s !important;
   }
 }
 
-/* Style 0 - Disable animations when nebula-tab-loading-animation is set to 0 */
 @media (-moz-pref("nebula-tab-loading-animation", 0)) {
   .browserSidebarContainer:not([zen-split="true"]) {
     transition: none !important;
   }
-  
   #main-window:has(.tabbrowser-tab[selected][busy]) .browserSidebarContainer:not([zen-split="true"]),
   #main-window:has(.tabbrowser-tab[selected]:not([busy])) .browserSidebarContainer:not([zen-split="true"]) {
     filter: none !important;
@@ -88,41 +76,17 @@
     transition-delay: 0s !important;
   }
 }
-/* ----------------- Tab switch animation -------------------- */
-/* Default behavior (Style 1) - Applied when no preference is set or when nebula-tab-switch-animation is set to 1 */
 
-  #tabbrowser-tabpanels > hbox:not(:has(.zen-glance-background)):not([zen-split="true"]) {
-    &:is([zen-split]) {
-      transition: all 0.17s cubic-bezier(0.175, 0.685, 0.52, 1.05), filter 0.1s ease-out !important;
-    }
-    &:not(.zen-glance-background):not([zen-split="true"]) {
-      transition: all 0.17s cubic-bezier(0.175, 0.685, 0.52, 1), filter 0.1s ease-out !important;
-      scale: 0.975 !important;
-      opacity: 1;
-      filter: blur(5px) !important;
-    }
-  }
-
-
-  #tabbrowser-tabpanels > hbox.deck-selected:not(:has(.zen-glance-background)):not([zen-split="true"]) {
-    &:not(.zen-glance-background) {
-      scale: 1 !important;
-      opacity: 1 !important;
-      filter: none !important;
-    }
-  }
-
-/* Style 2 - Override default when nebula-tab-switch-animation is set to 2 */
-@media (-moz-pref("nebula-tab-switch-animation", 2)) {
+/* --------------------- Tab Switch Animation --------------------- */
 #tabbrowser-tabpanels > hbox:not(:has(.zen-glance-background)):not([zen-split="true"]) {
   &:is([zen-split]) {
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), filter 0.18s ease-out !important;
+    transition: all 0.17s cubic-bezier(0.175, 0.685, 0.52, 1.05), filter 0.1s ease-out !important;
   }
   &:not(.zen-glance-background):not([zen-split="true"]) {
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), filter 0.18s ease-out !important;
-    scale: 0.95 !important;
+    transition: all 0.17s cubic-bezier(0.175, 0.685, 0.52, 1), filter 0.1s ease-out !important;
+    scale: 0.975 !important;
     opacity: 1;
-    filter: blur(20px) !important;
+    filter: blur(5px) !important;
   }
 }
 
@@ -131,11 +95,31 @@
     scale: 1 !important;
     opacity: 1 !important;
     filter: none !important;
+  }
+}
+
+@media (-moz-pref("nebula-tab-switch-animation", 2)) {
+  #tabbrowser-tabpanels > hbox:not(:has(.zen-glance-background)):not([zen-split="true"]) {
+    &:is([zen-split]) {
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), filter 0.18s ease-out !important;
+    }
+    &:not(.zen-glance-background):not([zen-split="true"]) {
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35), filter 0.18s ease-out !important;
+      scale: 0.95 !important;
+      opacity: 1;
+      filter: blur(20px) !important;
+    }
+  }
+
+  #tabbrowser-tabpanels > hbox.deck-selected:not(:has(.zen-glance-background)):not([zen-split="true"]) {
+    &:not(.zen-glance-background) {
+      scale: 1 !important;
+      opacity: 1 !important;
+      filter: none !important;
     }
   }
 }
 
-/* Style 3 - Override default when nebula-tab-switch-animation is set to 3 */
 @media (-moz-pref("nebula-tab-switch-animation", 3)) {
   #tabbrowser-tabpanels > hbox:not(:has(.zen-glance-background)):not([zen-split="true"]) {
     &:is([zen-split]) {
@@ -158,15 +142,13 @@
   }
 }
 
-/* Style 4 - Smooth crossfade */
 @media (-moz-pref("nebula-tab-switch-animation", 4)) {
   #tabbrowser-tabpanels > hbox:not(:has(.zen-glance-background)):not([zen-split="true"]) {
-    /* Transition only opacity */
     transition: opacity 0.35s ease-in-out !important;
     opacity: 0 !important;
-    pointer-events: none; /* Prevent interaction during fade */
+    pointer-events: none;
     position: absolute !important;
-    inset: 0; /* Full size overlay */
+    inset: 0;
     z-index: 0;
   }
 
@@ -178,7 +160,6 @@
   }
 }
 
-/* Style 0 - Disable animations when nebula-tab-switch-animation is set to 0 */
 @media (-moz-pref("nebula-tab-switch-animation", 0)):not([zen-split="true"]) {
   #tabbrowser-tabpanels > hbox:not(:has(.zen-glance-background)) {
     &:is([zen-split]),
@@ -199,7 +180,7 @@
   }
 }
 
-/* ----------------- Other animations by Zen Zero ------------------ */
+/* ----------------- Other animations ------------------ */
 
 /* website view animations [works for split tabs] */
 #browser:not(:has(.zen-glance-background)) #tabbrowser-tabpanels {

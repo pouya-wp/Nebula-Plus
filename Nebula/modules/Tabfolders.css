@@ -1,7 +1,4 @@
-/* ==== Tab groups ==== */
-/* https://github.com/Anoms12/Advanced-Tab-Groups */
-/* ====== V1.6.1 ====== */
-/* Make groups workspace specific */
+/* ------------------------- TAB FOLDER LIKE GROUPS ------------------------- */
 
 /* fix for collapsed toolbar */
 tab-group:not([split-view-group]) {
@@ -263,10 +260,9 @@ tab-group:not([split-view-group]) {
   tab-group:not([split-view-group]) {
   tab[style=""]  {
    transition: transform 0.3s ease-out, opacity 0.25s ease-out !important;
+    }
   }
 }
-}
-
 
 .all-tabs-group-button {
   .toolbarbutton-icon {
@@ -402,8 +398,6 @@ tab-group:not([split-view-group]) {
     background-repeat: no-repeat !important;
   }
 }
-
-
 
 /* fix icon padding */
 .tabbrowser-tab[zen-glance-tab] {

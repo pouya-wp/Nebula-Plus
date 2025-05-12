@@ -1,6 +1,4 @@
-/* Credit: Pinned extensions mod from discord */
-
-/* === PINNED EXTENSIONS (Keeps Dark Background & Shadow) ==================================================================================== */
+/* ------------------------- PINNED EXTENSIONs ------------------------- */
 /* Pinned extensions */
 #TabsToolbar-customization-target {
   display: flex !important;
@@ -30,14 +28,14 @@
     width: 32px !important;
     flex-grow: 1 !important;
     order: -1 !important;
-    background-color: light-dark(rgba(255,255,255,0.3), rgba(0,0,0,0.354)) !important;
-    box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.12),rgba(0, 0, 0, 0)) !important;
+    background-color: var(--nebula-color) !important;
+    box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0),rgba(0, 0, 0, 0)) !important;
     border-radius: calc(var(--nebula-border-radius) - 0.5px) !important;
     transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
   }
 
   .unified-extensions-item:hover {
-    background-color: light-dark(rgba(255,255,255,0.4), rgba(0,0,0,0.5)) !important;
+    background-color: var(--nebula-color-hover) !important;
     box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.5),rgba(0, 0, 0, 0.95)) !important;
   }
 
@@ -64,7 +62,7 @@
 
   >toolbarbutton:not([id="tabs-newtab-button"]),
   >toolbaritem {
-    background-color: light-dark(rgba(255,255,255,0.4), rgba(0,0,0,0.4)) !important;
+    background-color: var(--nebula-color) !important;
     box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.12),rgba(0, 0, 0, 0.12)) !important;
     border-radius: calc(var(--nebula-border-radius) + 1px) !important;
     margin: 0px !important;
@@ -75,7 +73,7 @@
 
   >toolbarbutton:not([id="tabs-newtab-button"]):hover,
   >toolbaritem:hover {
-    background-color: light-dark(rgba(255,255,255,0.45), rgba(0,0,0,0.5)) !important;
+    background-color: var(--nebula-color-hover) !important;
     box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.95),rgba(0, 0, 0, 0.95)) !important; 
   }
 }
@@ -169,7 +167,7 @@
 }
 
 
-/* ============ COMPACT EXTENSIONS (Credit: KiKaraage) ================== */
+/* ------------------------- COMPACT EXTENSIONS ------------------------- */
 #unified-extensions-view{
   
   --uei-icon-size: 20px !important;

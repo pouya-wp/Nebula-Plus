@@ -1,93 +1,105 @@
-/* === COMPACT SIDEBAR ===================================================================================================== */
-  :root {
-  --sidebar-width: 19em !important;
-  }
-  
-  :root[zen-compact-mode="true"] #sidebar {
-    width: var(--sidebar-width) !important;
-    min-width: var(--sidebar-width) !important;
-  }
-  
-  /* Reduce unnecessary transitions */
-  :root[zen-compact-mode="true"]:not([customizing]):not([inDOMFullscreen="true"]) #navigator-toolbox {
-  }
-  
-/* === BLUR COMPACT SIDEBAR ================================================================================================ */
-/* Compact sidebar with blurred transparent background */
-body:has([zen-compact-mode="true"]) #titlebar {
-  top: calc(var(--zen-element-separation) / 1.4) !important;
-  left: calc(var(--zen-element-separation) / 0.999) !important;
-  background: light-dark(rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.4)) !important; /* Slightly lighter dark with transparency */
-  backdrop-filter: blur(32px) saturate(140%) !important; /* Smooth blur effect */
-
-  border-radius: 11px !important;
-  scale: 1 !important;
-  padding: 8px !important;
-
-  height: calc(100% - (var(--zen-element-separation) * 2.4)) !important;
-  margin: calc(var(--zen-element-separation) / 2) 0 !important; 
+/* -------------------------- COMPACT SIDEBAR -------------------------- */
+:root {
+    --sidebar-width: 19em !important;
 }
 
-/* pseudo bg config */
-@media (-moz-pref("nebula-compact-mode-sidebar-bg")) {
-  body:has([zen-compact-mode="true"]) #titlebar {
+:root[zen-compact-mode="true"] #sidebar {
+    width: var(--sidebar-width) !important;
+    min-width: var(--sidebar-width) !important;
+}
+
+/* Placeholder for transition cleanup (if needed) */
+:root[zen-compact-mode="true"]:not([customizing]):not([inDOMFullscreen="true"]) #navigator-toolbox {
+    /* No transitions defined here */
+}
+
+/* -------------------------- BLUR COMPACT SIDEBAR -------------------------- */
+
+/* Base blurred transparent background for compact sidebar */
+body:has([zen-compact-mode="true"]) #titlebar {
     top: calc(var(--zen-element-separation) / 1.4) !important;
     left: calc(var(--zen-element-separation) / 0.999) !important;
     background: light-dark(rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.4)) !important;
-    backdrop-filter: blur(32px) saturate(140%) !important;
-
-    width: calc(var(--sidebar-width) - 0px) !important;
-    min-width: calc(var(--sidebar-width) - 8px) !important;
+    backdrop-filter: blur(32px) saturate(140%) contrast(120%) !important;
     border-radius: 11px !important;
     scale: 1 !important;
     padding: 8px !important;
-    transition: left 0.2s cubic-bezier(0.175, 0.585, 0.32, 1.1), right 0.2s cubic-bezier(0.175, 0.585, 0.32, 1.1) !important;
     height: calc(100% - (var(--zen-element-separation) * 2.4)) !important;
     margin: calc(var(--zen-element-separation) / 2) 0 !important;
-  }
-/* for sidebar right side */
-  :root[zen-right-side="true"] body:has([zen-compact-mode="true"]) #titlebar {
-    left: auto !important;
-    right: calc(var(--zen-element-separation) / 0.999) !important;
-  }
-
-  body:has([zen-compact-mode="true"]) #browser::after {
-    opacity: 0 !important;
-    left: 0px !important;
-    width: calc(var(--sidebar-width) - 3px) !important;
-    min-width: calc(var(--sidebar-width) - 4px) !important;
-    border-radius: 10px !important;
-    margin-right: 0 !important;
-    margin-left: calc(var(--zen-element-separation) / 1.5) !important;
-    margin-top: calc(var(--zen-element-separation) / 0.85) !important;
-    margin-bottom: calc(var(--zen-element-separation) / 2) !important;
-    height: calc(100% - (var(--zen-element-separation) * 3.2)) !important;
-    top: calc(var(--zen-element-separation) / 2) !important;
-    background-color: light-dark(rgba(200,200,200,1),rgba(50,50,50,1)) !important;
-    transition: left 0.2s, right 0.2s, opacity 0.2s ease, filter 0.2s ease !important;
-  }
-
-  :root[zen-right-side="true"] body:has([zen-compact-mode="true"]) #browser::after {
-    left: auto !important;
-    right: 0px !important;
-    margin-left: 0 !important;
-    margin-right: calc(var(--zen-element-separation) / 1.5) !important;
-  }
-
-  body:has([zen-compact-mode="true"] [zen-user-show=""], [zen-compact-mode="true"] #navigator-toolbox[zen-has-hover="true"]) #browser::after {
-    opacity: 1 !important;
-    left: var(--zen-element-separation) !important;
-  }
-
-  :root[zen-right-side="true"] body:has([zen-compact-mode="true"] [zen-user-show=""], [zen-compact-mode="true"] #navigator-toolbox[zen-has-hover="true"]) #browser::after {
-    left: auto !important;
-    right: var(--zen-element-separation) !important;
-  }
 }
 
+/* Required for blur rendering */
+browser {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
 
-/* === GENERAL SIDEBAR ====================================================================================================== */
-/* scrollbar removal and smoother bottom fade for tab panel */
+/* -------------------------- COMPACT SIDEBAR PSEUDO BACKGROUND -------------------------- */
+@media (-moz-pref("nebula-compact-mode-sidebar-bg")) {
+    
+    /* Background blur + layout config */
+    body:has([zen-compact-mode="true"]) #titlebar {
+        top: calc(var(--zen-element-separation) / 1.4) !important;
+        left: calc(var(--zen-element-separation) / 0.999) !important;
+        background: light-dark(rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.4)) !important;
+        backdrop-filter: blur(32px) saturate(140%) !important;
+
+        width: calc(var(--sidebar-width) - 0px) !important;
+        min-width: calc(var(--sidebar-width) - 8px) !important;
+        border-radius: 11px !important;
+        scale: 1 !important;
+        padding: 8px !important;
+        height: calc(100% - (var(--zen-element-separation) * 2.4)) !important;
+        margin: calc(var(--zen-element-separation) / 2) 0 !important;
+
+        transition: left 0.2s cubic-bezier(0.175, 0.585, 0.32, 1.1), right 0.2s cubic-bezier(0.175, 0.585, 0.32, 1.1) !important;
+    }
+
+    /* Sidebar on right */
+    :root[zen-right-side="true"] body:has([zen-compact-mode="true"]) #titlebar {
+        left: auto !important;
+        right: calc(var(--zen-element-separation) / 0.999) !important;
+    }
+
+    /* Pseudo background overlay for the sidebar */
+    body:has([zen-compact-mode="true"]) #browser::after {
+        opacity: 0 !important;
+        left: 0px !important;
+        width: calc(var(--sidebar-width) - 3px) !important;
+        min-width: calc(var(--sidebar-width) - 4px) !important;
+        border-radius: 10px !important;
+        margin-right: 0 !important;
+        margin-left: calc(var(--zen-element-separation) / 1.5) !important;
+        margin-top: calc(var(--zen-element-separation) / 0.85) !important;
+        margin-bottom: calc(var(--zen-element-separation) / 2) !important;
+        height: calc(100% - (var(--zen-element-separation) * 3.2)) !important;
+        top: calc(var(--zen-element-separation) / 2) !important;
+        background-color: light-dark(rgba(200, 200, 200, 1), rgba(40, 40, 40, 1)) !important;
+
+        transition: left 0.2s, right 0.2s, opacity 0s ease, filter 0.2s ease !important;
+    }
+
+    /* Right-side pseudo background */
+    :root[zen-right-side="true"] body:has([zen-compact-mode="true"]) #browser::after {
+        left: auto !important;
+        right: 0px !important;
+        margin-left: 0 !important;
+        margin-right: calc(var(--zen-element-separation) / 1.5) !important;
+    }
+
+    /* Show pseudo background when active/hovered */
+    body:has([zen-compact-mode="true"] [zen-user-show=""], [zen-compact-mode="true"] #navigator-toolbox[zen-has-hover="true"]) #browser::after {
+        opacity: 1 !important;
+        left: var(--zen-element-separation) !important;
+    }
+
+    :root[zen-right-side="true"] body:has([zen-compact-mode="true"] [zen-user-show=""], [zen-compact-mode="true"] #navigator-toolbox[zen-has-hover="true"]) #browser::after {
+        left: auto !important;
+        right: var(--zen-element-separation) !important;
+    }
+}
+
+/* ------------------------- GENERAL SIDEBAR -------------------------- */
+/* Scrollbar Removal and Bottom Fade for Tab Panel */
 #zen-tabs-wrapper {
     mask-image: linear-gradient(to bottom, black 80%, rgba(0, 0, 0, 0.4) 95%, transparent 100%) !important;
     -webkit-mask-image: linear-gradient(to bottom, black 80%, rgba(0, 0, 0, 0.7) 95%, transparent 100%) !important;
@@ -96,175 +108,182 @@ body:has([zen-compact-mode="true"]) #titlebar {
     overflow-y: auto !important;
     transition: mask-image 0.3s ease, -webkit-mask-image 0.3s ease;
 }
-  
-  #zen-tabs-wrapper::-webkit-scrollbar {
-      display: none !important;
-  }
-/* --------------------Better findbar & bookmark sidebar-------------------------- */
-/* Floating Findbar - Default Hidden State */
+
+#zen-tabs-wrapper::-webkit-scrollbar {
+    display: none !important;
+}
+
+/* Transparent Bookmarks Panel */
+#zen-sidebar-web-panel {
+    background: light-dark(#00000022, #00000044) !important;
+    backdrop-filter: blur(30px) !important;
+}
+
+/* Transparent Sidebar Items */
+.sidebar-panel {
+    background: transparent !important;
+    font-weight: 600 !important;
+    opacity: 0.7 !important;
+}
+
+/* Clean & Transparent Sidebar Box */
+#sidebar-box {
+    background-color: light-dark(rgba(255, 255, 255, 0.11), rgba(0, 0, 0, 0.2)) !important;
+    border: none !important;
+}
+
+#sidebar-box #sidebar-header {
+    border-bottom: none !important;
+}
+
+/* Transparent Sidebar Search Box & View Button */
+#sidebar-search-container > #search-box,
+#viewButton {
+    padding: 4px 8px !important;
+    appearance: none !important;
+    background-color: transparent !important;
+    border-radius: 10px !important;
+    border: none !important;
+}
+
+#sidebar-search-container > #search-box:hover,
+#viewButton:hover,
+#sidebar-search-container > #search-box:active,
+#viewButton:active {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* -------------------------- FINDBAR & BOOKMARKS -------------------------- */
+
+/* Floating Findbar - Base Styling */
 findbar {
-  position: fixed !important;
-  top: 20px !important;
-  right: 20px !important;
-  z-index: 1000 !important;
-  min-width: 780px !important;
-background: light-dark(
-  color-mix(in srgb, rgba(255, 255, 255, 0.59), var(--zen-primary-color) 15%),
-  color-mix(in srgb, rgba(0, 0, 0, 0.51), var(--zen-primary-color) 15%)) !important;
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    z-index: 1000 !important;
+    min-width: 900px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 6px 10px !important;
 
+    background: light-dark(
+        color-mix(in srgb, rgba(255, 255, 255, 0.59), var(--zen-primary-color) 15%),
+        color-mix(in srgb, rgba(0, 0, 0, 0.51), var(--zen-primary-color) 15%)
+    ) !important;
 
-  backdrop-filter: blur(5px) !important; /* Start with very little blur */
-  border-radius: 13px !important;
-  padding: 6px 10px !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6) !important;
-  border: 2px solid light-dark(rgba(100, 100, 100, 1), rgba(0, 0, 0, 0.3)) !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  opacity: 0 !important; /* Start invisible */
-  transform: scale(0.95) !important; /* Start slightly shrunken */
-  pointer-events: none !important; /* Prevent interaction when hidden */
-  transition: opacity 0.3s ease, transform 0.3s ease, backdrop-filter 0.6s ease !important;
+    backdrop-filter: blur(5px) !important;
+    border-radius: 13px !important;
+    border: 2px solid light-dark(rgba(100, 100, 100, 1), rgba(0, 0, 0, 0.3)) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6) !important;
+
+    opacity: 0 !important;
+    transform: scale(0.95) !important;
+    pointer-events: none !important;
+    transition: opacity 0.3s ease, transform 0.3s ease, backdrop-filter 0.6s ease !important;
 }
 
-/* Show Animation (Blurs In) */
+/* Show Animation */
 findbar:not([hidden="true"]) {
-  opacity: 1 !important;
-  transform: scale(1) !important;
-  backdrop-filter: blur(25px) !important; /* Full blur effect */
-  pointer-events: auto !important;
-  visibility: visible !important;
+    opacity: 1 !important;
+    transform: scale(1) !important;
+    backdrop-filter: blur(25px) !important;
+    pointer-events: auto !important;
+    visibility: visible !important;
 }
 
-/* Hide Animation (Blurs Out) */
+/* Hide Animation */
 findbar[hidden="true"] {
-  opacity: 0 !important;
-  transform: scale(0.95) !important;
-  backdrop-filter: blur(5px) !important; /* Reduce blur before hiding */
-  pointer-events: none !important;
-  visibility: hidden !important;
-  transition: opacity 0.3s ease, transform 0.3s ease, backdrop-filter 0.6s ease, visibility 0s linear 0.3s !important;
+    opacity: 0 !important;
+    transform: scale(0.95) !important;
+    backdrop-filter: blur(8px) !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    transition: opacity 0.3s ease, transform 0.3s ease, backdrop-filter 0.6s ease, visibility 0s linear 0.3s !important;
 }
 
-/* Search Input - No Border */
+/* Search Input Styling */
 findbar textbox {
-  flex-grow: 1 !important;
-  min-width: 230px !important;
-  background: transparent !important;
-  color: inherit !important;
-  border: none !important;  /* Ensures no border */
-  outline: none !important;
-  font-size: 14px !important;
-  padding: 4px 10px !important;
-  box-shadow: none !important; /* Removes any inset shadow */
+    flex-grow: 1 !important;
+    min-width: 230px !important;
+    background: transparent !important;
+    color: inherit !important;
+    border: none !important;
+    outline: none !important;
+    font-size: 14px !important;
+    padding: 4px 10px !important;
+    box-shadow: none !important;
 }
 
-
-/* General Button Styling */
+/* Toolbar Button Base Styling */
 findbar toolbarbutton {
-  background: light-dark(rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0.15)) !important;
-  border-radius: 6.5px !important;
-  transition: background 0.2s ease, transform 0.1s ease-out !important;
+    background: light-dark(rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0.15)) !important;
+    border-radius: 6.5px !important;
+    transition: background 0.2s ease, transform 0.1s ease-out !important;
 }
 
-/* Small Up/Down (Find Previous/Next) Buttons */
+/* Previous/Next Buttons */
 findbar .findbar-find-previous,
 findbar .findbar-find-next {
-  width: 20px !important;
-  height: 20px !important;
-  padding: 2px !important;
-  font-size: 10px !important;
+    width: 20px !important;
+    height: 20px !important;
+    padding: 2px !important;
+    font-size: 10px !important;
 }
 
-/* Add spacing between up/down buttons */
 .findbar-find-previous {
-  margin-right: 4px !important;
+    margin-right: 4px !important;
 }
 
-/* Small Close Button */
+/* Close Button */
 findbar .findbar-close {
-  width: 18px !important;
-  height: 18px !important;
-  padding: 2px !important;
-  font-size: 10px !important;
-  margin-left: auto !important; /* Keep it aligned to the right */
+    width: 18px !important;
+    height: 18px !important;
+    padding: 2px !important;
+    font-size: 10px !important;
+    margin-left: auto !important;
 }
 
-/* Hover and Active Effects */
+/* Hover & Active Effects */
 findbar toolbarbutton:hover {
-  background: light-dark(rgba(255, 255, 255, 0.6), rgba(0, 0, 0, 0.6)) !important;
-  transform: scale(1.05) !important;
+    background: light-dark(rgba(255, 255, 255, 0.6), rgba(0, 0, 0, 0.6)) !important;
+    transform: scale(1.05) !important;
 }
 
 findbar toolbarbutton:active {
-  transform: scale(0.92) !important;
-}
-/* ------------------------------------------------------------------ */
-/* Transparent Bookmarks */
-#zen-sidebar-web-panel {
-  background: light-dark(#00000022, #00000044) !important;
-  backdrop-filter: blur(30px) !important;
-}
-.sidebar-panel {
-  background: transparent !important;
-  font-weight: 600 !important;
-  opacity: 0.7 !important;
+    transform: scale(0.92) !important;
 }
 
-/* Cleaned & Transparent Sidebar */
-#sidebar-box {
-  background-color: light-dark(rgba(255, 255, 255, 0.11),
-      rgba(0, 0, 0, 0.2)) !important;
-  border: none !important;
+/* -------------------------- Better Context Menu -------------------------- */
 
-  & #sidebar-header {
-    border-bottom: none !important;
-
-    & #sidebar-close {
-      !important;
-    }
-  }
-}
-
-/* Transparent Search box in sidebar */
-#sidebar-search-container>#search-box,
-#viewButton {
-  padding: 4px 8px !important;
-
-  appearance: none !important;
-  background-color: transparent !important;
-  border-radius: 10px !important;
-  border: none !important;
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-  }
-
-  &:active {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-  }
-}
-
-/* ================= Better Context Menu ===================== */
-/*menupopup {
-    --panel-border-radius: 15px !important;
-    --panel-background: linear-gradient(
-        155deg, 
-        color-mix(in srgb, var(--zen-primary-color) 25%, light-dark(white, rgba(20,20,20,1))) 0%, 
-        light-dark(white,rgba(20,20,20,1)) 40%
-    ) !important;
-}
-*/
-
+/* Base Hover Styling for Menu Items */
 :is(menu, menuitem):hover {
     border-radius: 12px !important;
 }
 
-#tabContextMenu:has(
-    #context_reloadTab:not([hidden])
-    ):has(:is(#context_zen-add-essential, #context_zen-remove-essential):not([hidden])
-    ):has(:is(#context_pinTab, #context_unpinTab, #context_bookmarkTab):not([hidden])) {
-    
+/* Hide "New Tab" Option */
+#context_openANewTab {
+    display: none !important;
+}
+
+/* General Context Menu Layout */
+#tabContextMenu {
+    width: 280px !important;
+}
+
+menuseparator {
+    &:first-of-type {
+        display: none !important;
+    }
+
+    &::before {
+        opacity: 0.3;
+    }
+}
+
+/* Force First Separator Visible for Grouping */
+#tabContextMenu:has(#context_reloadTab:not([hidden])):has(:is(#context_zen-add-essential,
+#context_zen-remove-essential):not([hidden])):has(:is(#context_pinTab, #context_unpinTab, #context_bookmarkTab):not([hidden])) {
     :nth-child(1 of menuseparator) {
         display: flex !important;
         visibility: visible !important;
@@ -276,19 +295,30 @@ findbar toolbarbutton:active {
     :is(#context_pinTab, #context_unpinTab),
     #context_bookmarkTab {
         order: -999 !important;
-        --height: 42px;
         width: 25% !important;
+        --height: 42px;
         height: var(--height) !important;
+
+        position: relative;
+        overflow: hidden;
+
         background-position: center !important;
         border-radius: 12px !important;
-        position: relative; /* Required for absolute pseudo-element */
-        overflow: hidden; /* Keeps the effect within bounds */
-        transition: box-shadow 0.4s ease-in-out; /* Smooth transition */
-
+        transition: box-shadow 0.4s ease-in-out;
 
         .menu-text {
             display: none !important;
         }
+    }
+
+    /* Positioning Each Button */
+    #context_reloadTab {
+        margin-left: 0 !important;
+    }
+
+    :is(#context_pinTab, #context_unpinTab) {
+        margin-left: 25% !important;
+        margin-top: calc(0px - var(--height)) !important;
     }
 
     #context_zen-remove-essential {
@@ -301,85 +331,69 @@ findbar toolbarbutton:active {
         margin-top: calc(0px - var(--height)) !important;
     }
 
-    :is(#context_pinTab, #context_unpinTab) {
-        margin-left: 25% !important;
-        margin-top: calc(0px - var(--height)) !important;
-    }
-
     #context_bookmarkTab {
         margin-left: 75% !important;
         margin-top: calc(0px - var(--height)) !important;
     }
 }
 
-/* Fixed width */
-#tabContextMenu {
-    width: 280px !important;
-}
-
-/* Hide "New Tab" */
-#context_openANewTab {
-    display: none !important;
-}
-
-menuseparator {
-
-    /* Hide first separator */
-    &:first-of-type {
-        display: none !important;
-    }
-
-    /* Reduce separator opacity */
-    &::before {
-        opacity: 0.3;
-    }
-}
-
-/* Gradient animation effect */
+/* -------------------------- Gradient Animation Base -------------------------- */
 #context_reloadTab::before,
 :is(#context_zen-add-essential, #context_zen-remove-essential)::before,
 :is(#context_pinTab, #context_unpinTab)::before,
 #context_bookmarkTab::before {
     content: "";
     position: absolute;
-    inset: 2px; /* Shrinks the effect area */
-    background: linear-gradient(
-        45deg,
-        color-mix(in srgb, var(--zen-primary-color) 5%, black),  
-        color-mix(in srgb, var(--zen-primary-color) 20%, black),  
-        color-mix(in srgb, var(--zen-primary-color) 50%, black),  
-        color-mix(in srgb, var(--zen-primary-color) 90%, black), /* Peak highlight */
-        color-mix(in srgb, var(--zen-primary-color) 50%, black),  
-        color-mix(in srgb, var(--zen-primary-color) 15%, black)  
-    );
-    background-size: 400% 400%;
+    inset: 2px;
     border-radius: 12px !important;
     clip-path: inset(-1 round 12px);
-
-    opacity: 0;
-    filter: blur(10px) brightness(1);
-    transition: opacity 0.4s ease-in-out;
     pointer-events: none;
+
+    background: linear-gradient(
+        45deg,
+        color-mix(in srgb, var(--zen-primary-color) 5%, black),
+        color-mix(in srgb, var(--zen-primary-color) 20%, black),
+        color-mix(in srgb, var(--zen-primary-color) 50%, black),
+        color-mix(in srgb, var(--zen-primary-color) 90%, black),
+        color-mix(in srgb, var(--zen-primary-color) 50%, black),
+        color-mix(in srgb, var(--zen-primary-color) 15%, black)
+    );
+
+    background-size: 400% 400%;
+    filter: blur(10px) brightness(1);
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
 }
 
-/* Hover effect - gradient animation */
-#context_reloadTab:hover,
-:is(#context_zen-add-essential, #context_zen-remove-essential):hover,
-:is(#context_pinTab, #context_unpinTab):hover,
-#context_bookmarkTab:hover {
-}
-
+/* Hover Activates Gradient Effect */
 #context_reloadTab:hover::before,
 :is(#context_zen-add-essential, #context_zen-remove-essential):hover::before,
 :is(#context_pinTab, #context_unpinTab):hover::before,
 #context_bookmarkTab:hover::before {
-    animation-play-state: running;
     opacity: 0.5;
+    animation-play-state: running;
 }
 
-/* Gradient animation */
 @keyframes tab-hover-gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
+
+/* OPTIONAL BACKGROUND (Commented Out) */
+/*
+menupopup {
+    --panel-border-radius: 15px !important;
+    --panel-background: linear-gradient(
+        155deg,
+        color-mix(in srgb, var(--zen-primary-color) 25%, light-dark(white, rgba(20,20,20,1))) 0%,
+        light-dark(white, rgba(20,20,20,1)) 40%
+    ) !important;
+}
+*/

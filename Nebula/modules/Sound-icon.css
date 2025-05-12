@@ -1,4 +1,5 @@
-/* === PLAYING/MUTE ICON APPEARANCE CUSTOMIZATION ========================================================================== */
+/* ------------------------- QUIETIFY SOUND ICON ------------------------- */
+
 span[part="button"].button-background {
   display: none !important; /* removes sound button added in 1.12t */
 }

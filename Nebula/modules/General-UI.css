@@ -1,13 +1,26 @@
-/* === GENERAL BROWSER UI ================================================================================================== */
+/* ------------------------- GENERAL ZEN UI ------------------------- */
+/* main ui tint */
 #zen-main-app-wrapper {
   background: var(--nebula-ui-tint) !important;
 }
 
+/* website tint */
 browser[transparent='true'] {
   background: var(--nebula-website-tint) !important;
 }
 
-/* hide shadow of tabs */
+/* Hide identity label for Bonjourr */
+#identity-icon-label[value="Extension (Bonjourr · Minimalist Startpage)"] {
+  display: none !important;
+}
+
+:root {
+  --attention-dot-color: transparent !important; /* remove attention dot */
+  --zen-themed-toolbar-bg-transparent: transparent !important; /* fix for transparency */
+}
+
+/* --------------------- TABS: NO SHADOW --------------------- */
+
 hbox.browserSidebarContainer,
 #zen-tabbox-wrapper {
   @media (-moz-pref("nebula-tabs-no-shadow")) {
@@ -15,15 +28,8 @@ hbox.browserSidebarContainer,
   }
 }
 
-:root {
-  --attention-dot-color: transparent !important;
-}
+/* ---------------------- NOGAPS MOD ------------------------ */
 
-#identity-icon-label[value="Extension (Bonjourr · Minimalist Startpage)"] {
-    display: none !important;
-}
-
-/* ----------- NoGaps mod ------------ */
 @media (-moz-pref("nebula-nogaps-mod")) {
   [zen-single-toolbar="true"] {
     #zen-appcontent-wrapper {
@@ -33,10 +39,10 @@ hbox.browserSidebarContainer,
     #zen-appcontent-navbar-container {
       position: absolute;
       width: 100% !important;
-      height: 48px; /* Optional: make navbar thicker */
-      backdrop-filter: blur(20px);
+      height: 48px; /* Optional: thicker navbar */
+      backdrop-filter: blur(30px) saturate(110%) contrast(110%);
       background: var(--zen-main-browser-background) !important;
-      border-bottom: 1px solid light-dark(rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.1));
+      border-bottom: 1.7px solid light-dark(rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.1));
     }
 
     #zen-tabbox-wrapper {
@@ -50,81 +56,16 @@ hbox.browserSidebarContainer,
   }
 }
 
+/* ------------------- FLOATING STATUSBAR ------------------- */
+/* Credit to the mod */
 
-/* ---- Fix for linux transparency (Credit: Zylvo) ---- */
-:root {
-  --zen-themed-toolbar-bg-transparent: transparent !important;
+#statuspanel {
+  margin: 10px !important;
 }
 
-/* Removes the background of the icon extension box in the url bar */
-#identity-icon-box {
-  background: none !important;
+#statuspanel-label {
+  border-radius: 11px !important;
+  padding: 3px 10px !important;
+  border: 1px solid var(--zen-colors-border) !important;
+  background: light-dark(rgba(255, 255, 255, 1), rgba(0, 0, 0, 0.9)) !important;
 }
-/*---- Removes the background of the icon extension box in the url bar---- */
-
-#identity-icon-box {
-  background: none !important;
-}
-/* ---- Fix for linux transparency (Credit: Zylvo) ---- */
-:root {
-  --zen-themed-toolbar-bg-transparent: transparent !important;
-}
-
-/* -------- floating statusbar (credit to the mod) --------- */
-  #statuspanel {
-    margin: 10px !important;
-  }
-  
-  #statuspanel-label {
-    border-radius: 11px !important;
-    padding: 3px 10px !important;
-    border: 1px solid var(--zen-colors-border) !important;
-    background: light-dark(rgba(255, 255, 255, 1),rgba(0, 0, 0, 0.9)) !important;
-  }
-  
-/* -------------------- Split view outline -------------------------- */
-#tabbrowser-tabpanels[zen-split-view="true"] .browserSidebarContainer {
-  outline: none !important; /* Remove default outline */
-  box-shadow: 0 0 0 2px light-dark(rgba(0, 0, 0, 0), rgba(255, 255, 255, 0)), 
-              0 4px 10px light-dark(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)) !important;
-  transition: box-shadow 0.35s ease !important;
-}
-
-#tabbrowser-tabpanels[zen-split-view="true"] .browserSidebarContainer.deck-selected {
-  box-shadow: 0 0 0 2px light-dark(rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5)), 
-              0 4px 10px light-dark(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)) !important;
-}
-
-/* ------------------ Split view tabs container --------------------- */
-tab-group[split-view-group="true"] {
-  background-color: transparent !important;
-  box-shadow: 0 0px 8px rgba(0, 0, 0, 0) !important;
-  border-radius: 12px !important;
-  position: relative !important;
-  transition: background-color 0.3s ease, 
-              box-shadow 0.3s ease, 
-              transform 0.2s cubic-bezier(0.2, 0.8, 0.4, 1) !important; /* Resistive transition */
-}
-
-tab-group[split-view-group="true"]:hover {
-  background-color: light-dark(rgba(255,255,255,0.45), rgba(0,0,0,0.45)) !important;
-  box-shadow: 0 0px 3px rgba(0, 0, 0, 0.55) !important;
-}
-
-/* If any tab inside the group is selected, apply dark background */
-tab-group[split-view-group="true"]:has(.tabbrowser-tab[selected="true"], .tabbrowser-tab[visuallyselected="true"]) {
-  background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.35)) !important;
-  box-shadow: 0 0px 3px rgba(0, 0, 0, 0.55) !important;
-}
-
-/* Right mouse button press effect with resistive animation */
-tab-group[split-view-group="true"]:active {
-  transform: scale(0.95) !important;
-  transition: transform 0.1s ease-out !important;
-}
-
-/* Smooth return effect */
-tab-group[split-view-group="true"]:not(:active) {
-  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.4, 1) !important;
-}
-

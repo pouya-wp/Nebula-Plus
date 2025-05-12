@@ -1,6 +1,4 @@
-/* Credit: Lacuna by Tanay-Kar */
-
-/* === BUTTONS ABOVE URL BAR =============================================================================================== */
+/* ------------------------- BUTTONS ABOVE URLBAR ------------------------- */
 
 #zen-sidebar-top-buttons,
 #zen-sidebar-top-buttons-customization-target {
@@ -22,8 +20,8 @@
   }
 }
 
+/* ------------------------- Windows close buttons ------------------------- */
 
-/* ---------- Windows close buttons ----------- */
 .titlebar-close {
     transition: background-color 0.3s ease-out, transform 0.2s ease-in-out;
 }
