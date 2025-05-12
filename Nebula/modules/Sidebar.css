@@ -15,17 +15,41 @@
 
 /* -------------------------- BLUR COMPACT SIDEBAR -------------------------- */
 
+/* Fix for twilight acrylic */
+#navigator-toolbox:not([animate='true']) #titlebar {
+  position: relative;
+}
+
+#navigator-toolbox:not([animate='true']) #titlebar::before {
+  border-radius: 11px !important;
+  background: transparent !important;
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+}
+
+#navigator-toolbox:not([animate='true']) #titlebar::after {
+  content: '';
+  position: absolute;
+  background: transparent !important;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--zen-grainy-background-opacity, 0);
+  mix-blend-mode: overlay;
+}
+
 /* Base blurred transparent background for compact sidebar */
 body:has([zen-compact-mode="true"]) #titlebar {
-    top: calc(var(--zen-element-separation) / 1.4) !important;
-    left: calc(var(--zen-element-separation) / 0.999) !important;
-    background: light-dark(rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.4)) !important;
-    backdrop-filter: blur(32px) saturate(140%) contrast(120%) !important;
-    border-radius: 11px !important;
-    scale: 1 !important;
-    padding: 8px !important;
-    height: calc(100% - (var(--zen-element-separation) * 2.4)) !important;
-    margin: calc(var(--zen-element-separation) / 2) 0 !important;
+  top: calc(var(--zen-element-separation) / 1.4) !important;
+  left: calc(var(--zen-element-separation) / 0.999) !important;
+  background: light-dark(rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.3)) !important;
+  backdrop-filter: blur(32px) saturate(140%) contrast(120%) !important;
+  border-radius: 11px !important;
+  scale: 1 !important;
+  padding: 8px !important;
+  height: calc(100% - (var(--zen-element-separation) * 2.4)) !important;
+  margin: calc(var(--zen-element-separation) / 2) 0 !important;
 }
 
 /* Required for blur rendering */
