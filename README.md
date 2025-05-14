@@ -219,7 +219,11 @@ Follow these steps to install and apply the **Nebula** theme on Zen Browser:
 
 ###
 
-<p align="left">• Nebula features a `Nebula-config.css` file inside the Nebula folder, it allows users to customize Nebula to their own liking!</br><br>• Want to change/disable certain animations? you can do that aswell by reading the clear instructions in the `Nebula-config.css` file</br><br>• There are lots of inbuilt mods which Nebula has baked in, for example nogaps mod which removes the gap/border from website window.</br><br>• Here is a list of configs which you can change through `about:config` </p>
+- Nebula features a `Nebula-config.css` file inside the Nebula folder — it allows users to customize Nebula to their own liking!  
+- Want to change/disable certain animations? You can do that as well by reading the clear instructions in the `Nebula-config.css` file.  
+- There are lots of inbuilt mods which Nebula has baked in — for example, the `nogaps` mod removes the gap/border from the website window.  
+- Here is a list of configs which you can change through `about:config`
+
 
 <div align="center">
     <img width="800" src="https://github.com/user-attachments/assets/2408e11c-8a5c-4b86-9d7f-f7789badecd1" />
