@@ -36,8 +36,8 @@
 
 <h2 align="left">🫶🏻Thanks for the support!</h2>
 <p align="center">
-  <a href="https://www.star-history.com/#JustAdumbPrsn/Nebula-A-Minimal-Theme-for-Zen-Browser&greeeen-dev/natsumi-browser&Date">
-    <img src="https://api.star-history.com/svg?repos=JustAdumbPrsn/Nebula-A-Minimal-Theme-for-Zen-Browser,greeeen-dev/natsumi-browser&type=Date" alt="Star History Chart" width="800">
+  <a href="https://www.star-history.com/#JustAdumbPrsn/Zen-Nebula&greeeen-dev/natsumi-browser&Date">
+    <img src="https://api.star-history.com/svg?repos=JustAdumbPrsn/Zen-Nebula,greeeen-dev/natsumi-browser&type=Date" alt="Star History Chart" width="800">
   </a>
 </p>
 
