@@ -13,6 +13,11 @@
 #urlbar .urlbar-input,
 .urlbar-input-container {
     text-align: center !important;
+    position: relative;
+}
+
+#urlbar:not([open]) {
+  height: 40px !important;
 }
 
 #identity-icon-box {
@@ -91,7 +96,7 @@
 /* Style 2 – Heavy scale and Blur (for different preferences) */
 @media (-moz-pref("nebula-urlbar-animation", 2)) {
     #browser:has(#urlbar[open]) .browserStack {
-        filter: blur(1rem) brightness(50%) saturate(180%) !important;
+        filter: blur(1rem) brightness(70%) saturate(180%) !important;
         opacity: 0.7 !important;
         scale: 1.05 !important;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;

@@ -1,5 +1,17 @@
 /* ------------------------------ Workspace Button Styles ------------------------------ */
 
+/* make workspace indicator have nebula theme background on hover */
+.zen-current-workspace-indicator::before {
+  box-shadow: 0 0px 8px transparent !important;
+  border-radius: var(--nebula-border-radius) !important;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.zen-current-workspace-indicator:hover::before {
+  background-color: var(--nebula-color) !important;
+  box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.55)) !important;
+}
+
 /* Common animations */
 @keyframes emojiPulse {
   0% { transform: scale(0.85); }
@@ -191,6 +203,7 @@
   /* Container styling */
   #zen-workspaces-button {
     height: 30px !important;
+    width: auto !important;
     padding: 3px !important;
     position: relative !important;
     overflow: visible !important;
@@ -305,10 +318,10 @@
 
 /* Option to remove workspace name */
 @media (-moz-pref("nebula-remove-workspace-indicator")) {
-  /* Hide top Workspace Indicator */
-  #zen-current-workspace-indicator-container {
-    display: none !important;
-  }
+  
+.zen-current-workspace-indicator {
+  display: none !important;
+}
   
   #zen-tabs-wrapper {
     padding-top: 4px; /* Add missing padding */

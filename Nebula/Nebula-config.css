@@ -67,7 +67,7 @@ without searching through the code directly */
 :root {
 --nebula-border-radius: 13px; /* This will change roundness of everything in Nebula (DEFAULT: 13px) */
 --nebula-website-tint: light-dark(rgba(255,255,255,0),rgba(0,0,0,0)); /* Edit the color values to change the tint on transparent websites */
---nebula-ui-tint: light-dark(rgba(255,255,255,0.25),rgba(0,0,0,0.12)); /* Edit the color values to change the tint of sidebar and etc. */
+--nebula-ui-tint: light-dark(rgba(255,255,255,0.2),rgba(0,0,0,0.12)); /* Edit the color values to change the tint of sidebar and etc. */
 --nebula-workspace-grayscale: 100%; /* Edit the % to make non active workspace icons more colored */
 --nebula-essentials-width: 60px !important; /* Edit the "60px" to something less to make width of essentials smaller */
     

@@ -4,6 +4,10 @@ span[part="button"].button-background {
   display: none !important; /* removes sound button added in 1.12t */
 }
 
+.zen-essentials-container .tab-icon-overlay {
+  pointer-events: none !important;
+}
+
 @media not (-moz-pref("lacuna.tab.default-audio-indicator")) {
     .tabbrowser-tab img {
       transition: opacity 0.3s ease-in-out;

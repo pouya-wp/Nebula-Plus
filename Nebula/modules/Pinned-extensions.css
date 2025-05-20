@@ -1,4 +1,10 @@
-/* ------------------------- PINNED EXTENSIONs ------------------------- */
+/* ------------------------- PINNED EXTENSIONS ------------------------- */
+
+/* gap between urlbar and pinned extensions */
+#nav-bar {
+  margin-bottom: 8px !important; /* Adjust gap size as needed */
+}
+
 /* Pinned extensions */
 #TabsToolbar-customization-target {
   display: flex !important;
