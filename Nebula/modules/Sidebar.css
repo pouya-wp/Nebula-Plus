@@ -1,11 +1,8 @@
 /* -------------------------- COMPACT SIDEBAR -------------------------- */
-:root {
-    --sidebar-width: 19em !important;
-}
 
 :root[zen-compact-mode="true"] #sidebar {
-    width: var(--sidebar-width) !important;
-    min-width: var(--sidebar-width) !important;
+    width: var(--nebula-sidebar-width) !important;
+    min-width: var(--nebula-sidebar-width) !important;
 }
 
 /* Placeholder for transition cleanup (if needed) */
@@ -52,11 +49,6 @@ body:has([zen-compact-mode="true"]) #titlebar {
   margin: calc(var(--zen-element-separation) / 2) 0 !important;
 }
 
-/* Required for blur rendering */
-browser {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-}
-
 /* -------------------------- COMPACT SIDEBAR PSEUDO BACKGROUND -------------------------- */
 @media (-moz-pref("nebula-compact-mode-sidebar-bg")) {
     
@@ -67,8 +59,8 @@ browser {
         background: light-dark(rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.4)) !important;
         backdrop-filter: blur(32px) saturate(140%) !important;
 
-        width: calc(var(--sidebar-width) - 0px) !important;
-        min-width: calc(var(--sidebar-width) - 8px) !important;
+        width: calc(var(--nebula-sidebar-width) - 0px) !important;
+        min-width: calc(var(--nebula-sidebar-width) - 8px) !important;
         border-radius: 11px !important;
         scale: 1 !important;
         padding: 8px !important;
@@ -88,8 +80,8 @@ browser {
     body:has([zen-compact-mode="true"]) #browser::after {
         opacity: 0 !important;
         left: 0px !important;
-        width: calc(var(--sidebar-width) - 3px) !important;
-        min-width: calc(var(--sidebar-width) - 4px) !important;
+        width: calc(var(--nebula-sidebar-width) - 3px) !important;
+        min-width: calc(var(--nebula-sidebar-width) - 4px) !important;
         border-radius: 10px !important;
         margin-right: 0 !important;
         margin-left: calc(var(--zen-element-separation) / 1.5) !important;
@@ -98,7 +90,9 @@ browser {
         height: calc(100% - (var(--zen-element-separation) * 3.2)) !important;
         top: calc(var(--zen-element-separation) / 2) !important;
         background-color: light-dark(rgba(200, 200, 200, 1), rgba(40, 40, 40, 1)) !important;
-
+        content: "" !important; 
+        position: absolute !important; 
+        z-index: 0;
         transition: left 0.2s, right 0.2s, opacity 0s ease, filter 0.2s ease !important;
     }
 
@@ -120,6 +114,7 @@ browser {
         left: auto !important;
         right: var(--zen-element-separation) !important;
     }
+    
 }
 
 /* ------------------------- GENERAL SIDEBAR -------------------------- */

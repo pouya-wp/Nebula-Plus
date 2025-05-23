@@ -1,4 +1,8 @@
 /* ------------------ URLBAR Styling ------------------ */
+#urlbar {
+  /* your existing styles */
+  margin-bottom: -4px; /* pulls the content below up by 4px */
+}
 
 /* URL bar background - default state */
 #urlbar-background {
@@ -42,8 +46,9 @@
 #urlbar[open] #urlbar-background {
     border-radius: 15px !important;
     background: light-dark(rgba(255, 255, 255, 0.6), rgba(36, 36, 36, 0.3)) !important;
-    backdrop-filter: blur(52px) brightness(0.4) saturate(3.5) !important;
+    backdrop-filter: blur(32px) brightness(0.4) saturate(3.5) !important;
     opacity: 1 !important;
+    outline: none !important;
 }
 
 #urlbar[open] {

@@ -19,6 +19,11 @@ browser[transparent='true'] {
   --zen-themed-toolbar-bg-transparent: transparent !important; /* fix for transparency */
 }
 
+/* Required for blur rendering */
+browser {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+}
+
 /* --------------------- TABS: NO SHADOW --------------------- */
 
 hbox.browserSidebarContainer,
@@ -36,10 +41,10 @@ hbox.browserSidebarContainer,
       position: relative;
     }
 
-    #zen-appcontent-navbar-container {
+    #zen-appcontent-navbar-wrapper {
       position: absolute;
       width: 100% !important;
-      height: 48px; /* Optional: thicker navbar */
+      height: 50px; /* Optional: thicker navbar */
       backdrop-filter: blur(30px) saturate(110%) contrast(110%);
       background: var(--zen-main-browser-background) !important;
       border-bottom: 1.7px solid light-dark(rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.1));

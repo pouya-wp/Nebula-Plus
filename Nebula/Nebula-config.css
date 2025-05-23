@@ -70,6 +70,7 @@ without searching through the code directly */
 --nebula-ui-tint: light-dark(rgba(255,255,255,0.2),rgba(0,0,0,0.12)); /* Edit the color values to change the tint of sidebar and etc. */
 --nebula-workspace-grayscale: 100%; /* Edit the % to make non active workspace icons more colored */
 --nebula-essentials-width: 60px !important; /* Edit the "60px" to something less to make width of essentials smaller */
+--nebula-sidebar-width: 19em !important; /* Edit the 19em to any other value you would like for compact sidebar when nebula-compact-mode-sidebar-bg is true */
     
 /* Tabs color */
 --nebula-color: light-dark(rgba(255, 255, 255, 0.25), rgba(0, 0, 0, 0.35)); /* default color */
