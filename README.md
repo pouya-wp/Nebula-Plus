@@ -62,7 +62,8 @@ Follow these steps to install and apply the **Nebula** theme to Zen Browser:
    
 2. 💎 **Installing Nebula through Sine's Marketplace**
    Go to settings and click **Sine**, from there a Marketplace will load where Nebula will be shown as a mod to install
-   Click the install button and Nebula should be installed as a mod
+   Click the install button and Nebula should be installed as a mod.
+   
    ![image](https://github.com/user-attachments/assets/a6a88c52-011f-46aa-b4be-1f8fd147ac8c)
 
 
