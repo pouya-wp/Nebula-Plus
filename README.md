@@ -56,13 +56,13 @@
 Follow these steps to install and apply the **Nebula** theme to Zen Browser:
 
 1. 📝 **Install Sine**
-    Go to [Sine's Github](https://github.com/CosmoCreeper/Sine/tree/main) and follow its installation process
-    This includes downloading and setting up FX-Autoconfig using the auto installer or manual installation
-    Then setting up Sine.
+   - Go to [Sine's Github](https://github.com/CosmoCreeper/Sine/tree/main) and follow its installation process.
+   - This includes downloading and setting up FX-Autoconfig using the auto installer or manual installation.
+   - Then setting up Sine.
    
 2. 💎 **Installing Nebula through Sine's Marketplace**
-   Go to settings and click **Sine**, from there a Marketplace will load where Nebula will be shown as a mod to install
-   Click the install button and Nebula should be installed as a mod.
+   - Go to settings and click **Sine**, from there a Marketplace will load where Nebula will be shown as a mod to install.
+   - Click the install button and Nebula should be installed as a mod.
    
    ![image](https://github.com/user-attachments/assets/a6a88c52-011f-46aa-b4be-1f8fd147ac8c)
 
