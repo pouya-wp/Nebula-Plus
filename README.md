@@ -120,9 +120,8 @@ Follow these steps to install and apply the **Nebula** theme on Zen Browser:
 - **Note:** If you are on Sine version of Nebula, you can click this settings icon on Nebula mod to change its preferences ![image](https://github.com/user-attachments/assets/bad610a8-fc19-454d-acd3-6eb325e11959)
 
 
-
 <div align="center">
-    <img width="800" src="https://github.com/user-attachments/assets/2408e11c-8a5c-4b86-9d7f-f7789badecd1" />
+    <img width="800" src="https://github.com/user-attachments/assets/19fa0fad-5d05-46d0-a517-e7f0ee3b8549" />
 </div>
 
 ###
