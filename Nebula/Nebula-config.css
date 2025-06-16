@@ -11,13 +11,14 @@ without searching through the code directly */
                                                 Set number to 2 (for style 2 which is more bouncy)
                                                 Set number to 3 (for style 3 which is more bounce than default but very light)
                                                 Set number to 4 (for style 4 which has no blur but instead smooth crossfade)
+                                                Set number to 5 (for style 5 for zoom out effect)
                                                 By default the style is set to 1 but no need to add its config
 
     2. Tab loading animations
           Go to about:config and add a "number" "nebula-tab-loading-animation"
                                                 Set number to 0 (for no animation)
                                                 Set number to 2 (for style 2 which is more prominant)
-                                                Set number to 3 (for style 3 which is lighter)
+                                                Set number to 3 (for style 3 which has see through window)
                                                 Set number to 4 (for style 4 which has no blur but grayscale when loading)
                                                 Set number to 5 (for style 5 which has blur + grayscale)
                                                 By default the style is set to 1 but no need to add its config
@@ -37,7 +38,7 @@ without searching through the code directly */
     1. URLbar opening animations
          Go to about:config and add a "number" "nebula-urlbar-animation"
                                                Set number to 0 (for no animation)
-                                               Set number to 2 (for style 2 which is more heavy)
+                                               Set number to 2 (for style 2 which has zoom out)
                                                Set number to 3 (for style 3 which has no blur but instead grayscale for background)
                                                By default the style is set to 1 but no need to add its config
 
@@ -67,6 +68,16 @@ without searching through the code directly */
 
     /* 6. If you want to remove the workspace indicator:
         Go to about:config and add a "boolean" "nebula-remove-workspace-indicator" and set it to true */
+
+    /* 7. If you want Pinned Extensions mod:
+        Go to about:config and add a "boolean" "nebula-pinned-extensions-mod" and set it to true, then read the instructions
+        on Github to pin extensions above essentials */
+
+    /* 8. If you want to make icons of essential tabs gray:
+        Go to about:config and add a "boolean" "nebula-essentials-gray-icons" and set it to true */
+
+    /* 9. If you want to disable nebula's container styling:
+        Go to about:config and add a "boolean" "nebula-disable-container-styling" and set it to true */
 
 :root {
 --nebula-border-radius: 13px; /* This will change roundness of everything in Nebula (DEFAULT: 13px) */

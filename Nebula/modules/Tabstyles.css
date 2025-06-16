@@ -1,15 +1,3 @@
-/* ------------------- Pinned Tab Reset Button ------------------- */
-/* Style for multi-selected tabs, same as selected tabs */
-.tabbrowser-tab[multiselected="true"] .tab-background {
-  background-color: var(--nebula-color-selected) !important;
-  box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.55)) !important;
-}
-
-.tab-reset-pin-button {
-    border-top-left-radius: var(--nebula-border-radius) !important;
-    border-bottom-left-radius: var(--nebula-border-radius) !important;
-}
-
 /* ------------------- PDF Tab Custom Icon ------------------- */
 
 tab[label$='.pdf'] img.tab-icon-image {
@@ -20,39 +8,75 @@ tab[label$='.pdf'] img.tab-icon-image {
     width: 32px !important;
 }
 
-/* ------------------- Container and Tab Context Styling ------------------- */
-/*
-.tab-context-line {
-    display: none !important;
-}
+/* ------------------- Container Tabs Styling ------------------- */
 
-@keyframes container-glow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+@media not (-moz-pref("nebula-disable-container-styling")) {
+  
+  #userContext-icons {
+  /* URLbar of container tabs */
+  width: 5px !important;
+  height: 14px !important;
+  border-radius: 3px !important;
+  background-color: var(--identity-tab-color) !important;
+  opacity: 0.8;
+  margin: 0 6px 0 2px !important;
 }
-
-.tabbrowser-tab[usercontextid] .tab-background {
-    background: linear-gradient(45deg, 
-        var(--identity-tab-color, rgba(0, 0, 255, 0.95)) 30%, 
-        rgba(255, 255, 255, 0.1) 70%
-    ) !important;
+  
+  tab {
+    .tab-background {
+      flex-direction: unset !important;
+  
+      .tab-context-line {
+        display: flex !important;
+        box-sizing: border-box !important;
+  
+        width: 24px !important;
+        height: 24px !important;
+        margin: auto 5px !important;
+        border-radius: 0.7rem !important;
+        background: color-mix(
+          in srgb,
+          var(--identity-tab-color) 30%,
+          transparent
+        ) !important;
+        transition: all 0.3s ease-in-out !important;
+      }
+    }
     
-    background-size: 300% 300% !important;
-    opacity: 0.212 !important;
-    filter: blur(0px) !important;
-    transition: opacity 0.3s, filter 0.3s ease-in-out !important;
-    z-index: -1 !important;
-    border-radius: inherit !important;
+    &:hover .tab-context-line {
+      filter: blur(12px) !important;
+    }
+  }
+  
+  [uidensity="compact"] tab .tab-background .tab-context-line {
+    margin: auto 5px !important;
+  }
+  
+  tab[zen-essential="true"] .tab-background .tab-context-line {
+    margin: auto !important;
+    z-index: 1000 !important;
+  }
+  
+  tab[discarded=""]:hover,
+  tab[pending="true"]:hover {
+    filter: grayscale(0) !important;
+  }
+
 }
 
-.tabbrowser-tab[usercontextid]:hover .tab-background::after {
-    opacity: 0.25 !important;
-    filter: blur(0px) !important;
-    animation: container-glow 5s infinite linear;
-}
-*/
 /* ------------------- Close and Reset Button Styling ------------------- */
+
+.tab-reset-pin-button {
+  border-top-left-radius: var(--nebula-border-radius) !important;
+  border-bottom-left-radius: var(--nebula-border-radius) !important;
+  background-color: rgba(255, 255, 255, 0);
+  transition: background-color 0.2s ease-out;
+}
+
+.tab-reset-pin-button:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
 
 .tabbrowser-tab .tab-background::before {
     content: "" !important;
@@ -67,8 +91,7 @@ tab[label$='.pdf'] img.tab-icon-image {
         transparent 40%
     ) !important;
     opacity: 0 !important;
-    clip-path: inset(0 100% 0 0);
-    transition: opacity 0.3s ease, clip-path 0.3s ease !important;
+    transition: opacity 0.3s ease !important;
     z-index: 3 !important; 
 }
 
@@ -79,7 +102,6 @@ tab[label$='.pdf'] img.tab-icon-image {
 
 .tabbrowser-tab:has(.tab-close-button:hover, .tab-reset-button:hover) .tab-background::before {
     opacity: 0.7 !important;
-    clip-path: inset(0 0 0 0);
 }
 
 .tab-close-button,
@@ -176,7 +198,6 @@ tab[label$='.pdf'] img.tab-icon-image {
   z-index: 0;
 }
 
-/* Fade out on hover */
 .tabbrowser-tab:not(.zen-essentials-container .tabbrowser-tab)[selected="true"]:hover .tab-background::after,
 .tabbrowser-tab:not(.zen-essentials-container .tabbrowser-tab)[visuallyselected="true"]:hover .tab-background::after {
   opacity: 0 !important;
@@ -184,6 +205,13 @@ tab[label$='.pdf'] img.tab-icon-image {
 */
 
 /* --- add nebula background and also glow animation to tab which is ctrl+clicked --- */
+
+/* Style for multi-selected tabs, same as selected tabs */
+.tabbrowser-tab[multiselected="true"] .tab-background {
+  background-color: var(--nebula-color-selected) !important;
+  box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.55)) !important;
+}
+
 .tabbrowser-tab[multiselected="true"] .tab-background {
   position: relative !important;
   background-color: var(--nebula-color-selected) !important;
@@ -271,54 +299,6 @@ tab[label$='.pdf'] img.tab-icon-image {
 #tabs-newtab-button.toolbarbutton-1:hover::before {
   background-color: var(--nebula-color-hover) !important;
   box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.055), rgba(0, 0, 0, 0.55)) !important;
-}
-
-/* -------------------- Split view outline -------------------------- */
-
-#tabbrowser-tabpanels[zen-split-view="true"] .browserSidebarContainer {
-  outline: none !important; /* Remove default outline */
-  box-shadow: 0 0 0 2px light-dark(rgba(0, 0, 0, 0), rgba(255, 255, 255, 0)), 
-              0 4px 10px light-dark(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)) !important;
-  transition: box-shadow 0.35s ease !important;
-}
-
-#tabbrowser-tabpanels[zen-split-view="true"] .browserSidebarContainer.deck-selected {
-  box-shadow: 0 0 0 2px light-dark(rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5)), 
-              0 4px 10px light-dark(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)) !important;
-}
-
-/* ------------------ Split view tabs container --------------------- */
-
-tab-group[split-view-group="true"] {
-  background-color: transparent !important;
-  box-shadow: 0 0px 8px rgba(0, 0, 0, 0) !important;
-  border-radius: 12px !important;
-  position: relative !important;
-  transition: background-color 0.3s ease, 
-              box-shadow 0.3s ease, 
-              transform 0.2s cubic-bezier(0.2, 0.8, 0.4, 1) !important; /* Resistive transition */
-}
-
-tab-group[split-view-group="true"]:hover {
-  background-color: light-dark(rgba(255,255,255,0.45), rgba(0,0,0,0.45)) !important;
-  box-shadow: 0 0px 3px rgba(0, 0, 0, 0.55) !important;
-}
-
-/* If any tab inside the group is selected, apply dark background */
-tab-group[split-view-group="true"]:has(.tabbrowser-tab[selected="true"], .tabbrowser-tab[visuallyselected="true"]) {
-  background-color: light-dark(rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0.35)) !important;
-  box-shadow: 0 0px 3px rgba(0, 0, 0, 0.55) !important;
-}
-
-/* Right mouse button press effect with resistive animation */
-tab-group[split-view-group="true"]:active {
-  transform: scale(0.95) !important;
-  transition: transform 0.1s ease-out !important;
-}
-
-/* Smooth return effect */
-tab-group[split-view-group="true"]:not(:active) {
-  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.4, 1) !important;
 }
 
 /* ----------------------- Tab Hover Gradient ----------------------- */
@@ -419,4 +399,95 @@ tab-group[split-view-group="true"]:not(:active) {
 
 #zen-essentials-container .tabbrowser-tab:active::before {
     transform: none !important;
+}
+
+/* -------------------- Split view outline -------------------------- */
+
+#tabbrowser-tabpanels[zen-split-view="true"] .browserSidebarContainer {
+  outline: none !important; /* Remove default outline */
+  box-shadow: 0 0 0 2px light-dark(rgba(0, 0, 0, 0), rgba(255, 255, 255, 0)), 
+              0 4px 10px light-dark(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)) !important;
+  transition: box-shadow 0.35s ease !important;
+}
+
+#tabbrowser-tabpanels[zen-split-view="true"] .browserSidebarContainer.deck-selected {
+  box-shadow: 0 0 0 2px light-dark(rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5)), 
+              0 4px 10px light-dark(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)) !important;
+}
+
+/* ------------------ Split View Tab Group Styling -------------------- */
+
+tab-group[split-view-group] {
+  
+  /* --- Base Container Properties --- */
+  background-color: transparent !important;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0) !important;
+  border-radius: 13px !important;
+  position: relative !important;
+  flex-direction: column;
+  padding: 2px !important;
+  transform: scale(1);
+  transition: background-color 0.3s ease-out, 
+              box-shadow 0.3s ease-out, 
+              transform 0.2s cubic-bezier(0.2, 0.8, 0.4, 1) !important;
+
+  /* --- Vertical Indicator Bar --- */
+  /* This bar appears on the left when the group is inactive. */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: 2px;
+    width: 3px;
+    background-color: var(--tab-selected-bgcolor, #0060df);
+    border-radius: 2px;
+    transition: width 0.2s ease-out, opacity 0.2s ease-out;
+  }
+
+  /* --- Hover State --- */
+  &:hover {
+    background-color: light-dark(rgba(255,255,255,0.45), rgba(0,0,0,0.45)) !important;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.55) !important;
+  }
+  
+  /* --- Selected State --- */
+  /* Applies when a tab inside the group is the active/selected tab. */
+  &:has(.tabbrowser-tab:is([selected="true"], [visuallyselected="true"])) {
+    background-color: light-dark(rgba(255,255,255,0.55), rgba(0,0,0,0.35)) !important;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.55) !important;
+  }
+  
+  /* --- Active (Click/Press) State --- */
+  &:active {
+    transform: scale(0.95) !important;
+    transition-duration: 0.1s !important;
+    transition-timing-function: ease-out !important;
+  }
+
+  /* --- Hide Indicator Bar on Hover/Selection --- */
+  /* The bar disappears when the group is interacted with or contains the active tab. */
+  &:is(:hover, :has(.tabbrowser-tab:is([selected="true"], [visuallyselected="true"], [multiselected="true"])), :has(> tab-group-tab[selected="true"])) {
+    &::after {
+      width: 0;
+      opacity: 0;
+    }
+  }
+
+  /* --- Child Tab Styling --- */
+  & .tabbrowser-tab {
+    .tab-background {
+      border-radius: 12px !important;
+    }
+
+    .tab-close-button {
+      border-radius: 10px !important;
+    }
+
+    /* Remove the default separator line between tabs */
+    &:not(:last-child)::after {
+      width: 0 !important;
+      height: 0 !important;
+    }
+  }
 }

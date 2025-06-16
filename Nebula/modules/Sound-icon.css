@@ -1,7 +1,7 @@
 /* ------------------------- QUIETIFY SOUND ICON ------------------------- */
 
-span[part="button"].button-background {
-  display: none !important; /* removes sound button added in 1.12t */
+.tab-audio-button {
+  display: none !important;
 }
 
 .zen-essentials-container .tab-icon-overlay {

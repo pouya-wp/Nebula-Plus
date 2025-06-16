@@ -1,8 +1,66 @@
+/* ------------------------------ Workspace creation styling --------------------------- */
+
+.zen-workspace-creation-name-wrapper {
+    background-color: var(--nebula-color) !important;
+    border-radius: var(--nebula-border-radius) !important;
+    box-shadow: 0 0px 3px transparent !important;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.zen-workspace-creation-name-wrapper:hover {
+    background-color: var(--nebula-color-hover) !important;
+    border-radius: var(--nebula-border-radius) !important;
+    box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.55)) !important;
+}
+
+.zen-workspace-creation-profile-wrapper {
+    background-color: var(--nebula-color) !important;
+    border-radius: var(--nebula-border-radius) !important;
+    box-shadow: 0 0px 3px transparent !important;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.zen-workspace-creation-profile-wrapper:hover {
+    background-color: var(--nebula-color-hover) !important;
+    border-radius: var(--nebula-border-radius) !important;
+    box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.55)) !important;
+}
+
+button.zen-workspace-creation-profile {
+  border-radius: calc(var(--nebula-border-radius) - 2px) !important;
+}
+
+.zen-workspace-creation-edit-theme-button {
+    background-color: var(--nebula-color) !important;
+    border-radius: var(--nebula-border-radius) !important;
+    box-shadow: 0 0px 3px transparent !important;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.zen-workspace-creation-edit-theme-button:hover {
+    background-color: var(--nebula-color-hover) !important;
+    border-radius: var(--nebula-border-radius) !important;
+    box-shadow: 0 0px 3px light-dark(rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.55)) !important;
+}
+
+.zen-workspace-creation-buttons button {
+  border-radius: var(--nebula-border-radius) !important;
+}
+
+/* make the ... button on workspace indicator to be rounded */
+.zen-current-workspace-indicator toolbarbutton > .toolbarbutton-icon {
+  border-radius: calc(var(--nebula-border-radius) - 4px) !important;
+}
+
 /* ------------------------------ Workspace Button Styles ------------------------------ */
+
+#zen-workspaces-button toolbarbutton[dragged="true"] {
+  outline: none !important;
+}
 
 /* make workspace indicator have nebula theme background on hover */
 .zen-current-workspace-indicator::before {
-  box-shadow: 0 0px 8px transparent !important;
+  box-shadow: 0 0px 3px transparent !important;
   border-radius: var(--nebula-border-radius) !important;
   transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
 }
@@ -99,6 +157,12 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0) !important;
     transition: box-shadow 0.35s ease-out, background-color 0.35s ease-out;
   }
+
+  /* Collapsed toolbar mode only */
+html:not([zen-sidebar-expanded="true"]):not([zen-single-toolbar="true"]) #zen-workspaces-button {
+  height: auto !important;
+  width: 30px !important;
+}
 
   #zen-workspaces-button:hover {
     box-shadow: 0 2px 12px rgba(0,0,0,0) !important;
@@ -214,6 +278,12 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0.1) !important;
     transition: box-shadow 0.35s ease-out, background-color 0.35s ease-out;
   }
+  
+/* Collapsed toolbar mode only */
+html:not([zen-sidebar-expanded="true"]):not([zen-single-toolbar="true"]) #zen-workspaces-button {
+  height: auto !important;
+  width: 30px !important;
+}
 
   #zen-workspaces-button:hover {
     box-shadow: 0 2px 12px rgba(0,0,0,0.5) !important;

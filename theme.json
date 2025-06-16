@@ -4,9 +4,9 @@
   "author": "JustADumbPrsn",
   "name": "Nebula",
   "description": "A minimal theme made for Zen Browser.",
-  "version": "2.9",
+  "version": "3.0",
   "createdAt": "2025-05-31",
-  "updatedAt": "2025-05-31",
+  "updatedAt": "2025-06-16",
   "style": {
     "chrome": "https://raw.githubusercontent.com/JustADumbPrsn/Zen-Nebula/main/userChrome.css",
     "content": "https://raw.githubusercontent.com/JustADumbPrsn/Zen-Nebula/main/userContent.css"
@@ -18,5 +18,6 @@
     "content",
     "chrome",
     "minimal"
-  ]
+  ],
+  "fork": ["zen"]
 }

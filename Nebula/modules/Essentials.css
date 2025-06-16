@@ -1,5 +1,5 @@
 /* -------------------------- ESSENTIALS -------------------------- */
-/* ESSENTIAL COLOR WITH SHADOW, SPACING & ROUNDED EDGES */
+
 .zen-essentials-container .tabbrowser-tab {
   .tab-background {
     background-color: var(--nebula-color) !important;
@@ -145,5 +145,16 @@
         transform: scale(0.95, 0.95) !important;
       }
     }
+  }
+}
+
+@media (-moz-pref("nebula-essentials-gray-icons")) {
+  .zen-essentials-container .tab-icon-image {
+    filter: grayscale(100%) contrast(75%) !important;
+    transition: filter 0.5s ease !important;
+  }
+  .zen-essentials-container .tabbrowser-tab[selected="true"] .tab-icon-stack > .tab-icon-image,
+  .zen-essentials-container .tabbrowser-tab:hover .tab-icon-stack > .tab-icon-image {
+    filter: none !important;
   }
 }

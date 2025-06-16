@@ -21,7 +21,7 @@ browser[transparent='true'] {
 
 /* Required for blur rendering */
 browser {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    will-change: transform !important;
 }
 
 /* --------------------- TABS: NO SHADOW --------------------- */
@@ -36,7 +36,8 @@ hbox.browserSidebarContainer,
 /* ---------------------- NOGAPS MOD ------------------------ */
 
 @media (-moz-pref("nebula-nogaps-mod")) {
-  [zen-single-toolbar="true"] {
+  [zen-single-toolbar="true"]:not(:has(tab-group[split-view-group] .tabbrowser-tab:is([selected="true"], [visuallyselected="true"]))) {
+    
     #zen-appcontent-wrapper {
       position: relative;
     }
@@ -44,7 +45,7 @@ hbox.browserSidebarContainer,
     #zen-appcontent-navbar-wrapper {
       position: absolute;
       width: 100% !important;
-      height: 50px; /* Optional: thicker navbar */
+      height: 50px;
       backdrop-filter: blur(30px) saturate(110%) contrast(110%);
       background: var(--zen-main-browser-background) !important;
       border-bottom: 1.7px solid light-dark(rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0.1));
@@ -55,7 +56,7 @@ hbox.browserSidebarContainer,
     }
 
     .browserSidebarContainer {
-      border-radius: 0px !important;
+      border-radius: 0.1px !important;
       box-shadow: none !important;
     }
   }

@@ -1,7 +1,7 @@
 /* ------------------ URLBAR Styling ------------------ */
-#urlbar {
-  /* your existing styles */
-  margin-bottom: -4px; /* pulls the content below up by 4px */
+
+html[zen-single-toolbar="true"] #urlbar {
+  margin-bottom: -4px !important;
 }
 
 /* URL bar background - default state */
@@ -20,10 +20,9 @@
     position: relative;
 }
 
-:root[zen-single-toolbar="true"] #urlbar:not([open]) {
+html[zen-single-toolbar="true"] #urlbar:not([open]) {
   height: 40px !important;
 }
-
 
 #identity-icon-box {
   background: none !important;
@@ -46,8 +45,8 @@
 /* When URL bar is open - smooth visual effect */
 #urlbar[open] #urlbar-background {
     border-radius: 15px !important;
-    background: light-dark(rgba(255, 255, 255, 0.6), rgba(36, 36, 36, 0.3)) !important;
-    backdrop-filter: blur(32px) brightness(0.4) saturate(3.5) !important;
+    background: light-dark(rgba(255, 255, 255, 0.4), rgba(0, 0, 0, 0.4)) !important;
+    backdrop-filter: blur(32px) saturate(140%) !important;
     opacity: 1 !important;
     outline: none !important;
 }
@@ -57,7 +56,18 @@
     border-radius: 15px !important;
     overflow: hidden !important;
     backdrop-filter: blur(0px) !important;
-    animation: fadeIn 0.15s ease-in !important;
+    animation: fadeIn 0.15s cubic-bezier(0.12, 0, 0.39, 0) !important;
+
+}
+
+/* Unblur URL bar when opening */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 /* Limit to 5 visible results, prevent "dancing" */
@@ -66,30 +76,9 @@
     display: none !important;
 }
 
-/* Unblur URL bar when opening */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        filter: blur(0px);
-    }
-    to {
-        opacity: 1;
-        filter: none;
-    }
-}
+/* ------------------ Base and Default (Style 1) ------------------ */
 
-/* ------------------ URL Bar Open Animation ------------------ */
-#browser:has(#urlbar[open]) .browserStack {
-    filter: blur(1rem) brightness(70%) saturate(180%) !important;
-    opacity: 1 !important;
-    scale: 1.075 !important;
-    transition:
-        filter 0.25s cubic-bezier(0.175, 0.385, 0.12, 1),
-        opacity 0.25s cubic-bezier(0.175, 0.385, 0.12, 1),
-        scale 0.25s cubic-bezier(0.175, 0.385, 0.12, 1) !important;
-}
-
-.browserStack:not(:has(#urlbar[open])) {
+.browserStack {
     filter: none !important;
     opacity: 1 !important;
     scale: 1 !important;
@@ -99,56 +88,57 @@
         scale 0.25s cubic-bezier(0.175, 0.885, 0.32, 1) !important;
 }
 
-/* Style 2 – Heavy scale and Blur (for different preferences) */
+#browser:has(#urlbar[open]) .browserStack {
+    filter: blur(1rem) brightness(70%) saturate(140%) !important;
+    scale: 1.075 !important;
+    transition:
+        filter 0.25s cubic-bezier(0.175, 0.385, 0.12, 1),
+        opacity 0.25s cubic-bezier(0.175, 0.385, 0.12, 1),
+        scale 0.25s cubic-bezier(0.175, 0.385, 0.12, 1) !important;
+}
+
+/* ------------------ Style 2 – Zoom out ------------------ */
+
 @media (-moz-pref("nebula-urlbar-animation", 2)) {
-    #browser:has(#urlbar[open]) .browserStack {
-        filter: blur(1rem) brightness(70%) saturate(180%) !important;
-        opacity: 0.7 !important;
-        scale: 1.05 !important;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
+    .browserStack {
+        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
     }
 
-    .browserStack:not(:has(#urlbar[open])) {
-        filter: none !important;
+    #browser:has(#urlbar[open]) .browserStack {
+        scale: 0.95 !important;
+        filter: brightness(60%) blur(4px) !important;
         opacity: 1 !important;
-        scale: 1 !important;
-        transition:
-            filter 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35),
-            opacity 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35),
-            scale 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.35) !important;
     }
 }
 
-/* Style 3 – Desaturate and Darken */
+/* ------------------ Style 3 – Desaturate and Darken ------------------ */
+
 @media (-moz-pref("nebula-urlbar-animation", 3)) {
+    .browserStack {
+        transition: all 0.3s cubic-bezier(0.175, 0.385, 0.12, 1) !important;
+    }
+
     #browser:has(#urlbar[open]) .browserStack {
         filter: saturate(0%) brightness(20%) !important;
         opacity: 0.85 !important;
         scale: 1.05 !important;
         transition: all 0.25s cubic-bezier(0.175, 0.385, 0.12, 1) !important;
     }
-
-    .browserStack:not(:has(#urlbar[open])) {
-        filter: none !important;
-        opacity: 1 !important;
-        scale: 1 !important;
-        transition:
-            filter 0.3s cubic-bezier(0.175, 0.385, 0.12, 1),
-            opacity 0.3s cubic-bezier(0.175, 0.385, 0.12, 1),
-            scale 0.25s cubic-bezier(0.175, 0.385, 0.12, 1) !important;
-    }
 }
 
-/* Style 0 – No Animation */
+/* ------------------ Style 0 – No Animation ------------------ */
 @media (-moz-pref("nebula-urlbar-animation", 0)) {
-    #browser:has(#urlbar[open]) .browserStack,
-    .browserStack:not(:has(#urlbar[open])) {
-        filter: none !important;
-        opacity: 1 !important;
-        scale: 1 !important;
+    .browserStack {
         transition: none !important;
     }
+    #browser:has(#urlbar[open]) .browserStack {
+        filter: none !important;
+        opacity: 1 !important;
+        scale: 1 !important;
+    }
 }
+
+
 
 /* ------------------ URLbar loading & hover animation ------------------ */
 #urlbar .urlbar-input-container {
@@ -174,7 +164,6 @@
     );
     background-size: 300% 100%;
     background-repeat: repeat-x;
-    clip-path: inset(0 round var(--nebula-border-radius));
     animation: urlbar-gradient 8s linear infinite;
     opacity: 0;
     filter: blur(20px) brightness(1) contrast(120%);
@@ -265,7 +254,6 @@
     );
     background-size: 300% 100%;
     background-repeat: repeat-x;
-    clip-path: inset(0 round 12px);
     animation: urlbar-gradient 8s linear infinite;
     opacity: 0;
     filter: blur(20px) brightness(1) contrast(120%);
