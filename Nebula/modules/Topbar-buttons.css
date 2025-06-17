@@ -21,7 +21,6 @@ toolbarbutton#PanelUI-menu-button {
 
 /* ------------------------- ANIMATIONS ------------------------- */
 
-html[zen-single-toolbar="true"] {
 @keyframes spin-once {
   to { transform: rotate(180deg); }
 }
@@ -67,6 +66,8 @@ html[zen-single-toolbar="true"] {
   100% { transform: scale(1); }
 }
 
+html[zen-single-toolbar="true"] { 
+  
 #preferences-button,
 #downloads-button,
 #back-button,
@@ -157,7 +158,7 @@ html[zen-single-toolbar="true"] {
 
 #zen-sidebar-top-buttons-customization-target .toolbarbutton-1 > :is(.toolbarbutton-icon, .toolbarbutton-text, .toolbarbutton-badge-stack) {
   border-radius: 9.5px !important;
-}
+  }
 }
 
 /* ------------------------- WINDOWS BUTTONS ------------------------ */
