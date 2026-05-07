@@ -3,13 +3,13 @@
 .zen-essentials-container .tabbrowser-tab {
   .tab-background {
     background-color: var(--nebula-color) !important;
-    box-shadow: 0 0px 3px transparent !important;
+    box-shadow: 0 0 3px transparent !important;
     border-radius: calc(var(--nebula-border-radius) + 1px) !important;
   }
 
   &:hover .tab-background {
     background-color: var(--nebula-color-hover) !important;
-    box-shadow: 0 0px 3px var(--nebula-color-shadow) !important;
+    box-shadow: 0 0 3px var(--nebula-color-shadow) !important;
   }
 
   @media (-moz-pref("zen.theme.essentials-favicon-bg")) {
@@ -27,15 +27,18 @@
 }
 
 .zen-essentials-container {
-  grid-template-columns: repeat(auto-fit, minmax(var(--nebula-essentials-width), auto)) !important;
-  
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(var(--nebula-essentials-width), auto)
+  ) !important;
+
   .tabbrowser-tab {
     overflow: visible !important;
 
     &[selected],
     &[visuallyselected] {
       .tab-icon-image {
-        filter: drop-shadow(0px 0px 4px var(--nebula-color-shadow));
+        filter: drop-shadow(0 0 4px var(--nebula-color-shadow));
       }
 
       > .tab-stack > .tab-background {
@@ -60,14 +63,16 @@
       transition: scale 0.2s ease !important;
     }
 
-    .tabbrowser-tab:active:not(:has(
-        .tab-icon-overlay:hover,
-        .tab-icon-overlay:active,
-        .tab-close-button:hover,
-        .tab-close-button:active
-        )) {
-        scale: 0.96 !important;
-      }
+    .tabbrowser-tab:active:not(
+        :has(
+          .tab-icon-overlay:hover,
+          .tab-icon-overlay:active,
+          .tab-close-button:hover,
+          .tab-close-button:active
+        )
+      ) {
+      scale: 0.96 !important;
+    }
 
     .tabbrowser-tab:has(.tab-close-button:hover) {
       scale: 1 !important;
@@ -117,12 +122,18 @@
     }
 
     .tab-background {
-      transition: background 0.3s ease, box-shadow 0.3s ease, border 0.3s ease !important;
+      transition:
+        background 0.3s ease,
+        box-shadow 0.3s ease,
+        border 0.3s ease !important;
       overflow: hidden !important;
       position: relative !important;
 
       &::before {
-        transition: opacity 0.3s ease, width 0.3s ease, background 0.3s ease;
+        transition:
+          opacity 0.3s ease,
+          width 0.3s ease,
+          background 0.3s ease;
         opacity: 0;
       }
 
@@ -147,13 +158,15 @@
     }
 
     &:active {
-      .tab-stack:active:not(:has(
-        .tab-icon-overlay:hover,
-        .tab-icon-overlay:active,
-        .tab-close-button:hover,
-        .tab-close-button:active
-        )) {
-            transform: scale(0.95, 0.95) !important;
+      .tab-stack:active:not(
+          :has(
+            .tab-icon-overlay:hover,
+            .tab-icon-overlay:active,
+            .tab-close-button:hover,
+            .tab-close-button:active
+          )
+        ) {
+        transform: scale(0.95, 0.95) !important;
       }
     }
   }
@@ -164,8 +177,15 @@
     filter: grayscale(100%) contrast(75%) !important;
     transition: filter 0.5s ease !important;
   }
-  .zen-essentials-container .tabbrowser-tab[selected="true"] .tab-icon-stack > .tab-icon-image,
-  .zen-essentials-container .tabbrowser-tab:hover .tab-icon-stack > .tab-icon-image {
+
+  .zen-essentials-container
+    .tabbrowser-tab[selected="true"]
+    .tab-icon-stack
+    > .tab-icon-image,
+  .zen-essentials-container
+    .tabbrowser-tab:hover
+    .tab-icon-stack
+    > .tab-icon-image {
     filter: none !important;
   }
 }

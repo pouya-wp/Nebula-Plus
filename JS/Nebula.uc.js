@@ -7,11 +7,13 @@
 // @grant          none
 // ==/UserScript==
 
-(function() {
-  'use strict';
+(function () {
+  "use strict";
 
   if (window.Nebula) {
-    try { window.Nebula.destroy(); } catch {}
+    try {
+      window.Nebula.destroy();
+    } catch {}
   }
 
   window.Nebula = {
@@ -19,24 +21,33 @@
     _initialized: false,
 
     logger: {
-      _prefix: '[Nebula]',
-      log(msg) { console.log(`${this._prefix} ${msg}`); },
-      warn(msg) { console.warn(`${this._prefix} ${msg}`); },
-      error(msg) { console.error(`${this._prefix} ${msg}`); }
+      _prefix: "[Nebula]",
+      log(msg) {
+        console.log(`${this._prefix} ${msg}`);
+      },
+      warn(msg) {
+        console.warn(`${this._prefix} ${msg}`);
+      },
+      error(msg) {
+        console.error(`${this._prefix} ${msg}`);
+      },
     },
 
     runOnLoad(callback) {
-      if (document.readyState === 'complete') callback();
-      else document.addEventListener('DOMContentLoaded', callback, { once: true });
+      if (document.readyState === "complete") callback();
+      else
+        document.addEventListener("DOMContentLoaded", callback, { once: true });
     },
 
     register(ModuleClass) {
-      const name = ModuleClass?.name || 'UnnamedModule';
+      const name = ModuleClass?.name || "UnnamedModule";
       if (!ModuleClass) {
-        this.logger.warn(`Module "${name}" is not defined, skipping registration.`);
+        this.logger.warn(
+          `Module "${name}" is not defined, skipping registration.`,
+        );
         return;
       }
-      if (this._modules.find(m => m._name === name)) {
+      if (this._modules.find((m) => m._name === name)) {
         this.logger.warn(`Module "${name}" already registered.`);
         return;
       }
@@ -52,7 +63,7 @@
       instance._name = name;
       this._modules.push(instance);
 
-      if (this._initialized && typeof instance.init === 'function') {
+      if (this._initialized && typeof instance.init === "function") {
         try {
           instance.init();
         } catch (err) {
@@ -62,7 +73,7 @@
     },
 
     getModule(name) {
-      return this._modules.find(m => m._name === name);
+      return this._modules.find((m) => m._name === name);
     },
 
     observePresence(selector, attrName) {
@@ -71,16 +82,20 @@
         document.documentElement.toggleAttribute(attrName, found);
       };
       const observer = new MutationObserver(update);
-      observer.observe(document.documentElement, { childList: true, subtree: true, attributes: true });
+      observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+      });
       update();
       return observer;
     },
 
     init() {
-      this.logger.log('⏳ Initializing core...');
+      this.logger.log("⏳ Initializing core...");
       this._initialized = true;
       this.runOnLoad(() => {
-        this._modules.forEach(m => {
+        this._modules.forEach((m) => {
           try {
             m.init?.();
           } catch (err) {
@@ -88,27 +103,27 @@
           }
         });
       });
-      window.addEventListener('unload', () => this.destroy(), { once: true });
+      window.addEventListener("unload", () => this.destroy(), { once: true });
     },
 
     destroy() {
-      this._modules.forEach(m => {
+      this._modules.forEach((m) => {
         try {
           m.destroy?.();
         } catch (err) {
           this.logger.error(`Module "${m._name}" failed to destroy:\n${err}`);
         }
       });
-      this.logger.log('🧹 All modules destroyed.');
+      this.logger.log("🧹 All modules destroyed.");
       delete window.Nebula;
     },
 
     debug: {
       listModules() {
-        return Nebula._modules.map(m => m._name || 'Unnamed');
+        return Nebula._modules.map((m) => m._name || "Unnamed");
       },
       destroyModule(name) {
-        const mod = Nebula._modules.find(m => m._name === name);
+        const mod = Nebula._modules.find((m) => m._name === name);
         try {
           mod?.destroy?.();
         } catch (err) {
@@ -118,8 +133,8 @@
       reload() {
         Nebula.destroy();
         location.reload();
-      }
-    }
+      },
+    },
   };
 
   // ========== NebulaPolyfillModule ==========
@@ -135,7 +150,7 @@
     async init() {
       // Wait until gBrowser is available
       if (!window.gBrowser) {
-        await new Promise(resolve => {
+        await new Promise((resolve) => {
           const check = setInterval(() => {
             if (window.gBrowser?.tabContainer) {
               clearInterval(check);
@@ -148,7 +163,7 @@
       // Compact mode detection
       this.compactObserver = Nebula.observePresence(
         '[zen-compact-mode="true"]',
-        "nebula-compact-mode"
+        "nebula-compact-mode",
       );
 
       // Toolbar mode detection
@@ -157,8 +172,14 @@
       this.updateToolbarModes();
 
       // Favicon color detection
-      gBrowser.tabContainer.addEventListener("TabSelect", this.updateFaviconColor);
-      gBrowser.tabContainer.addEventListener("TabAttrModified", this.updateFaviconColor);
+      gBrowser.tabContainer.addEventListener(
+        "TabSelect",
+        this.updateFaviconColor,
+      );
+      gBrowser.tabContainer.addEventListener(
+        "TabAttrModified",
+        this.updateFaviconColor,
+      );
 
       // Initial run
       this.updateFaviconColor();
@@ -171,12 +192,19 @@
       const isSingle = this.root.hasAttribute("zen-single-toolbar");
 
       this.root.toggleAttribute("nebula-single-toolbar", isSingle);
-      this.root.toggleAttribute("nebula-multi-toolbar", hasSidebar && !isSingle);
-      this.root.toggleAttribute("nebula-collapsed-toolbar", !hasSidebar && !isSingle);
+      this.root.toggleAttribute(
+        "nebula-multi-toolbar",
+        hasSidebar && !isSingle,
+      );
+      this.root.toggleAttribute(
+        "nebula-collapsed-toolbar",
+        !hasSidebar && !isSingle,
+      );
     }
 
     async updateFaviconColor(e) {
-      if (e?.type === "TabAttrModified" && !e.detail.changed.includes("image")) return;
+      if (e?.type === "TabAttrModified" && !e.detail.changed.includes("image"))
+        return;
 
       const tab = gBrowser.selectedTab;
       const iconUrl = tab?.getAttribute("image");
@@ -189,7 +217,10 @@
           const img = new Image();
           img.crossOrigin = "anonymous";
           img.src = iconUrl;
-          await new Promise(resolve => { img.onload = resolve; img.onerror = resolve; });
+          await new Promise((resolve) => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
 
           const size = 16; // smaller canvas
           if (!this._faviconCanvas) {
@@ -207,10 +238,15 @@
           const counts = [];
 
           for (let i = 0; i < data.length; i += 4) {
-            const [r, g, b, a] = [data[i], data[i+1], data[i+2], data[i+3]];
+            const [r, g, b, a] = [
+              data[i],
+              data[i + 1],
+              data[i + 2],
+              data[i + 3],
+            ];
             if (a < 128) continue;
-            const key = `${r & 0xFC},${g & 0xFC},${b & 0xFC}`; // round to multiple of 4
-            const index = counts.findIndex(c => c.key === key);
+            const key = `${r & 0xfc},${g & 0xfc},${b & 0xfc}`; // round to multiple of 4
+            const index = counts.findIndex((c) => c.key === key);
             if (index >= 0) counts[index].freq++;
             else counts.push({ key, r, g, b, freq: 1 });
           }
@@ -221,21 +257,25 @@
           for (let c of counts) {
             const hsl = this.rgbToHsl(c.r, c.g, c.b);
             const vibrancy = hsl.s * (1 - Math.abs(0.5 - hsl.l) * 2);
-            const brightness = (0.299*c.r + 0.587*c.g + 0.114*c.b) / 255;
+            const brightness = (0.299 * c.r + 0.587 * c.g + 0.114 * c.b) / 255;
             const score = c.freq * vibrancy * brightness;
 
-            if (!best || score > best.score) best = { ...c, score, brightness, hsl };
+            if (!best || score > best.score)
+              best = { ...c, score, brightness, hsl };
             if (brightness > 0.5) {
-              if (!brightCandidate || score > brightCandidate.score) brightCandidate = { ...c, score, brightness, hsl };
+              if (!brightCandidate || score > brightCandidate.score)
+                brightCandidate = { ...c, score, brightness, hsl };
             }
           }
 
-          if (best && (best.r + best.g + best.b) < 300 && brightCandidate) best = brightCandidate;
+          if (best && best.r + best.g + best.b < 300 && brightCandidate)
+            best = brightCandidate;
 
           if (best) {
             let { r, g, b, hsl } = best;
             const sum = r + g + b;
-            if (sum < 180) { // very dark
+            if (sum < 180) {
+              // very dark
               let newL = Math.max(hsl.l, 0.4);
               newL = Math.min(newL * 1.6, 0.8);
               let newS = Math.min(hsl.s * 1.2, 1);
@@ -243,10 +283,12 @@
             }
 
             const finalColor = `rgb(${r | 0}, ${g | 0}, ${b | 0})`;
-            this.root.style.setProperty("--nebula-selected-favicon-color", finalColor);
+            this.root.style.setProperty(
+              "--nebula-selected-favicon-color",
+              finalColor,
+            );
           }
-
-        } catch(err) {
+        } catch (err) {
           console.error("[NebulaPolyfill] Favicon color error:", err);
         }
       }, 100); // 10ms delay
@@ -261,25 +303,30 @@
         const hue2rgb = (p, q, t) => {
           if (t < 0) t += 1;
           if (t > 1) t -= 1;
-          if (t < 1/6) return p + (q - p) * 6 * t;
-          if (t < 1/2) return q;
-          if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+          if (t < 1 / 6) return p + (q - p) * 6 * t;
+          if (t < 1 / 2) return q;
+          if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
           return p;
         };
         const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
         const p = 2 * l - q;
-        r = hue2rgb(p, q, h + 1/3);
+        r = hue2rgb(p, q, h + 1 / 3);
         g = hue2rgb(p, q, h);
-        b = hue2rgb(p, q, h - 1/3);
+        b = hue2rgb(p, q, h - 1 / 3);
       }
-      return { r: r*255, g: g*255, b: b*255 };
+      return { r: r * 255, g: g * 255, b: b * 255 };
     }
 
     // helper: convert RGB to HSL
     rgbToHsl(r, g, b) {
-      r /= 255; g /= 255; b /= 255;
-      const max = Math.max(r, g, b), min = Math.min(r, g, b);
-      let h, s, l = (max + min) / 2;
+      r /= 255;
+      g /= 255;
+      b /= 255;
+      const max = Math.max(r, g, b),
+        min = Math.min(r, g, b);
+      let h,
+        s,
+        l = (max + min) / 2;
 
       if (max === min) {
         h = s = 0;
@@ -287,9 +334,15 @@
         const d = max - min;
         s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
         switch (max) {
-          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-          case g: h = (b - r) / d + 2; break;
-          case b: h = (r - g) / d + 4; break;
+          case r:
+            h = (g - b) / d + (g < b ? 6 : 0);
+            break;
+          case g:
+            h = (b - r) / d + 2;
+            break;
+          case b:
+            h = (r - g) / d + 4;
+            break;
         }
         h /= 6;
       }
@@ -301,8 +354,14 @@
       this.modeObserver?.disconnect();
 
       if (window.gBrowser) {
-        gBrowser.tabContainer.removeEventListener("TabSelect", this.updateFaviconColor);
-        gBrowser.tabContainer.removeEventListener("TabAttrModified", this.updateFaviconColor);
+        gBrowser.tabContainer.removeEventListener(
+          "TabSelect",
+          this.updateFaviconColor,
+        );
+        gBrowser.tabContainer.removeEventListener(
+          "TabAttrModified",
+          this.updateFaviconColor,
+        );
       }
 
       this.root.removeAttribute("nebula-single-toolbar");
@@ -326,14 +385,17 @@
     }
 
     init() {
-      this._waitFor(() => document.querySelector("#PanelUI-zen-gradient-generator-opacity"), (slider) => {
-        this.gradientSlider = slider;
-        slider.min = 0.0; // force min opacity
-        slider.addEventListener("input", this._sliderHandler);
+      this._waitFor(
+        () => document.querySelector("#PanelUI-zen-gradient-generator-opacity"),
+        (slider) => {
+          this.gradientSlider = slider;
+          slider.min = 0.0; // force min opacity
+          slider.addEventListener("input", this._sliderHandler);
 
-        this.sync();
-        this._patchThemePicker();
-      });
+          this.sync();
+          this._patchThemePicker();
+        },
+      );
     }
 
     _waitFor(fn, callback, maxRetries = 40) {
@@ -342,7 +404,9 @@
         const el = fn();
         if (el) return callback(el);
         if (retries-- > 0) {
-          Nebula.logger.debug?.(`[GradientSlider] Waiting… retries left: ${retries}`);
+          Nebula.logger.debug?.(
+            `[GradientSlider] Waiting… retries left: ${retries}`,
+          );
           requestAnimationFrame(tryFind);
         } else {
           Nebula.logger.error("❌ [GradientSlider] Target not found.");
@@ -354,7 +418,10 @@
     sync() {
       if (!this.gradientSlider) return;
       const val = +this.gradientSlider.value;
-      this.root.style.setProperty("--nebula-gradient-opacity", val === 0 ? "0" : null);
+      this.root.style.setProperty(
+        "--nebula-gradient-opacity",
+        val === 0 ? "0" : null,
+      );
       Nebula.logger.debug?.(`[GradientSlider] Sync → ${val}`);
     }
 
@@ -362,7 +429,9 @@
       if (this._patched) return;
 
       this._waitFor(
-        () => window.nsZenThemePicker?.prototype || window.browser?.gZenThemePicker?.constructor?.prototype,
+        () =>
+          window.nsZenThemePicker?.prototype ||
+          window.browser?.gZenThemePicker?.constructor?.prototype,
         (proto) => {
           if (!proto?.blendWithWhiteOverlay) return;
 
@@ -371,24 +440,31 @@
 
           const moduleInstance = this;
 
-          proto.blendWithWhiteOverlay = function(baseColor, opacity) {
+          proto.blendWithWhiteOverlay = function (baseColor, opacity) {
             const val = +moduleInstance.gradientSlider?.value ?? opacity;
             if (val === 0) {
               if (Array.isArray(baseColor)) {
                 return `rgba(${baseColor.join(",")},0)`;
               }
-              if (typeof baseColor === "string" && baseColor.startsWith("rgb")) {
+              if (
+                typeof baseColor === "string" &&
+                baseColor.startsWith("rgb")
+              ) {
                 return baseColor.replace(/rgb(a)?\(([^)]+)\)/, "rgba($2, 0)");
               }
               return "rgba(0,0,0,0)";
             }
             // Call the original method with the correct context
-            return moduleInstance._origMethods.get(proto).call(this, baseColor, opacity);
+            return moduleInstance._origMethods
+              .get(proto)
+              .call(this, baseColor, opacity);
           };
 
           this._patched = true;
-          Nebula.logger.log("✅ [GradientSlider] Patched blendWithWhiteOverlay");
-        }
+          Nebula.logger.log(
+            "✅ [GradientSlider] Patched blendWithWhiteOverlay",
+          );
+        },
       );
     }
 
@@ -399,7 +475,9 @@
       }
 
       if (this._patched) {
-        const proto = window.nsZenThemePicker?.prototype || window.browser?.gZenThemePicker?.constructor?.prototype;
+        const proto =
+          window.nsZenThemePicker?.prototype ||
+          window.browser?.gZenThemePicker?.constructor?.prototype;
         if (proto && this._origMethods.has(proto)) {
           proto.blendWithWhiteOverlay = this._origMethods.get(proto);
           this._origMethods.delete(proto);
@@ -431,7 +509,9 @@
 
     init() {
       if (!this.browser || !this.titlebar) {
-        Nebula.logger.warn("⚠️ [TitlebarBackground] Required elements not found.");
+        Nebula.logger.warn(
+          "⚠️ [TitlebarBackground] Required elements not found.",
+        );
         return;
       }
 
@@ -439,7 +519,7 @@
       this.overlay.id = "Nebula-titlebar-background";
       Object.assign(this.overlay.style, {
         position: "absolute",
-        display: "none"
+        display: "none",
       });
       this.browser.appendChild(this.overlay);
 
@@ -494,7 +574,12 @@
         return;
       }
 
-      this.lastRect = { top: rect.top, left: rect.left, width: rect.width, height: rect.height };
+      this.lastRect = {
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+      };
 
       if (isVisible) {
         Object.assign(this.overlay.style, {
@@ -502,7 +587,7 @@
           left: `${rect.left + window.scrollX}px`,
           width: `${rect.width}px`,
           height: `${rect.height}px`,
-          display: "block"
+          display: "block",
         });
 
         if (!this.lastVisible) {
@@ -563,7 +648,9 @@
 
     init() {
       if (!this.browser || !this.navbar) {
-        Nebula.logger.warn("⚠️ [NavbarBackground] Required elements not found.");
+        Nebula.logger.warn(
+          "⚠️ [NavbarBackground] Required elements not found.",
+        );
         return;
       }
 
@@ -571,7 +658,7 @@
       this.overlay.id = "Nebula-navbar-background";
       Object.assign(this.overlay.style, {
         position: "absolute",
-        display: "none"
+        display: "none",
       });
       this.browser.appendChild(this.overlay);
 
@@ -625,7 +712,12 @@
         return;
       }
 
-      this.lastRect = { top: rect.top, left: rect.left, width: rect.width, height: rect.height };
+      this.lastRect = {
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+      };
 
       if (isVisible) {
         Object.assign(this.overlay.style, {
@@ -633,7 +725,7 @@
           left: `${rect.left + window.scrollX}px`,
           width: `${rect.width}px`,
           height: `${rect.height}px`,
-          display: "block"
+          display: "block",
         });
 
         if (!this.lastVisible) {
@@ -694,7 +786,9 @@
 
     init() {
       if (!this.browser || !this.urlbar) {
-        Nebula.logger.warn("⚠️ [URLBarBackground] Required elements not found.");
+        Nebula.logger.warn(
+          "⚠️ [URLBarBackground] Required elements not found.",
+        );
         return;
       }
 
@@ -702,13 +796,16 @@
       this.overlay.id = "Nebula-urlbar-background";
       Object.assign(this.overlay.style, {
         position: "absolute",
-        display: "none"
+        display: "none",
       });
       this.browser.appendChild(this.overlay);
 
       // Start mutation observer for `open` attribute change
       this.mutationObserver = new MutationObserver(() => this.onMutation());
-      this.mutationObserver.observe(this.urlbar, { attributes: true, attributeFilter: ["open"] });
+      this.mutationObserver.observe(this.urlbar, {
+        attributes: true,
+        attributeFilter: ["open"],
+      });
 
       if (this.urlbar.hasAttribute("open")) {
         this.startLiveTracking();
@@ -758,7 +855,12 @@
         return;
       }
 
-      this.lastRect = { top: rect.top, left: rect.left, width: rect.width, height: rect.height };
+      this.lastRect = {
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+      };
 
       if (isVisible) {
         Object.assign(this.overlay.style, {
@@ -766,7 +868,7 @@
           left: `${rect.left + window.scrollX}px`,
           width: `${rect.width}px`,
           height: `${rect.height}px`,
-          display: "block"
+          display: "block",
         });
 
         if (!this.lastVisible) {
@@ -813,8 +915,8 @@
   // ========== NebulaMediaCoverArtModule ==========
   class NebulaMediaCoverArtModule {
     constructor() {
-      this.OVERLAY_ID = 'Nebula-media-cover-art';
-      this.TOOLBAR_ITEM_SELECTOR = '#zen-media-controls-toolbar > toolbaritem';
+      this.OVERLAY_ID = "Nebula-media-cover-art";
+      this.TOOLBAR_ITEM_SELECTOR = "#zen-media-controls-toolbar > toolbaritem";
 
       this.lastArtworkUrl = null;
       this.originalSetupMediaController = null;
@@ -827,18 +929,24 @@
     }
 
     _waitForController() {
-      if (typeof window.gZenMediaController?.setupMediaController === 'function') {
+      if (
+        typeof window.gZenMediaController?.setupMediaController === "function"
+      ) {
         this._onControllerReady();
       } else {
-        requestIdleCallback(() => setTimeout(() => this._waitForController(), 200)); // gentle polling
+        requestIdleCallback(() =>
+          setTimeout(() => this._waitForController(), 200),
+        ); // gentle polling
       }
     }
 
     _onControllerReady() {
       if (this.originalSetupMediaController) return;
 
-      this.originalSetupMediaController = gZenMediaController.setupMediaController.bind(gZenMediaController);
-      gZenMediaController.setupMediaController = this._setupMediaControllerPatcher.bind(this);
+      this.originalSetupMediaController =
+        gZenMediaController.setupMediaController.bind(gZenMediaController);
+      gZenMediaController.setupMediaController =
+        this._setupMediaControllerPatcher.bind(this);
 
       const initialController = gZenMediaController._currentMediaController;
       if (initialController) {
@@ -860,13 +968,19 @@
     }
 
     _attachMetadataHandler(controller) {
-      controller.removeEventListener("metadatachange", this._metadataChangeHandler);
-      controller.addEventListener("metadatachange", this._metadataChangeHandler);
+      controller.removeEventListener(
+        "metadatachange",
+        this._metadataChangeHandler,
+      );
+      controller.addEventListener(
+        "metadatachange",
+        this._metadataChangeHandler,
+      );
     }
 
     _metadataChangeHandler(event) {
       const controller = event.target;
-      if (controller && typeof controller.getMetadata === 'function') {
+      if (controller && typeof controller.getMetadata === "function") {
         this._setBackgroundFromMetadata(controller);
       } else {
         this._cleanupToDefaultState();
@@ -884,7 +998,7 @@
       const sorted = [...artwork].sort((a, b) => {
         const [aw, ah] = a.sizes?.split("x").map(Number) || [0, 0];
         const [bw, bh] = b.sizes?.split("x").map(Number) || [0, 0];
-        return (bw * bh) - (aw * ah);
+        return bw * bh - aw * ah;
       });
 
       const coverUrl = sorted[0]?.src || null;
@@ -901,7 +1015,7 @@
       const toolbarItem = document.querySelector(this.TOOLBAR_ITEM_SELECTOR);
       if (!toolbarItem) return;
 
-      this.overlay = document.createElement('div');
+      this.overlay = document.createElement("div");
       this.overlay.id = this.OVERLAY_ID;
       toolbarItem.prepend(this.overlay);
     }
@@ -913,7 +1027,7 @@
         if (this.overlay.style.backgroundImage !== `url("${coverUrl}")`) {
           this.overlay.style.backgroundImage = `url("${coverUrl}")`;
         }
-        this.overlay.classList.add('visible');
+        this.overlay.classList.add("visible");
       } else {
         this._cleanupToDefaultState();
       }
@@ -923,10 +1037,10 @@
       if (!this.overlay) return;
 
       if (show) {
-        this.overlay.classList.add('visible');
+        this.overlay.classList.add("visible");
       } else {
-        this.overlay.classList.remove('visible');
-        this.overlay.style.backgroundImage = 'none';
+        this.overlay.classList.remove("visible");
+        this.overlay.style.backgroundImage = "none";
       }
     }
 
@@ -939,13 +1053,17 @@
 
     destroy() {
       if (this.originalSetupMediaController) {
-        gZenMediaController.setupMediaController = this.originalSetupMediaController;
+        gZenMediaController.setupMediaController =
+          this.originalSetupMediaController;
         this.originalSetupMediaController = null;
       }
 
       const current = gZenMediaController?._currentMediaController;
       if (current) {
-        current.removeEventListener("metadatachange", this._metadataChangeHandler);
+        current.removeEventListener(
+          "metadatachange",
+          this._metadataChangeHandler,
+        );
       }
 
       this._cleanupToDefaultState();
@@ -961,19 +1079,19 @@
       this.STAGGER_DELAY = 15;
       this.MAX_DELAY = 200;
       this.MENU_ITEM_SELECTORS = [
-        'menuitem',
-        'menuseparator',
-        '.subviewbutton',
-        '.panel-menuitem',
-        '.panel-list-item',
-        '.PanelUI-subView .subviewbutton',
-        '.panel-subview-body > *',
-        '.panel-subview .subviewbutton',
+        "menuitem",
+        "menuseparator",
+        ".subviewbutton",
+        ".panel-menuitem",
+        ".panel-list-item",
+        ".PanelUI-subView .subviewbutton",
+        ".panel-subview-body > *",
+        ".panel-subview .subviewbutton",
         'toolbarbutton[class*="subviewbutton"]',
-        '.cui-widget-panel .subviewbutton',
-        'vbox.panel-subview-body > *',
-        '.panel-subview-body > toolbarbutton',
-        '.panel-subview-body > .subviewbutton'
+        ".cui-widget-panel .subviewbutton",
+        "vbox.panel-subview-body > *",
+        ".panel-subview-body > toolbarbutton",
+        ".panel-subview-body > .subviewbutton",
       ];
 
       this.observers = new Map();
@@ -984,10 +1102,10 @@
     }
 
     init() {
-      document.addEventListener('popupshowing', this.handlePopupShowing, true);
-      document.addEventListener('popuphidden', this.handlePopupHidden, true);
-      document.addEventListener('ViewShowing', this.handlePopupShowing, true);
-      document.addEventListener('ViewHiding', this.handlePopupHidden, true);
+      document.addEventListener("popupshowing", this.handlePopupShowing, true);
+      document.addEventListener("popuphidden", this.handlePopupHidden, true);
+      document.addEventListener("ViewShowing", this.handlePopupShowing, true);
+      document.addEventListener("ViewHiding", this.handlePopupHidden, true);
 
       Nebula.logger.log("✅ [MenuModule] Animations initialized.");
     }
@@ -996,21 +1114,32 @@
       if (!popup) return [];
       let items = [];
       // Cache selector string
-      const selectorString = this._cachedSelectorString || (this._cachedSelectorString = this.MENU_ITEM_SELECTORS.join(','));
+      const selectorString =
+        this._cachedSelectorString ||
+        (this._cachedSelectorString = this.MENU_ITEM_SELECTORS.join(","));
 
-      if (popup.localName === 'menupopup') {
+      if (popup.localName === "menupopup") {
         items = Array.from(popup.children);
       } else {
-        const subviewBody = popup.querySelector('.panel-subview-body');
-        items = Array.from((subviewBody || popup).querySelectorAll(selectorString));
+        const subviewBody = popup.querySelector(".panel-subview-body");
+        items = Array.from(
+          (subviewBody || popup).querySelectorAll(selectorString),
+        );
       }
 
       // Flatten children only if needed
       const flattenedItems = [];
       for (const item of items) {
-        if (item.matches && item.matches('.panel-subview-body, .panel-subview')) {
+        if (
+          item.matches &&
+          item.matches(".panel-subview-body, .panel-subview")
+        ) {
           for (const child of item.children) {
-            if (this.MENU_ITEM_SELECTORS.some(selector => child.matches(selector))) {
+            if (
+              this.MENU_ITEM_SELECTORS.some((selector) =>
+                child.matches(selector),
+              )
+            ) {
               flattenedItems.push(child);
             }
           }
@@ -1020,10 +1149,14 @@
       }
 
       // Filter visible elements efficiently
-      return flattenedItems.filter(item => {
+      return flattenedItems.filter((item) => {
         if (!item || item.nodeType !== 1) return false;
         const rect = item.getBoundingClientRect();
-        return rect.width > 0 && rect.height > 0 && getComputedStyle(item).display !== 'none';
+        return (
+          rect.width > 0 &&
+          rect.height > 0 &&
+          getComputedStyle(item).display !== "none"
+        );
       });
     }
 
@@ -1037,27 +1170,28 @@
     }
 
     animateItem(item, index) {
-      const shouldAnimate = getComputedStyle(this.root)
-        .getPropertyValue('--nebula-menu-animation')
-        .trim() === 'true';
+      const shouldAnimate =
+        getComputedStyle(this.root)
+          .getPropertyValue("--nebula-menu-animation")
+          .trim() === "true";
 
-      item.classList.remove('nebula-menu-anim');
-      item.style.animationDelay = '';
+      item.classList.remove("nebula-menu-anim");
+      item.style.animationDelay = "";
 
       if (!shouldAnimate) return;
 
       const delay = Math.min(index * this.STAGGER_DELAY, this.MAX_DELAY);
       item.style.animationDelay = `${delay}ms`;
-      item.classList.add('nebula-menu-anim');
+      item.classList.add("nebula-menu-anim");
     }
 
     cleanupMenuItems(popup) {
       if (!popup) return;
       // Batch DOM updates for cleanup
       window.requestAnimationFrame(() => {
-        popup.querySelectorAll('.nebula-menu-anim').forEach(item => {
-          item.classList.remove('nebula-menu-anim');
-          item.style.animationDelay = '';
+        popup.querySelectorAll(".nebula-menu-anim").forEach((item) => {
+          item.classList.remove("nebula-menu-anim");
+          item.style.animationDelay = "";
         });
       });
     }
@@ -1065,30 +1199,39 @@
     isTargetMenu(popup) {
       if (!popup || !popup.localName) return false;
       const menuTypes = [
-        'menupopup',
-        '#appMenu-popup',
-        '#PanelUI-popup',
-        '.panel-popup',
-        '.panel-subview',
-        '#PanelUI-history',
-        '#PanelUI-bookmarks',
-        '#PanelUI-downloads'
+        "menupopup",
+        "#appMenu-popup",
+        "#PanelUI-popup",
+        ".panel-popup",
+        ".panel-subview",
+        "#PanelUI-history",
+        "#PanelUI-bookmarks",
+        "#PanelUI-downloads",
       ];
-      return menuTypes.some(selector =>
-        selector.startsWith('#') || selector.startsWith('.') ?
-          (popup.matches && popup.matches(selector)) :
-          popup.localName === selector
-      ) || popup.classList.contains('panel-subview') ||
-        popup.classList.contains('PanelUI-subView') ||
-        popup.querySelector('.panel-subview-body');
+      return (
+        menuTypes.some((selector) =>
+          selector.startsWith("#") || selector.startsWith(".")
+            ? popup.matches && popup.matches(selector)
+            : popup.localName === selector,
+        ) ||
+        popup.classList.contains("panel-subview") ||
+        popup.classList.contains("PanelUI-subView") ||
+        popup.querySelector(".panel-subview-body")
+      );
     }
 
     setupMutationObserver(popup) {
       if (this.observers.has(popup)) return;
 
-      const observer = new MutationObserver(mutations => {
-        if (mutations.some(m => m.type === 'childList' && m.addedNodes.length > 0 ||
-                              m.type === 'attributes' && ['hidden', 'collapsed'].includes(m.attributeName))) {
+      const observer = new MutationObserver((mutations) => {
+        if (
+          mutations.some(
+            (m) =>
+              (m.type === "childList" && m.addedNodes.length > 0) ||
+              (m.type === "attributes" &&
+                ["hidden", "collapsed"].includes(m.attributeName)),
+          )
+        ) {
           setTimeout(() => this.animateMenuItems(popup), 5);
         }
       });
@@ -1097,7 +1240,7 @@
         childList: true,
         subtree: true,
         attributes: true,
-        attributeFilter: ['hidden', 'collapsed', 'disabled']
+        attributeFilter: ["hidden", "collapsed", "disabled"],
       });
 
       this.observers.set(popup, observer);
@@ -1122,17 +1265,25 @@
     }
 
     stop() {
-      document.removeEventListener('popupshowing', this.handlePopupShowing, true);
-      document.removeEventListener('popuphidden', this.handlePopupHidden, true);
-      document.removeEventListener('ViewShowing', this.handlePopupShowing, true);
-      document.removeEventListener('ViewHiding', this.handlePopupHidden, true);
+      document.removeEventListener(
+        "popupshowing",
+        this.handlePopupShowing,
+        true,
+      );
+      document.removeEventListener("popuphidden", this.handlePopupHidden, true);
+      document.removeEventListener(
+        "ViewShowing",
+        this.handlePopupShowing,
+        true,
+      );
+      document.removeEventListener("ViewHiding", this.handlePopupHidden, true);
 
-      this.observers.forEach(observer => observer.disconnect());
+      this.observers.forEach((observer) => observer.disconnect());
       this.observers.clear();
 
-      document.querySelectorAll('.nebula-menu-anim').forEach(item => {
-        item.classList.remove('nebula-menu-anim');
-        item.style.animationDelay = '';
+      document.querySelectorAll(".nebula-menu-anim").forEach((item) => {
+        item.classList.remove("nebula-menu-anim");
+        item.style.animationDelay = "";
       });
 
       Nebula.logger.log("🛑 [MenuModule] Animations disabled.");
@@ -1162,13 +1313,23 @@
 
     init() {
       if (!this.browser || !this.panel) {
-        return Nebula.logger.warn("⚠️ [CtrlTabDualBackground] Required elements not found.");
+        return Nebula.logger.warn(
+          "⚠️ [CtrlTabDualBackground] Required elements not found.",
+        );
       }
 
       if (this.trackingMode !== "below")
-        this.overlays.above = this.createOverlay("nebula-ctrltab-background-above", 2147483646, true);
+        this.overlays.above = this.createOverlay(
+          "nebula-ctrltab-background-above",
+          2147483646,
+          true,
+        );
       if (this.trackingMode !== "above")
-        this.overlays.below = this.createOverlay("nebula-ctrltab-background-below", 0, false);
+        this.overlays.below = this.createOverlay(
+          "nebula-ctrltab-background-below",
+          0,
+          false,
+        );
 
       this.panel.addEventListener("popupshown", this.onPopupShown);
       this.panel.addEventListener("popuphidden", this.onPopupHidden);
@@ -1183,7 +1344,7 @@
         position: "absolute",
         display: "none",
         zIndex: interactive ? zIndex : "",
-        pointerEvents: interactive ? "auto" : "none"
+        pointerEvents: interactive ? "auto" : "none",
       });
       this.browser.appendChild(o);
       return o;
@@ -1226,23 +1387,32 @@
         return;
       }
 
-      this.lastRect = { top: r.top, left: r.left, width: r.width, height: r.height };
+      this.lastRect = {
+        top: r.top,
+        left: r.left,
+        width: r.width,
+        height: r.height,
+      };
       const style = {
         top: `${r.top + window.scrollY}px`,
         left: `${r.left + window.scrollX}px`,
         width: `${r.width}px`,
         height: `${r.height}px`,
-        display: "block"
+        display: "block",
       };
 
-      Object.values(this.overlays).forEach(o => o && Object.assign(o.style, style));
+      Object.values(this.overlays).forEach(
+        (o) => o && Object.assign(o.style, style),
+      );
 
       this.lastVisible = true;
       this.rafId = requestAnimationFrame(this.update);
     }
 
     hideOverlays() {
-      Object.values(this.overlays).forEach(o => o && (o.style.display = "none"));
+      Object.values(this.overlays).forEach(
+        (o) => o && (o.style.display = "none"),
+      );
       this.lastVisible = false;
     }
 
@@ -1250,7 +1420,7 @@
       this.panel?.removeEventListener("popupshown", this.onPopupShown);
       this.panel?.removeEventListener("popuphidden", this.onPopupHidden);
       this.stopTracking();
-      Object.values(this.overlays).forEach(o => o?.remove());
+      Object.values(this.overlays).forEach((o) => o?.remove());
       this.overlays = {};
       Nebula.logger.log("🧹 [CtrlTabDualBackground] Destroyed.");
     }
