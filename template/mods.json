@@ -9,7 +9,7 @@
     "version": "1.0.0",
     "style": { "chrome": "userChrome.css", "content": "userContent.css" },
     "scripts": {
-      "JS/Nebula.uc.js": {
+      "js/nebula.uc.js": {
         "include": ["chrome://browser/content/browser.xhtml"]
       }
     },
