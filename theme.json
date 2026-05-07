@@ -17,15 +17,9 @@
     "JS/Nebula.uc.js": {
       "name": "Core script",
       "description": "Central script for Nebula.",
-      "include": [
-        "chrome://browser/content/browser.xhtml"
-      ]
+      "include": ["chrome://browser/content/browser.xhtml"]
     }
   },
-  "tags": [
-    "content",
-    "chrome",
-    "minimal"
-  ],
+  "tags": ["content", "chrome", "minimal"],
   "fork": ["zen"]
 }

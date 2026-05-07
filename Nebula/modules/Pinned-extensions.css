@@ -1,7 +1,6 @@
 /* ------------------------- PINNED EXTENSIONS ------------------------- */
 
 @media (-moz-pref("nebula-pinned-extensions-mod")) {
-  
   :root[customizing] #TabsToolbar-customization-target {
     visibility: visible !important;
   }
@@ -30,8 +29,7 @@
 
   #TabsToolbar-customization-target {
     display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
+    flex-flow: row wrap !important;
     gap: calc(var(--zen-toolbox-padding) - 3px) !important;
   }
 
@@ -53,7 +51,9 @@
     background-color: var(--nebula-color) !important;
     box-shadow: 0 0 3px transparent !important;
     border-radius: calc(var(--nebula-border-radius) - 0.5px) !important;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.3s ease !important;
   }
 
   #TabsToolbar-customization-target .unified-extensions-item:hover {
@@ -61,29 +61,35 @@
     box-shadow: 0 0 3px var(--nebula-color-shadow) !important;
   }
 
-  #TabsToolbar-customization-target > toolbarbutton:not([id="tabs-newtab-button"]):not(#sort-button):not(#clear-button),
-  #TabsToolbar-customization-target > toolbaritem:not(#sort-button):not(#clear-button) {
+  #TabsToolbar-customization-target
+    > toolbarbutton:not([id="tabs-newtab-button"], #sort-button, #clear-button),
+  #TabsToolbar-customization-target
+    > toolbaritem:not(#sort-button, #clear-button) {
     height: 32px !important;
     width: 32px !important;
     flex-grow: 1 !important;
     padding: 0 !important;
   }
 
-  #TabsToolbar-customization-target > toolbarbutton:not([id="tabs-newtab-button"]),
+  #TabsToolbar-customization-target
+    > toolbarbutton:not([id="tabs-newtab-button"]),
   #TabsToolbar-customization-target > toolbaritem {
     background-color: var(--nebula-color) !important;
-    box-shadow: 0 0 3px light-dark(rgba(255,255,255,0.12), rgba(0,0,0,0.12)) !important;
+    box-shadow: 0 0 3px light-dark(rgb(255 255 255 / 12%), rgb(0 0 0 / 12%)) !important;
     border-radius: calc(var(--nebula-border-radius) + 1px) !important;
     margin: 0 !important;
     order: -1 !important;
     flex-grow: 1 !important;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease !important;
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.3s ease !important;
   }
 
-  #TabsToolbar-customization-target > toolbarbutton:not([id="tabs-newtab-button"]):hover,
+  #TabsToolbar-customization-target
+    > toolbarbutton:not([id="tabs-newtab-button"]):hover,
   #TabsToolbar-customization-target > toolbaritem:hover {
     background-color: var(--nebula-color-hover) !important;
-    box-shadow: 0 0 3px light-dark(rgba(255,255,255,0.95), rgba(0,0,0,0.95)) !important;
+    box-shadow: 0 0 3px light-dark(rgb(255 255 255 / 95%), rgb(0 0 0 / 95%)) !important;
   }
 
   #TabsToolbar-customization-target toolbarbutton,
@@ -96,8 +102,9 @@
     display: none !important;
   }
 
-  html:not([zen-sidebar-expanded="true"]):not([zen-single-toolbar="true"]) 
-  #TabsToolbar-customization-target .unified-extensions-item {
+  html:not([zen-sidebar-expanded="true"], [zen-single-toolbar="true"])
+    #TabsToolbar-customization-target
+    .unified-extensions-item {
     width: 24px !important;
     height: 32px !important;
     margin-inline: 6px !important;
@@ -105,7 +112,7 @@
   }
 
   /* -------- Hover Gradient -------- */
-  
+
   .unified-extensions-item {
     position: relative !important;
     border-radius: calc(var(--nebula-border-radius) - 2px) !important;
@@ -141,7 +148,10 @@
     opacity: 0.5;
   }
 
-  .unified-extensions-item:has(.close-button:hover, .reset-button:hover)::before {
+  .unified-extensions-item:has(
+      .close-button:hover,
+      .reset-button:hover
+    )::before {
     opacity: 0;
   }
 
@@ -155,12 +165,12 @@
     .unified-extensions-item::before {
       background: linear-gradient(
         45deg,
-        light-dark(#dddddd, #ffffff),
-        light-dark(#eeeeee, #dddddd),
-        light-dark(#dddddd, #bbbbbb),
-        light-dark(#ffffff, #000000),
-        light-dark(#eeeeee, #dddddd),
-        light-dark(#dddddd, #ffffff)
+        light-dark(#ddd, #fff),
+        light-dark(#eee, #ddd),
+        light-dark(#ddd, #bbb),
+        light-dark(#fff, #000),
+        light-dark(#eee, #ddd),
+        light-dark(#ddd, #fff)
       );
       background-size: 200% 200%;
       animation: tab-hover-gradient 3.5s linear infinite;
@@ -172,7 +182,11 @@
     .unified-extensions-item::before {
       background: linear-gradient(
         45deg,
-        #ff8a00, #e52e71, #7f00ff, #00c9ff, #ff8a00
+        #ff8a00,
+        #e52e71,
+        #7f00ff,
+        #00c9ff,
+        #ff8a00
       );
       background-size: 200% 200%;
       animation: tab-hover-gradient 3.5s linear infinite;
@@ -181,8 +195,12 @@
   }
 
   @keyframes tab-hover-gradient {
-    from { background-position: 0% 50%; }
-    to { background-position: 200% 50%; }
-  }
+    from {
+      background-position: 0% 50%;
+    }
 
+    to {
+      background-position: 200% 50%;
+    }
+  }
 }

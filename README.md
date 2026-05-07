@@ -41,8 +41,6 @@
   </a>
 </p>
 
-
-
 <p align="center">It is so crazy to me that Nebula has become one of the biggest mods for Zen Browser in such a short period of time! really appreciate it</p>
 
 ###
@@ -55,11 +53,10 @@ Follow these steps to install and apply the **Nebula** theme to Zen Browser:
    - Go to [Sine's Github](https://github.com/CosmoCreeper/Sine/tree/main) and follow its installation process.
    - This includes downloading and setting up FX-Autoconfig using the auto installer or manual installation.
    - Then setting up Sine.
-   
 2. 💎 **Installing Nebula through Sine's Marketplace**
    - Go to settings and click **Sine**, from there a Marketplace will load where Nebula will be shown as a mod to install.
    - Click the install button and Nebula should be installed as a mod.
-   
+
    ![image](https://github.com/user-attachments/assets/a6a88c52-011f-46aa-b4be-1f8fd147ac8c)
 
 3. ⚙️ **Enable Transparent Tabs**
@@ -72,19 +69,17 @@ Follow these steps to install and apply the **Nebula** theme to Zen Browser:
 
    - Extract and use them as desired.
 
-
 ###
 
 <h3 align="left">2. Customize Nebula through configs</h3>
 
 ###
 
-- Nebula features a `Nebula-config.css` file inside the Nebula folder — it allows users to customize Nebula to their own liking!  
-- Want to change/disable certain animations? You can do that as well by reading the clear instructions in the `Nebula-config.css` file.  
-- There are lots of inbuilt mods which Nebula has baked in — for example, the `nogaps` mod removes the gap/border from the website window.  
+- Nebula features a `Nebula-config.css` file inside the Nebula folder — it allows users to customize Nebula to their own liking!
+- Want to change/disable certain animations? You can do that as well by reading the clear instructions in the `Nebula-config.css` file.
+- There are lots of inbuilt mods which Nebula has baked in — for example, the `nogaps` mod removes the gap/border from the website window.
 - Here is a list of configs which you can change through `about:config`
 - **Note:** If you are on Sine version of Nebula, you can click this settings icon on Nebula mod to change its preferences ![image](https://github.com/user-attachments/assets/bad610a8-fc19-454d-acd3-6eb325e11959)
-
 
 <div align="center">
     <img width="800" src="https://github.com/user-attachments/assets/19fa0fad-5d05-46d0-a517-e7f0ee3b8549" />
@@ -119,9 +114,11 @@ Follow these steps to install and apply the **Nebula** theme to Zen Browser:
 <p align="left">• Change the Backdrop type to Acrylic and enable blur behind in advanced options.<br><br>• Restart Zen and see how it looks.</p>
 
 ###
+
 <h3 align="left">3. Install kwin-effects-better-blur-dx (ONLY FOR KDE LINUX)</h3>
 
 ###
+
 <p align="left">• To get real backdrop filter transparency, go to "https://github.com/xarblu/kwin-effects-better-blur-dx" and install the app through the method specified for your distribution.<br><br>• Once you install 'kwin-effects-better-blur-dx' using your package manager, go to System Settings -> Windows -> Desktop Effecs, disable Blur and enable Better Blur DX. Then in Better Blur DX, settings go to 'Force blur' tab and add 'zen' to list of classes of windows.<br><br>• NOTE: If Zen was installed from AUR as "zen-browser-bin", then in Better Blur DX put the name "zen-browser" for blur Here is the blur configuration: </p>
 
 ###
@@ -151,65 +148,99 @@ Follow these steps to install and apply the **Nebula** theme to Zen Browser:
 <p align="left">• Go to "https://addons.mozilla.org/en-US/firefox/addon/bonjourr-startpage/" and install this extension.<br><br>• The new tab must be replaced by this now. On the bottom right, you will see a settings button for new tab. Change the settings to these:</p>
 
 | ![image](https://github.com/user-attachments/assets/e7e27035-6e2b-4006-abf7-091a103536f9) | ![image](https://github.com/user-attachments/assets/d8fb107f-1247-4a3e-8026-619311e2dee5) | ![image](https://github.com/user-attachments/assets/724abcd8-a9f0-4d76-a054-3d76e3c7db60) |
-|-|-|-|
+| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 
 ###
 
 <p align="left">• In the section where it says "Add custom CSS", add this code to change font of newtab and make it transparent:</p>
 
 ```css
-@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&display=swap");
 
-body, h1, h2, h3, h4, h5, h6, p, span, div {
-    font-family: 'Comfortaa', sans-serif !important;
-    font-weight: 300 !important;
-    letter-spacing: 0.015em;
-    font-smooth: always;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    transition: color 0.3s ease, text-shadow 0.3s ease;
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+div {
+  font-family: "Comfortaa", sans-serif !important;
+  font-weight: 300 !important;
+  letter-spacing: 0.015em;
+  font-smooth: always;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition:
+    color 0.3s ease,
+    text-shadow 0.3s ease;
 }
 
 /* Light mode */
 @media (prefers-color-scheme: light) {
-    body, h1, h2, h3, h4, h5, h6, p, span, div {
-        color: #222222;
-        text-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
-    }
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  div {
+    color: #222222;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
+  }
 }
 
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
-    body, h1, h2, h3, h4, h5, h6, p, span, div {
-        color: #e0e0e0;
-        text-shadow: 0 0 1px rgba(255, 255, 255, 0.2);
-    }
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  div {
+    color: #e0e0e0;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.2);
+  }
 }
 
 h1 {
-    font-weight: 400 !important;
-    letter-spacing: 0.025em;
+  font-weight: 400 !important;
+  letter-spacing: 0.025em;
 }
 
 p {
-    font-weight: 300 !important;
-    line-height: 1.6;
-    letter-spacing: 0.015em;
+  font-weight: 300 !important;
+  line-height: 1.6;
+  letter-spacing: 0.015em;
 }
 #background {
-    background-color: transparent !important;
+  background-color: transparent !important;
 }
-#background {background-image: none !important; background-color: transparent !important;}
-   .tabbing {background-color: transparent !important;} 
-    body {background-color: transparent !important;}
+#background {
+  background-image: none !important;
+  background-color: transparent !important;
+}
+.tabbing {
+  background-color: transparent !important;
+}
+body {
+  background-color: transparent !important;
+}
 #background-wrapper {
-    opacity: 0 !important;
+  opacity: 0 !important;
 }
 ```
+
 ###
-
-
-
 
 <h3 align="left">5.  Using pinned extensions</h3>
 
@@ -219,12 +250,9 @@ p {
 
 <div align="center">
 
-
 <img height="400" src="https://github.com/user-attachments/assets/8121a9a4-e8ed-4c4e-8ed0-92bd775438bb" />
 
-
 </div>
-
 
 ### 6. Add the extension [Zen Internet by Sameerasw](https://addons.mozilla.org/en-US/firefox/addon/zen-internet/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search) (Optional)
 
@@ -235,7 +263,6 @@ p {
 <h2 align="left">Re-distribution info:</h2>
 
 <p align="left">You are totally free to make forks of this or put this in your chrome file and create or modify it according to yourself. It is suggested to credit me if you use my theme. Thanks for using Nebula 🫶🏻</p>
-
 
 ## 🙌 Credits
 
@@ -249,6 +276,7 @@ Here are some awesome projects that inspired or contributed to this project:
 - 💻 [NoGaps by Comp-Tech-Guy](https://github.com/Comp-Tech-Guy/No-Gaps)
 
 ---
+
 If I missed anyone, kindly let me know! 😊
 
 ###
