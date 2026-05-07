@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name           nebula-core.uc.js
+// @name           nebula.uc.js
 // @description    Central engine for Nebula with all modules
 // @author         JustAdumbPrsn
 // @version        v3.4
