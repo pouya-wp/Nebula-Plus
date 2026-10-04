@@ -14,7 +14,7 @@
   NP.DEFAULTS["nplus-ai-key"] = "";
   NP.DEFAULTS["nplus-ai-provider"] = 1;
   NP.DEFAULTS["nplus-openai-key"] = "";
-  NP.DEFAULTS["nplus-openai-models"] = "gpt-5-nano, gpt-4.1-nano, gpt-4o-mini";
+  NP.DEFAULTS["nplus-openai-models"] = "gpt-5-mini, gpt-4.1-mini, gpt-5-nano";
   NP.DEFAULTS["nplus-late-night"] = true;
   NP.DEFAULTS["nplus-name"] = "";
   NP.DEFAULTS["nplus-ui-sounds"] = true;
@@ -54,7 +54,7 @@
         const body = { model: p.model, messages };
         if (p.openai && /^(gpt-5|o\d)/.test(p.model)) {
           // reasoning models: keep it fast and cheap; they reject temperature
-          body.reasoning_effort = "minimal";
+          body.reasoning_effort = "low";
           body.response_format = { type: "json_object" };
         } else {
           body.temperature = 0.2;
@@ -104,9 +104,12 @@
     },
 
     tabs() {
-      return gBrowser.visibleTabs.filter(
-        (t) => !t.pinned && !t.hasAttribute("zen-essential") && !t.hasAttribute("zen-empty-tab") && !t.closing && !t.group,
-      );
+      return gBrowser.visibleTabs.filter((t) => {
+        if (t.pinned || t.hasAttribute("zen-essential") || t.hasAttribute("zen-empty-tab") || t.closing || t.group) return false;
+        // settings, new tab and other internal pages aren't part of any task
+        const scheme = t.linkedBrowser?.currentURI?.scheme;
+        return scheme === "http" || scheme === "https";
+      });
     },
 
     async run({ dryRun = false } = {}) {
@@ -124,23 +127,33 @@
       const persian = NP.prefs.get("nplus-ai-group-lang") === 1;
       const list = tabs
         .map((t, i) => {
-          let host = "";
+          let where = "";
           try {
-            host = t.linkedBrowser.currentURI.host;
+            const u = t.linkedBrowser.currentURI;
+            where = (u.host.replace(/^www\./, "") + u.filePath).slice(0, 70);
           } catch {}
-          return `${i}: ${t.label.slice(0, 90)} (${host})`;
+          return `${i} | ${t.label.slice(0, 100)} | ${where}`;
         })
         .join("\n");
       const messages = [
         {
           role: "system",
-          content:
-            "You organize browser tabs into folders by topic or task. " +
-            "Make 2 to 6 groups; every group needs at least 2 tabs; a tab that fits nowhere can be left out. " +
-            `Names: ${persian ? "Persian (Farsi)" : "English"}, 1-2 words, each starting with one fitting emoji. ` +
-            'Reply ONLY with JSON: {"groups":[{"name":"🎨 name","tabs":[ids]}]}',
+          content: [
+            "You organize one person's open browser tabs into small, specific folders.",
+            "Step 1: for every tab, infer the concrete task or project the person is working on there (not the website's category).",
+            "Step 2: group tabs that serve the SAME concrete task, project or topic.",
+            "Rules:",
+            "- Prefer small, specific folders: usually exactly 2 tabs, at most 4.",
+            "- Never use vague folders such as Tools, Misc, Other, Web, Apps, Work, Utilities, AI.",
+            "- Same website does not mean same task, and different websites can share one task.",
+            "- If a tab has no clear partner, leave it out. Fewer good folders beat many weak ones.",
+            persian
+              ? "- Folder names: natural, correct Persian (Farsi), 1 to 3 words, specific to the task, starting with one fitting emoji. Example: \"🎨 بازطراحی پورتفولیو\", \"🧠 رفع مشکل رم\"."
+              : "- Folder names: English, 1 to 3 words, specific to the task, starting with one fitting emoji.",
+            'Reply ONLY with JSON: {"tabs":[{"id":0,"task":"..."}],"groups":[{"name":"...","tabs":[0,3],"why":"..."}]}',
+          ].join("\n"),
         },
-        { role: "user", content: list },
+        { role: "user", content: `Tabs (id | title | site/path):\n${list}` },
       ];
 
       try {

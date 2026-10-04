@@ -1041,9 +1041,9 @@
   {
     "type": "string",
     "property": "nplus-openai-models",
-    "label": "OpenAI models, cheapest first",
-    "defaultValue": "gpt-5-nano, gpt-4.1-nano, gpt-4o-mini",
-    "placeholder": "gpt-5-nano"
+    "label": "OpenAI models, in order (mini = smarter grouping, still cheap)",
+    "defaultValue": "gpt-5-mini, gpt-4.1-mini, gpt-5-nano",
+    "placeholder": "gpt-5-mini"
   },
   {
     "type": "string",
