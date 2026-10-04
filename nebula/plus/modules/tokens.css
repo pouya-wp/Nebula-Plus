@@ -92,8 +92,11 @@
 
 /* Optional UI font override (Sine setting "UI font") */
 :root[nplus-has-ui-font] {
+  /* Everything in the browser UI: tab titles, URL bar and its results,
+     menus, panels, tooltips. Icons are images, so they are unaffected. */
   &,
-  & :is(label, description, .tab-label, input, menuitem, menu, button, toolbarbutton) {
+  & *,
+  & ::placeholder {
     font-family: var(--nplus-ui-font), system-ui, sans-serif !important;
   }
 }

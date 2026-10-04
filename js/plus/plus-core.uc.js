@@ -56,7 +56,7 @@
     // 🌊 Ambience
     "nplus-time-tint": true,
     "nplus-page-halo": false,
-    "var-nplus-ui-font": "",
+    "var-nplus-ui-font": "Meem",
     "nplus-content-selection": true,
     "nplus-content-scrollbar": true,
     // 🧭 Sidebar & islands
