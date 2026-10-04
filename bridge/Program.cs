@@ -26,6 +26,20 @@ var app = builder.Build();
 var manager = await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
 var art = new ArtCache();
 var spectrum = new NebulaBridge.Spectrum();
+var stats = new NebulaBridge.ListeningStats();
+
+// Count listening time in the background (works even while Zen is closed).
+var statsTimer = new Timer(async _ =>
+{
+    try
+    {
+        var s = PickSession();
+        if (s?.GetPlaybackInfo()?.PlaybackStatus != GlobalSystemMediaTransportControlsSessionPlaybackStatus.Playing) return;
+        var p = await s.TryGetMediaPropertiesAsync();
+        stats.Add(p?.Title ?? "", p?.Artist ?? "", 5);
+    }
+    catch { }
+}, null, 5000, 5000);
 
 bool IsBrowser(string aumid) =>
     ignoredApps.Any(a => aumid.Contains(a, StringComparison.OrdinalIgnoreCase)) ||
@@ -166,6 +180,27 @@ app.MapPost("/seek", async (double pos) =>
 
 // Live spectrum of the system audio: { b: [28 values 0..1] }
 app.MapGet("/bands", () => Results.Json(new { b = spectrum.Read() }));
+
+// Listening summary for the new tab: GET /stats?days=7
+app.MapGet("/stats", (int? days) => Results.Json(stats.Summary(Math.Clamp(days ?? 7, 1, 90))));
+
+// The current Windows desktop wallpaper (for theme colors / new tab)
+app.MapGet("/wallpaper", () =>
+{
+    string? path = null;
+    try
+    {
+        using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop");
+        path = key?.GetValue("WallPaper") as string;
+    }
+    catch { }
+    var transcoded = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Microsoft\Windows\Themes\TranscodedWallpaper");
+    if (string.IsNullOrEmpty(path) || !File.Exists(path)) path = File.Exists(transcoded) ? transcoded : null;
+    if (path == null) return Results.NotFound();
+    var ext = Path.GetExtension(path).ToLowerInvariant();
+    var type = ext == ".png" ? "image/png" : ext == ".webp" ? "image/webp" : "image/jpeg";
+    return Results.File(path, type, enableRangeProcessing: false, lastModified: File.GetLastWriteTimeUtc(path));
+});
 
 app.MapGet("/debug/requests", () => Results.Text(string.Join('\n', recent)));
 

@@ -476,6 +476,35 @@ async function accentFrom(url) {
   } catch {}
 }
 
+// ---------------- this week's listening (Nebula Bridge) ----------------
+async function loadWeek() {
+  const box = $("#week");
+  try {
+    const s = await (await fetch(`${BRIDGE}/stats?days=7`, { cache: "no-store" })).json();
+    if (!s.minutes || s.minutes < 1) return (box.hidden = true);
+    const h = Math.floor(s.minutes / 60);
+    const m = s.minutes % 60;
+    $("#wk-total").textContent = h ? `${num(h)} ساعت و ${num(m)} دقیقه` : `${num(m)} دقیقه`;
+    // one bar per day, oldest on the right (RTL)
+    const max = Math.max(1, ...s.perDay);
+    const dayName = new Intl.DateTimeFormat("fa-IR", { weekday: "narrow" });
+    $("#wk-bars").innerHTML = s.perDay
+      .map((v, i) => {
+        const d = new Date(Date.now() - (s.perDay.length - 1 - i) * 86400000);
+        return `<div class="wk-bar" title="${num(v)} دقیقه"><span style="--h:${Math.max(4, (v / max) * 100)}%"></span><i>${dayName.format(d)}</i></div>`;
+      })
+      .join("");
+    $("#wk-artists").innerHTML = s.artists
+      .map((a, i) => `<div class="wk-artist"><b>${num(i + 1)}</b><span dir="auto">${a.name}</span><em>${num(a.minutes)} دقیقه</em></div>`)
+      .join("");
+    const t = s.tracks[0];
+    $("#wk-track").innerHTML = t ? `<span>آهنگ هفته</span><b dir="auto">${t.title}</b>` : "";
+    box.hidden = false;
+  } catch {
+    box.hidden = true;
+  }
+}
+
 // ---------------- notes ----------------
 const notes = $("#notes-text");
 notes.value = localStorage.getItem("nplus-notes") || "";
@@ -650,4 +679,5 @@ applyVisibility();
 renderWall();
 loadWeather();
 player.poll();
+loadWeek();
 setInterval(() => player.tick(), 250);

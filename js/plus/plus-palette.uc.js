@@ -58,6 +58,7 @@
     { t: "Toggle lyrics", k: "لیریک lyrics", icon: ICON("selectable/music"), run: () => NP.prefs.set("nplus-lyrics", !NP.prefs.get("nplus-lyrics")) },
     { t: "Toggle dark mode", k: "دارک تاریک شب dark mode night", icon: ICON("selectable/moon"), run: () => NP.prefs.set("nplus-darkmode", !NP.prefs.get("nplus-darkmode")) },
     { t: "Focus mode", k: "تمرکز فوکوس پومودورو focus pomodoro", icon: ICON("selectable/time"), run: () => NP.focus?.toggle() },
+    { t: "Organize tabs with AI", k: "دسته بندی هوشمند مرتب تب ها پوشه ai organize group", icon: ICON("sparkles"), run: () => NP.autoGroup?.run() },
     { t: "Google Meet", k: "میت جلسه تماس meet call meeting", icon: ICON("selectable/video"), run: () => NP.meet?.open() },
     { t: "New tab", k: "تب جدید new tab", icon: ICON("plus"), run: () => BrowserCommands.openTab() },
     { t: "Close tab", k: "بستن تب close", icon: ICON("close"), run: () => gBrowser.removeTab(gBrowser.selectedTab, { animate: true }) },

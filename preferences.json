@@ -570,6 +570,13 @@
     "defaultValue": true
   },
   {
+    "type": "checkbox",
+    "property": "nplus-beat-pulse",
+    "label": "Tab glow and ambience pulse on the beat",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
     "type": "dropdown",
     "property": "nplus-media-ambient",
     "label": "Album color ambience",
@@ -942,6 +949,13 @@
   },
   {
     "type": "checkbox",
+    "property": "nplus-focus-compact",
+    "label": "Hide the sidebar during focus sessions",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
     "property": "nplus-meet-pill",
     "label": "Floating call pill for Google Meet & other calls (Ctrl+Alt+G opens Meet)",
     "margin": "12px 0",
@@ -991,6 +1005,108 @@
     "type": "checkbox",
     "property": "nplus-weather-mood",
     "label": "Tint the theme with the weather (sunny, cloudy, rain, snow, fog)",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "separator",
+    "label": "🧠 Smart",
+    "margin": "15px 0 15px 0"
+  },
+  {
+    "type": "dropdown",
+    "property": "nplus-ai-provider",
+    "label": "AI provider for organizing tabs",
+    "value": "number",
+    "defaultValue": 1,
+    "placeholder": false,
+    "options": [
+      {
+        "label": "llm7.io (free)",
+        "value": 1
+      },
+      {
+        "label": "OpenAI (your key, falls back to llm7)",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "type": "string",
+    "property": "nplus-openai-key",
+    "label": "OpenAI API key (stored only in this Zen profile)",
+    "defaultValue": "",
+    "placeholder": "sk-..."
+  },
+  {
+    "type": "string",
+    "property": "nplus-openai-models",
+    "label": "OpenAI models, cheapest first",
+    "defaultValue": "gpt-5-nano, gpt-4.1-nano, gpt-4o-mini",
+    "placeholder": "gpt-5-nano"
+  },
+  {
+    "type": "string",
+    "property": "nplus-ai-key",
+    "label": "llm7.io token (free at token.llm7.io; empty = anonymous, small daily quota)",
+    "defaultValue": "",
+    "placeholder": "paste your token"
+  },
+  {
+    "type": "string",
+    "property": "nplus-ai-models",
+    "label": "AI models on llm7.io, in order of preference (Ctrl+Alt+O organizes tabs)",
+    "defaultValue": "codestral-latest, GLM-5.3-Flash, nemotron-3-nano:30b",
+    "placeholder": "codestral-latest"
+  },
+  {
+    "type": "dropdown",
+    "property": "nplus-ai-group-lang",
+    "label": "Folder names",
+    "value": "number",
+    "defaultValue": 1,
+    "placeholder": false,
+    "options": [
+      {
+        "label": "Persian",
+        "value": 1
+      },
+      {
+        "label": "English",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "type": "separator",
+    "label": "✨ Special",
+    "margin": "15px 0 15px 0"
+  },
+  {
+    "type": "string",
+    "property": "nplus-name",
+    "label": "Your name (used in friendly messages)",
+    "defaultValue": "",
+    "placeholder": "e.g. Pouya"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-late-night",
+    "label": "Late-night mode after midnight (warm, dim, dark websites)",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-ui-sounds",
+    "label": "Very quiet glass sounds (tabs, islands, palette)",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-wallpaper-accent",
+    "label": "Take the accent color from your Windows wallpaper",
     "margin": "12px 0",
     "defaultValue": true
   },

@@ -1059,3 +1059,128 @@ i {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* ---------------- this week's listening ---------------- */
+#week {
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wk-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+
+  & .widget-title {
+    margin: 0;
+  }
+}
+
+#wk-total {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+#wk-bars {
+  display: flex;
+  gap: 6px;
+  height: 64px;
+  align-items: flex-end;
+}
+
+.wk-bar {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 4px;
+
+  & span {
+    width: 100%;
+    height: var(--h);
+    border-radius: 6px;
+    background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 35%, transparent));
+    animation: wk-grow 0.9s var(--spring) both;
+  }
+
+  & i {
+    font-style: normal;
+    font-size: 10px;
+    color: var(--text-soft);
+  }
+
+  &:last-child span {
+    box-shadow: 0 0 14px -2px var(--accent);
+  }
+}
+
+@keyframes wk-grow {
+  from {
+    height: 4%;
+  }
+}
+
+#wk-artists {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wk-artist {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+
+  & b {
+    width: 18px;
+    height: 18px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    corner-shape: round;
+    font-size: 11px;
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+
+  & span {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  & em {
+    font-style: normal;
+    font-size: 11px;
+    color: var(--text-soft);
+  }
+}
+
+#wk-track {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+  border-top: 0.5px solid light-dark(rgb(0 0 0 / 8%), rgb(255 255 255 / 10%));
+  font-size: 13px;
+
+  & span {
+    font-size: 11px;
+    color: var(--text-soft);
+  }
+
+  & b {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    unicode-bidi: plaintext;
+  }
+
+  &:empty {
+    display: none;
+  }
+}

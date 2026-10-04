@@ -700,6 +700,7 @@
   // drawn behind the players: sidebar card, Zen's media card, mini player
   // and the lyrics stage. Polls only while music plays and a player shows.
   NP.DEFAULTS["nplus-visualizer"] = true;
+  NP.DEFAULTS["nplus-beat-pulse"] = true;
 
   NP.feature({
     name: "Visualizer",
@@ -770,6 +771,19 @@
       }
       // ease toward the latest values for a fluid line
       for (let i = 0; i < this.shown.length; i++) this.shown[i] += ((this.bands[i] ?? 0) - this.shown[i]) * 0.25;
+
+      // beat: bass jumps clearly above its running average -> a soft pulse
+      // that decays; CSS reads --nplus-beat (0..1) for the tab glow etc.
+      if (NP.prefs.get("nplus-beat-pulse")) {
+        const bass = (this.bands[0] + this.bands[1] + this.bands[2] + this.bands[3]) / 4;
+        this.bassAvg = (this.bassAvg ?? bass) * 0.92 + bass * 0.08;
+        if (bass > this.bassAvg * 1.25 && bass > 0.35 && now - (this.lastBeat ?? 0) > 260) {
+          this.lastBeat = now;
+          this.beat = 1;
+        }
+        this.beat = Math.max(0, (this.beat ?? 0) - 0.06);
+        NP.root.style.setProperty("--nplus-beat", this.beat.toFixed(2));
+      }
       const color = getComputedStyle(NP.root).getPropertyValue("--nplus-accent").trim() || "rgb(140 160 255)";
       for (const c of targets) this.draw(c, color);
       this.raf = requestAnimationFrame(this.loop);

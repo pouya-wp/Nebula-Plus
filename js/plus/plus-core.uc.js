@@ -507,7 +507,7 @@
   // ================= Extra modules =================
   // Newer modules are loaded from here rather than listed in Sine's
   // mods.json, so adding one needs no reinstall or restart.
-  for (const file of ["plus-palette.uc.js", "plus-tabs.uc.js", "plus-meet.uc.js"]) {
+  for (const file of ["plus-palette.uc.js", "plus-tabs.uc.js", "plus-meet.uc.js", "plus-smart.uc.js"]) {
     try {
       Services.scriptloader.loadSubScript(`chrome://sine/content/Nebula/js/plus/${file}?t=${Date.now()}`, window);
     } catch (err) {

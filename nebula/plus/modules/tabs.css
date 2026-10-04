@@ -274,3 +274,331 @@
     opacity: 1;
   }
 }
+
+/* ---------------- AI tab grouping ---------------- */
+#nplus-autogroup-button {
+  list-style-image: url("chrome://browser/skin/zen-icons/sparkles.svg");
+
+  &[busy] > .toolbarbutton-icon {
+    animation: nplus-spin 1.2s linear infinite;
+  }
+}
+
+/* tabs being sorted shimmer while the model thinks */
+.tabbrowser-tab[nplus-thinking] > .tab-stack > .tab-background {
+  background-image: var(--nplus-sheen) !important;
+  background-size: 250% 100% !important;
+  background-repeat: no-repeat !important;
+  animation: nplus-sheen 1.1s var(--nplus-ease-soft) infinite !important;
+}
+
+/* ---------------- Focus hourglass ----------------
+   During focus mode the active tab slowly fills with color, like sand. */
+:root[nplus-focus] .tabbrowser-tab:is([selected], [visuallyselected]) > .tab-stack > .tab-background {
+  background-image: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--nplus-accent) 22%, transparent) calc(var(--nplus-focus-p, 0) * 100%),
+    transparent calc(var(--nplus-focus-p, 0) * 100% + 0.5%)
+  ) !important;
+  transition: background-image 1s linear;
+}
+
+/* ---------------- Live mic glow ----------------
+   While a call has your microphone open, a faint green light breathes
+   around the window edges, so you never forget you can be heard. */
+#zen-main-app-wrapper::before {
+  box-shadow: inset 0 0 0 0 transparent;
+  transition: box-shadow 1s ease;
+}
+
+:root[nplus-mic-live] #zen-main-app-wrapper::before {
+  box-shadow: inset 0 0 70px -10px rgb(30 200 90 / 28%);
+  animation: nplus-mic-breathe 3.2s ease-in-out infinite;
+}
+
+@keyframes nplus-mic-breathe {
+  50% {
+    box-shadow: inset 0 0 90px -6px rgb(30 200 90 / 38%);
+  }
+}
+
+/* ---------------- Late night ----------------
+   After midnight: a warm, dim wash over the browser chrome. */
+@media (-moz-pref("nplus-late-night")) {
+  :root[nplus-late] {
+    --nplus-daytint: linear-gradient(180deg, rgb(255 150 60 / 10%), rgb(40 20 10 / 22%));
+  }
+}
+
+/* ---------------- Beat pulse ----------------
+   The active tab's inner light and the ambience swell gently on the beat. */
+@media (-moz-pref("nplus-beat-pulse")) {
+  :root[nplus-viz] .tabbrowser-tab:is([selected], [visuallyselected]) > .tab-stack > .tab-background::after {
+    opacity: calc(var(--nplus-ring-in) * var(--nplus-breath) * var(--nplus-glow-max) + var(--nplus-beat, 0) * 0.35) !important;
+  }
+
+  :root[nplus-viz][nplus-has-ambient] #zen-main-app-wrapper::after {
+    opacity: calc(0.45 + var(--nplus-beat, 0) * 0.12);
+    transition: opacity 0.12s ease-out;
+  }
+}
+
+/* ---------------- Wallpaper accent ----------------
+   With no music setting the color, the accent comes from your wallpaper. */
+@media (-moz-pref("nplus-wallpaper-accent")) {
+  :root[nplus-has-wall]:not([nplus-has-ambient]) {
+    --nplus-accent: var(--nplus-wall);
+    --nplus-glow-a: var(--nplus-wall);
+    --nplus-glow-b: color-mix(in srgb, var(--nplus-wall) 50%, white);
+  }
+}
+
+/* ---------------- Pomodoro button (next to the URL bar) ---------------- */
+#nplus-pomo {
+  --pm-p: 0;
+  --pm-color: var(--nplus-accent);
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  min-width: 30px;
+  margin-inline: 6px 2px;
+  padding: 0 7px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: var(--nplus-lyrics-font), "Meem", system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  transition:
+    background-color 0.2s ease,
+    padding 0.3s var(--nplus-ease-out);
+  -moz-window-dragging: no-drag;
+
+  &:hover {
+    background: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 8%));
+  }
+
+  &[phase="break"] {
+    --pm-color: #3fb27f;
+  }
+
+  &:not([phase="idle"]) {
+    padding-inline: 8px 10px;
+    background: color-mix(in srgb, var(--pm-color) 14%, transparent);
+  }
+
+  &[phase="focus"]:not([running]),
+  &[phase="break"]:not([running]) {
+    opacity: 0.7;
+  }
+}
+
+/* progress ring that empties as time runs out */
+.pm-ring {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  corner-shape: round;
+  background:
+    radial-gradient(closest-side, transparent 64%, transparent 0),
+    conic-gradient(var(--pm-color) calc(var(--pm-p) * 360deg), light-dark(rgb(0 0 0 / 15%), rgb(255 255 255 / 20%)) 0);
+  mask: radial-gradient(closest-side, transparent 58%, #000 62%);
+  transition: background 1s linear;
+
+  #nplus-pomo[phase="idle"] & {
+    /* idle: Zen's own timer icon */
+    background: currentColor;
+    mask: url("chrome://browser/skin/zen-icons/selectable/time.svg") center / 16px no-repeat;
+    opacity: 0.8;
+  }
+}
+
+.pm-time {
+  font-size: 12.5px;
+  font-weight: 700;
+
+  &:empty {
+    display: none;
+  }
+}
+
+/* ---------------- Pomodoro panel ---------------- */
+#nplus-pomo-panel {
+  --pm-p: 0;
+  --pm-color: var(--nplus-accent);
+
+  position: fixed;
+  z-index: 2147482600;
+  width: 236px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-radius: 18px;
+  background: light-dark(rgb(255 255 255 / 88%), rgb(26 26 32 / 88%));
+  backdrop-filter: blur(40px) saturate(180%);
+  box-shadow:
+    0 0 0 0.5px light-dark(rgb(0 0 0 / 10%), rgb(255 255 255 / 10%)),
+    0 24px 60px -20px rgb(0 0 0 / 45%);
+  font-family: var(--nplus-lyrics-font), "Meem", system-ui, sans-serif;
+  direction: rtl;
+  opacity: 0;
+  translate: 0 -6px;
+  scale: 0.97;
+  transform-origin: top center;
+  transition:
+    opacity 0.2s ease,
+    translate 0.3s var(--nplus-ease-spring),
+    scale 0.3s var(--nplus-ease-spring);
+  -moz-window-dragging: no-drag;
+
+  &[open] {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+
+  &[phase="break"] {
+    --pm-color: #3fb27f;
+  }
+}
+
+.pm-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.pm-phase {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.pm-done {
+  font-size: 11px;
+  color: var(--nplus-text-soft);
+}
+
+.pm-big {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  margin: 2px auto;
+  display: grid;
+  place-items: center;
+}
+
+.pm-big-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  corner-shape: round;
+  background: conic-gradient(var(--pm-color) calc(var(--pm-p) * 360deg), light-dark(rgb(0 0 0 / 8%), rgb(255 255 255 / 10%)) 0);
+  mask: radial-gradient(closest-side, transparent 86%, #000 88%);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--pm-color) 50%, transparent));
+  transition: background 1s linear;
+}
+
+.pm-big-time {
+  font-size: 30px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+}
+
+.pm-presets {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+
+  #nplus-pomo-panel:not([phase="idle"]) & {
+    display: none;
+  }
+}
+
+.pm-preset {
+  appearance: none;
+  min-width: 40px;
+  padding: 5px 0;
+  border: none;
+  border-radius: 99px;
+  corner-shape: round;
+  background: light-dark(rgb(0 0 0 / 5%), rgb(255 255 255 / 8%));
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+
+  &[active] {
+    background: var(--pm-color);
+    color: white;
+  }
+}
+
+.pm-unit {
+  font-size: 11px;
+  color: var(--nplus-text-soft);
+}
+
+.pm-actions {
+  display: flex;
+  gap: 8px;
+
+  & button {
+    appearance: none;
+    border: none;
+    border-radius: 12px;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    transition: scale 0.2s var(--nplus-ease-spring), filter 0.15s ease;
+
+    &:hover {
+      filter: brightness(1.06);
+    }
+
+    &:active {
+      scale: 0.96;
+    }
+
+    &[hidden] {
+      display: none;
+    }
+  }
+}
+
+.pm-main {
+  flex: 1;
+  height: 38px;
+  background: var(--pm-color) !important;
+  color: white !important;
+  font-size: 14px !important;
+  font-weight: 700;
+}
+
+.pm-reset {
+  width: 38px;
+  height: 38px;
+  font-size: 17px !important;
+  background: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 9%));
+}
+
+.pm-opt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--nplus-text-soft);
+  cursor: pointer;
+
+  & input {
+    accent-color: var(--pm-color);
+    margin: 0;
+  }
+}

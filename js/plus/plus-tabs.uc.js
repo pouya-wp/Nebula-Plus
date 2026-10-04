@@ -12,6 +12,7 @@
   NP.DEFAULTS["nplus-tab-preview"] = true;
   NP.DEFAULTS["nplus-mini-player"] = true;
   NP.DEFAULTS["nplus-focus-minutes"] = "25";
+  NP.DEFAULTS["nplus-focus-done"] = "";
   NP.DEFAULTS["nplus-weather-fx"] = 1;
   NP.DEFAULTS["nplus-weather-city"] = "Tehran";
   NP.DEFAULTS["nplus-weather-mood"] = true;
@@ -141,72 +142,209 @@
     },
   });
 
-  // ================= Focus mode =================
-  // Ctrl+Alt+F: the sidebar steps back (Zen compact mode), a calm timer
-  // counts down a focus session, and an island says when it is break time.
+  // ================= Pomodoro / focus mode =================
+  // A timer button next to the URL bar. Click it for presets, start/pause and
+  // reset. A focus session tucks the sidebar away (Zen compact mode) and
+  // slowly fills the active tab like an hourglass; when it ends a 5-minute
+  // break starts by itself. Ctrl+Alt+F starts/pauses.
+  NP.DEFAULTS["nplus-focus-compact"] = true;
+
   NP.feature({
     name: "FocusMode",
     init() {
-      this.pill = NP.html("div", { id: "nplus-focus", hidden: "true" }, [
-        NP.html("div", { class: "fc-ring" }),
-        NP.html("div", { class: "fc-text" }, [
-          NP.html("div", { class: "fc-label", text: "تمرکز" }),
-          NP.html("div", { class: "fc-time" }),
-        ]),
-        NP.html("button", { class: "fc-stop", title: "End focus", text: "✕", onclick: () => this.stop() }),
+      this.phase = "idle"; // idle | focus | break
+      this.running = false;
+      this.done = this.loadDone();
+
+      // ---- button next to the URL bar ----
+      this.button = NP.html("div", { id: "nplus-pomo", role: "button", title: "Pomodoro (Ctrl+Alt+F)" }, [
+        NP.html("div", { class: "pm-ring" }),
+        NP.html("span", { class: "pm-time" }),
       ]);
-      document.body.append(this.pill);
-      this.offKey = NP.hotkey?.("ctrl+alt+f", () => this.toggle());
-      NP.focus = { toggle: () => this.toggle(), get active() { return !!NP.root.hasAttribute("nplus-focus"); } };
+      this.button.addEventListener("click", () => this.togglePanel());
+      const anchor = document.getElementById("urlbar-container");
+      if (anchor) anchor.after(this.button);
+      else document.getElementById("nav-bar-customization-target")?.append(this.button);
+
+      // ---- panel ----
+      const preset = (min) =>
+        NP.html("button", { class: "pm-preset", "data-min": min, text: this.fa(min), onclick: () => this.setMinutes(min) });
+      this.panel = NP.html("div", { id: "nplus-pomo-panel", hidden: "true" }, [
+        NP.html("div", { class: "pm-head" }, [
+          NP.html("div", { class: "pm-phase" }),
+          NP.html("div", { class: "pm-done" }),
+        ]),
+        NP.html("div", { class: "pm-big" }, [NP.html("div", { class: "pm-big-ring" }), NP.html("div", { class: "pm-big-time" })]),
+        NP.html("div", { class: "pm-presets" }, [preset(15), preset(25), preset(50), NP.html("span", { class: "pm-unit", text: "دقیقه" })]),
+        NP.html("div", { class: "pm-actions" }, [
+          NP.html("button", { class: "pm-main", onclick: () => this.main() }),
+          NP.html("button", { class: "pm-reset", title: "Reset", text: "↺", onclick: () => this.reset() }),
+        ]),
+        NP.html("label", { class: "pm-opt" }, [
+          NP.html("input", { type: "checkbox", class: "pm-compact" }),
+          NP.html("span", { text: "جمع کردن sidebar موقع تمرکز" }),
+        ]),
+      ]);
+      document.body.append(this.panel);
+      const compact = this.panel.querySelector(".pm-compact");
+      compact.checked = NP.prefs.get("nplus-focus-compact");
+      compact.addEventListener("change", () => NP.prefs.set("nplus-focus-compact", compact.checked));
+
+      this.onDocDown = (e) => {
+        if (!this.panel.hidden && !e.target.closest?.("#nplus-pomo-panel, #nplus-pomo")) this.closePanel();
+      };
+      window.addEventListener("mousedown", this.onDocDown, true);
+
+      this.minutes = Math.max(1, Number.parseFloat(NP.prefs.get("nplus-focus-minutes")) || 25);
+      this.offKey = NP.hotkey?.("ctrl+alt+f", () => this.main());
+      NP.focus = { toggle: () => this.main(), get active() { return NP.root.hasAttribute("nplus-focus"); } };
+      this.timer = setInterval(() => this.tick(), 1000);
+      this.render();
     },
 
-    toggle() {
-      NP.root.hasAttribute("nplus-focus") ? this.stop() : this.start();
+    fa(n, pad = 0) {
+      return new Intl.NumberFormat("fa-IR", { minimumIntegerDigits: pad || 1, useGrouping: false }).format(n);
     },
 
-    start() {
-      const minutes = Math.max(1, Number.parseFloat(NP.prefs.get("nplus-focus-minutes")) || 25);
+    loadDone() {
+      const [day, n] = String(NP.prefs.get("nplus-focus-done") ?? "").split("|");
+      return day === new Date().toDateString() ? Number(n) || 0 : 0;
+    },
+
+    saveDone() {
+      NP.prefs.set("nplus-focus-done", `${new Date().toDateString()}|${this.done}`);
+    },
+
+    // ---- actions ----
+    setMinutes(min) {
+      this.minutes = min;
+      NP.prefs.set("nplus-focus-minutes", String(min));
+      if (this.phase === "idle") this.render();
+    },
+
+    main() {
+      if (this.phase === "idle") return this.startPhase("focus", this.minutes);
+      this.running ? this.pause() : this.resume();
+    },
+
+    startPhase(phase, minutes) {
+      this.phase = phase;
       this.total = minutes * 60_000;
       this.end = Date.now() + this.total;
-      this.wasCompact = !!gZenCompactModeManager?.preference;
-      if (window.gZenCompactModeManager) gZenCompactModeManager.preference = true;
-      NP.setRootAttr("nplus-focus", true);
-      this.pill.removeAttribute("hidden");
-      this.pill.getBoundingClientRect();
-      this.pill.setAttribute("open", "true");
-      NP.island?.show({ title: "حالت تمرکز", subtitle: `${minutes} دقیقه، شروع شد`, duration: 2200 });
-      this.tick();
-      clearInterval(this.timer);
-      this.timer = setInterval(() => this.tick(), 1000);
+      this.running = true;
+      if (phase === "focus") {
+        NP.setRootAttr("nplus-focus", true);
+        if (NP.prefs.get("nplus-focus-compact") && window.gZenCompactModeManager) {
+          this.wasCompact = !!gZenCompactModeManager.preference;
+          gZenCompactModeManager.preference = true;
+        }
+        NP.island?.show({ title: "تمرکز شروع شد", subtitle: `${this.fa(minutes)} دقیقه`, duration: 2000 });
+      } else {
+        this.leaveFocus();
+        NP.root.setAttribute("nplus-break", "true");
+      }
+      this.render();
+    },
+
+    pause() {
+      this.remaining = Math.max(0, this.end - Date.now());
+      this.running = false;
+      this.render();
+    },
+
+    resume() {
+      this.end = Date.now() + (this.remaining ?? 0);
+      this.running = true;
+      this.render();
+    },
+
+    reset() {
+      this.leaveFocus();
+      NP.root.removeAttribute("nplus-break");
+      this.phase = "idle";
+      this.running = false;
+      this.render();
+    },
+
+    leaveFocus() {
+      NP.root.removeAttribute("nplus-focus");
+      NP.root.style.removeProperty("--nplus-focus-p");
+      if (window.gZenCompactModeManager && this.wasCompact === false) gZenCompactModeManager.preference = false;
+      this.wasCompact = undefined;
     },
 
     tick() {
-      const left = Math.max(0, this.end - Date.now());
-      const m = Math.floor(left / 60000);
-      const s = Math.floor((left % 60000) / 1000);
-      const fa = new Intl.NumberFormat("fa-IR", { minimumIntegerDigits: 2, useGrouping: false });
-      this.pill.querySelector(".fc-time").textContent = `${fa.format(m)}:${fa.format(s)}`;
-      this.pill.style.setProperty("--fc-p", 1 - left / this.total);
-      if (!left) {
-        this.stop(false);
-        NP.island?.show({ title: "وقت استراحته ☕", subtitle: "یه جلسه‌ی تمرکز تموم شد", duration: 6000 });
+      if (this.phase === "idle" || !this.running) return;
+      if (Date.now() >= this.end) {
+        if (this.phase === "focus") {
+          this.done += 1;
+          this.saveDone();
+          NP.sound?.("done");
+          NP.island?.show({ title: "وقت استراحته ☕", subtitle: `جلسه‌ی ${this.fa(this.done)}ام امروز تموم شد · ۵ دقیقه استراحت`, duration: 6000 });
+          this.startPhase("break", 5);
+        } else {
+          NP.root.removeAttribute("nplus-break");
+          NP.sound?.("island");
+          NP.island?.show({ title: "استراحت تموم شد", subtitle: "بریم سراغ یه جلسه‌ی دیگه؟ کلیک کن", duration: 8000, onClick: () => this.startPhase("focus", this.minutes) });
+          this.phase = "idle";
+          this.running = false;
+        }
       }
+      this.render();
     },
 
-    stop(announce = true) {
-      clearInterval(this.timer);
-      NP.root.removeAttribute("nplus-focus");
-      this.pill.removeAttribute("open");
-      setTimeout(() => !NP.root.hasAttribute("nplus-focus") && this.pill.setAttribute("hidden", "true"), 400);
-      if (window.gZenCompactModeManager && this.wasCompact === false) gZenCompactModeManager.preference = false;
-      if (announce) NP.island?.show({ title: "تمرکز تموم شد", duration: 1600 });
+    render() {
+      const left = this.phase === "idle" ? this.minutes * 60_000 : this.running ? Math.max(0, this.end - Date.now()) : this.remaining ?? 0;
+      const p = this.phase === "idle" ? 0 : 1 - left / this.total;
+      const m = Math.floor(left / 60000);
+      const s = Math.floor((left % 60000) / 1000);
+      const time = `${this.fa(m, 2)}:${this.fa(s, 2)}`;
+
+      this.button.setAttribute("phase", this.phase);
+      this.button.toggleAttribute("running", this.running);
+      this.button.style.setProperty("--pm-p", p);
+      this.button.querySelector(".pm-time").textContent = this.phase === "idle" ? "" : time;
+      if (this.phase === "focus") NP.root.style.setProperty("--nplus-focus-p", p.toFixed(4));
+
+      const q = (sel) => this.panel.querySelector(sel);
+      this.panel.setAttribute("phase", this.phase);
+      this.panel.style.setProperty("--pm-p", p);
+      q(".pm-phase").textContent = { idle: "پومودورو", focus: "تمرکز", break: "استراحت" }[this.phase];
+      q(".pm-done").textContent = this.done ? `امروز: ${this.fa(this.done)} جلسه` : "";
+      q(".pm-big-time").textContent = time;
+      q(".pm-main").textContent = this.phase === "idle" ? "شروع" : this.running ? "مکث" : "ادامه";
+      q(".pm-reset").hidden = this.phase === "idle";
+      for (const b of this.panel.querySelectorAll(".pm-preset")) b.toggleAttribute("active", Number(b.dataset.min) === this.minutes);
+    },
+
+    togglePanel() {
+      this.panel.hidden ? this.openPanel() : this.closePanel();
+    },
+
+    openPanel() {
+      const r = this.button.getBoundingClientRect();
+      this.panel.hidden = false;
+      const w = this.panel.getBoundingClientRect().width;
+      this.panel.style.left = `${Math.round(Math.min(window.innerWidth - w - 10, Math.max(10, r.left + r.width / 2 - w / 2)))}px`;
+      this.panel.style.top = `${Math.round(r.bottom + 8)}px`;
+      this.panel.getBoundingClientRect();
+      this.panel.setAttribute("open", "true");
+      this.render();
+    },
+
+    closePanel() {
+      this.panel.removeAttribute("open");
+      setTimeout(() => !this.panel.hasAttribute("open") && (this.panel.hidden = true), 220);
     },
 
     destroy() {
       clearInterval(this.timer);
       this.offKey?.();
-      NP.root.removeAttribute("nplus-focus");
-      this.pill?.remove();
+      window.removeEventListener("mousedown", this.onDocDown, true);
+      this.leaveFocus();
+      NP.root.removeAttribute("nplus-break");
+      this.button?.remove();
+      this.panel?.remove();
       delete NP.focus;
     },
   });

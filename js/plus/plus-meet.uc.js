@@ -96,6 +96,8 @@
         this.since = tab ? Date.now() : 0;
         this.muted = { Microphone: false, Camera: false };
       }
+      const sharingNow = tab?.getAttribute("sharing") ?? "";
+      NP.setRootAttr("nplus-mic-live", !!tab && /microphone|camera/.test(sharingNow) && !this.muted.Microphone);
       const show = !!tab && NP.prefs.get("nplus-meet-pill") && !isVisible(tab);
       if (!show) {
         this.pill.removeAttribute("open");
