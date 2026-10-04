@@ -18,12 +18,30 @@
     "defaultValue": 1,
     "placeholder": false,
     "options": [
-      { "label": "No Animation", "value": 0 },
-      { "label": "Default", "value": 1 },
-      { "label": "Bounce Up", "value": 3 },
-      { "label": "Bounce Smooth", "value": 2 },
-      { "label": "Crossfade", "value": 4 },
-      { "label": "Zoom Out", "value": 5 }
+      {
+        "label": "No Animation",
+        "value": 0
+      },
+      {
+        "label": "Default",
+        "value": 1
+      },
+      {
+        "label": "Bounce Up",
+        "value": 3
+      },
+      {
+        "label": "Bounce Smooth",
+        "value": 2
+      },
+      {
+        "label": "Crossfade",
+        "value": 4
+      },
+      {
+        "label": "Zoom Out",
+        "value": 5
+      }
     ]
   },
   {
@@ -34,13 +52,34 @@
     "defaultValue": 1,
     "placeholder": false,
     "options": [
-      { "label": "No Animation", "value": 0 },
-      { "label": "Default", "value": 1 },
-      { "label": "Scale Blur", "value": 3 },
-      { "label": "More Blur", "value": 2 },
-      { "label": "Grayscale", "value": 4 },
-      { "label": "Grayscale + Blur", "value": 5 },
-      { "label": "Blur (Old Default)", "value": 6 }
+      {
+        "label": "No Animation",
+        "value": 0
+      },
+      {
+        "label": "Default",
+        "value": 1
+      },
+      {
+        "label": "Scale Blur",
+        "value": 3
+      },
+      {
+        "label": "More Blur",
+        "value": 2
+      },
+      {
+        "label": "Grayscale",
+        "value": 4
+      },
+      {
+        "label": "Grayscale + Blur",
+        "value": 5
+      },
+      {
+        "label": "Blur (Old Default)",
+        "value": 6
+      }
     ]
   },
   {
@@ -56,10 +95,22 @@
     "defaultValue": 1,
     "placeholder": false,
     "options": [
-      { "label": "No Animation", "value": 0 },
-      { "label": "Default", "value": 1 },
-      { "label": "Scale Down", "value": 2 },
-      { "label": "Grayscale", "value": 3 }
+      {
+        "label": "No Animation",
+        "value": 0
+      },
+      {
+        "label": "Default",
+        "value": 1
+      },
+      {
+        "label": "Scale Down",
+        "value": 2
+      },
+      {
+        "label": "Grayscale",
+        "value": 3
+      }
     ]
   },
   {
@@ -75,10 +126,22 @@
     "defaultValue": 0,
     "placeholder": false,
     "options": [
-      { "label": "Disable", "value": 0 },
-      { "label": "Display if hovered over topbar", "value": 1 },
-      { "label": "Display when search", "value": 2 },
-      { "label": "Display in both cases", "value": 3 }
+      {
+        "label": "Disable",
+        "value": 0
+      },
+      {
+        "label": "Display if hovered over topbar",
+        "value": 1
+      },
+      {
+        "label": "Display when search",
+        "value": 2
+      },
+      {
+        "label": "Display in both cases",
+        "value": 3
+      }
     ]
   },
   {
@@ -94,10 +157,22 @@
     "defaultValue": 1,
     "placeholder": false,
     "options": [
-      { "label": "None", "value": 0 },
-      { "label": "Zen Color", "value": 1 },
-      { "label": "Monochrome", "value": 2 },
-      { "label": "RGB", "value": 3 }
+      {
+        "label": "None",
+        "value": 0
+      },
+      {
+        "label": "Zen Color",
+        "value": 1
+      },
+      {
+        "label": "Monochrome",
+        "value": 2
+      },
+      {
+        "label": "RGB",
+        "value": 3
+      }
     ]
   },
   {
@@ -108,9 +183,18 @@
     "defaultValue": 0,
     "placeholder": false,
     "options": [
-      { "label": "None", "value": 0 },
-      { "label": "Zen color", "value": 1 },
-      { "label": "Tab Icon Color", "value": 2 }
+      {
+        "label": "None",
+        "value": 0
+      },
+      {
+        "label": "Zen color",
+        "value": 1
+      },
+      {
+        "label": "Tab Icon Color",
+        "value": 2
+      }
     ],
     "margin": "12px 0"
   },
@@ -127,9 +211,18 @@
     "defaultValue": 1,
     "placeholder": false,
     "options": [
-      { "label": "No background", "value": 0 },
-      { "label": "Default", "value": 1 },
-      { "label": "MacOS Dock Inspired", "value": 2 }
+      {
+        "label": "No background",
+        "value": 0
+      },
+      {
+        "label": "Default",
+        "value": 1
+      },
+      {
+        "label": "MacOS Dock Inspired",
+        "value": 2
+      }
     ]
   },
   {
@@ -145,9 +238,18 @@
     "defaultValue": 1,
     "placeholder": false,
     "options": [
-      { "label": "Disable", "value": 0 },
-      { "label": "Default", "value": 1 },
-      { "label": "Floating", "value": 2 }
+      {
+        "label": "Disable",
+        "value": 0
+      },
+      {
+        "label": "Default",
+        "value": 1
+      },
+      {
+        "label": "Floating",
+        "value": 2
+      }
     ]
   },
   {
@@ -165,13 +267,11 @@
     "property": "zen.view.experimental-force-window-controls-left",
     "label": "Force window controls to left side (Restart)"
   },
-
   {
     "type": "separator",
     "label": "",
     "margin": "15px 0 15px 0"
   },
-
   {
     "type": "text",
     "label": "🌙 Config Options",
@@ -238,13 +338,11 @@
     "label": "Enable pinned extensions mod (see GitHub for setup)",
     "margin": "12px 0"
   },
-
   {
     "type": "separator",
     "label": "",
     "margin": "15px 0 15px 0"
   },
-
   {
     "type": "text",
     "label": "🪐 Config Variables",
@@ -417,5 +515,401 @@
     "label": "Workspace Buttons Grayscale",
     "defaultValue": "100%",
     "placeholder": "e.g. 100%"
+  },
+  {
+    "type": "text",
+    "label": "✨ Nebula Plus",
+    "margin": "40px 0 20px 0",
+    "size": "20px"
+  },
+  {
+    "type": "separator",
+    "label": "🎵 Music",
+    "margin": "15px 0 15px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-media-bridge",
+    "label": "Connect to desktop players via Nebula Bridge (Spotify, etc.)",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-desktop-card",
+    "label": "Show a player card for desktop apps",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-media-cover-bg",
+    "label": "Blurred album art behind the player",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-media-vinyl",
+    "label": "Spinning vinyl album cover",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-media-eq",
+    "label": "Equalizer bars while playing",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "dropdown",
+    "property": "nplus-media-ambient",
+    "label": "Album color ambience",
+    "value": "number",
+    "defaultValue": 2,
+    "placeholder": false,
+    "options": [
+      {
+        "label": "Off",
+        "value": 0
+      },
+      {
+        "label": "Around the player",
+        "value": 1
+      },
+      {
+        "label": "Whole browser",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-media-pause-dim",
+    "label": "Fade the ambience when paused",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-media-glow",
+    "label": "Orbiting glow around the playing card",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-media-island",
+    "label": "Island when the track changes",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-media-shortcuts",
+    "label": "Shortcuts: Ctrl+Alt+Space / ← / → / , / .",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "separator",
+    "label": "🎤 Lyrics",
+    "margin": "15px 0 15px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-lyrics",
+    "label": "Synced lyrics under the player (Ctrl+Alt+L)",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "dropdown",
+    "property": "nplus-lyrics-lines",
+    "label": "Visible lyric lines",
+    "value": "number",
+    "defaultValue": 3,
+    "placeholder": false,
+    "options": [
+      {
+        "label": "1",
+        "value": 1
+      },
+      {
+        "label": "3",
+        "value": 3
+      },
+      {
+        "label": "5",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-lyrics-karaoke",
+    "label": "Karaoke fill on the current line",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-lyrics-seek",
+    "label": "Click a line to jump to it",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-lyrics-hover-only",
+    "label": "Show lyrics only when hovering the sidebar",
+    "margin": "12px 0"
+  },
+  {
+    "type": "string",
+    "property": "nplus-lyrics-offset",
+    "label": "Lyrics offset in ms (+ = earlier)",
+    "defaultValue": "0",
+    "placeholder": "e.g. 300"
+  },
+  {
+    "type": "string",
+    "property": "var-nplus-lyrics-font",
+    "label": "Lyrics font",
+    "defaultValue": "Meem",
+    "placeholder": "e.g. Meem"
+  },
+  {
+    "type": "string",
+    "property": "var-nplus-lyrics-size",
+    "label": "Lyrics size",
+    "defaultValue": "11.5px",
+    "placeholder": "e.g. 12px"
+  },
+  {
+    "type": "separator",
+    "label": "🌙 Dark mode",
+    "margin": "15px 0 15px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-darkmode",
+    "label": "Force dark mode on websites (Ctrl+Alt+D)",
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-darkmode-smart",
+    "label": "Automatically skip sites that are already dark",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "string",
+    "property": "nplus-darkmode-skip",
+    "label": "Never darken these sites (comma separated)",
+    "defaultValue": "",
+    "placeholder": "e.g. figma.com, photopea.com"
+  },
+  {
+    "type": "separator",
+    "label": "✨ Glow & motion",
+    "margin": "15px 0 15px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-glow-tab",
+    "label": "Orbiting glow on the active tab",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-glow-urlbar",
+    "label": "Orbiting glow on the URL bar while typing",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "dropdown",
+    "property": "nplus-glow-color",
+    "label": "Glow color",
+    "value": "number",
+    "defaultValue": 2,
+    "placeholder": false,
+    "options": [
+      {
+        "label": "Zen accent",
+        "value": 1
+      },
+      {
+        "label": "Album color",
+        "value": 2
+      },
+      {
+        "label": "Rainbow",
+        "value": 3
+      },
+      {
+        "label": "White",
+        "value": 4
+      }
+    ]
+  },
+  {
+    "type": "string",
+    "property": "var-nplus-glow-speed",
+    "label": "Glow orbit speed",
+    "defaultValue": "4s",
+    "placeholder": "e.g. 4s"
+  },
+  {
+    "type": "string",
+    "property": "var-nplus-glow-width",
+    "label": "Glow thickness",
+    "defaultValue": "1.5px",
+    "placeholder": "e.g. 1.5px"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-shimmer-hover",
+    "label": "Light sweep when hovering tabs",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-shimmer-loading",
+    "label": "Shimmer on loading tabs",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-audible-pulse",
+    "label": "Tabs playing audio breathe softly",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-press-feedback",
+    "label": "Tactile press animation on buttons",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-glass-edge",
+    "label": "Glass edge highlights",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-grain",
+    "label": "Film grain texture",
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-performance",
+    "label": "Performance mode (static glows, fewer effects)",
+    "margin": "12px 0"
+  },
+  {
+    "type": "separator",
+    "label": "🌊 Ambience",
+    "margin": "15px 0 15px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-time-tint",
+    "label": "Time-of-day tint (dawn, day, sunset, night)",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-page-halo",
+    "label": "Website color halo around the page",
+    "margin": "12px 0"
+  },
+  {
+    "type": "string",
+    "property": "var-nplus-ui-font",
+    "label": "UI font (empty = default)",
+    "defaultValue": "",
+    "placeholder": "e.g. Meem"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-content-selection",
+    "label": "Soft accent text selection on websites",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-content-scrollbar",
+    "label": "Slim scrollbars on websites",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "separator",
+    "label": "🧭 Sidebar & islands",
+    "margin": "15px 0 15px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-clock",
+    "label": "Clock in the sidebar",
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-clock-jalali",
+    "label": "Persian (Jalali) date under the clock",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-download-island",
+    "label": "Island when a download finishes",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "dropdown",
+    "property": "nplus-island-position",
+    "label": "Island position",
+    "value": "number",
+    "defaultValue": 1,
+    "placeholder": false,
+    "options": [
+      {
+        "label": "Top",
+        "value": 1
+      },
+      {
+        "label": "Bottom",
+        "value": 2
+      }
+    ]
+  },
+  {
+    "type": "separator",
+    "label": "🛠️ Developer",
+    "margin": "15px 0 15px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-dev-live",
+    "label": "Live reload CSS and scripts on save",
+    "margin": "12px 0",
+    "defaultValue": true
   }
 ]

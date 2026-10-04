@@ -1,0 +1,13 @@
+/* ✨ Nebula Plus — chrome entry
+   Imported by nebula/chrome.css after the Nebula modules, so it can refine them. */
+
+@import url("modules/tokens.css");
+@import url("modules/glow.css");
+@import url("modules/motion.css");
+@import url("modules/ambience.css");
+@import url("modules/media.css");
+@import url("modules/lyrics.css");
+@import url("modules/island.css");
+@import url("modules/darkmode.css");
+@import url("modules/sidebar.css");
+@import url("modules/performance.css");

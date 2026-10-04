@@ -1,0 +1,129 @@
+/* ---------------- Ambience ----------------
+   Two light layers sit behind the browser UI (under the glass, never over
+   web pages):
+   ::before  time-of-day tint + optional film grain
+   ::after   ambient light from the music, rising from the player corner */
+
+#zen-main-app-wrapper {
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  &::before {
+    background: var(--nplus-daytint, none), var(--nplus-grain, none);
+    transition: opacity 2s var(--nplus-ease-soft);
+  }
+
+  &::after {
+    opacity: 0;
+    background:
+      radial-gradient(
+        90% 70% at 0% 100%,
+        color-mix(in srgb, var(--nplus-ambient) 55%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        60% 50% at 100% 0%,
+        color-mix(in srgb, var(--nplus-ambient) 22%, transparent),
+        transparent 70%
+      );
+    transition:
+      opacity 1.6s var(--nplus-ease-soft),
+      filter 1.6s var(--nplus-ease-soft);
+  }
+}
+
+/* ---- Music ambient light ----
+   mode 1: only the player area glows · mode 2: the whole UI is tinted */
+:root[nplus-has-ambient][nplus-ambient-mode="2"] #zen-main-app-wrapper::after {
+  opacity: 0.45;
+}
+
+:root[nplus-has-ambient][nplus-ambient-mode="1"] #zen-main-app-wrapper::after {
+  opacity: 0.28;
+  background: radial-gradient(
+    55% 35% at 0% 100%,
+    color-mix(in srgb, var(--nplus-ambient) 60%, transparent),
+    transparent 70%
+  );
+}
+
+/* Paused music: the light fades and loses color */
+@media (-moz-pref("nplus-media-pause-dim")) {
+  :root[nplus-has-ambient]:not([nplus-media-playing]) #zen-main-app-wrapper::after {
+    opacity: 0.14;
+    filter: saturate(0.3);
+  }
+}
+
+/* ---- Time-of-day tint ---- */
+@media (-moz-pref("nplus-time-tint")) {
+  :root[nplus-daypart="dawn"] {
+    --nplus-daytint: linear-gradient(
+      180deg,
+      rgb(255 190 150 / 14%),
+      transparent 55%
+    );
+  }
+
+  :root[nplus-daypart="day"] {
+    --nplus-daytint: linear-gradient(
+      180deg,
+      rgb(255 255 240 / 6%),
+      transparent 60%
+    );
+  }
+
+  :root[nplus-daypart="sunset"] {
+    --nplus-daytint: linear-gradient(
+      0deg,
+      rgb(255 120 80 / 15%),
+      rgb(190 90 160 / 6%) 45%,
+      transparent 75%
+    );
+  }
+
+  :root[nplus-daypart="night"] {
+    --nplus-daytint: linear-gradient(
+      180deg,
+      rgb(30 40 110 / 18%),
+      rgb(10 10 30 / 10%)
+    );
+  }
+}
+
+/* ---- Film grain on the glass ---- */
+@media (-moz-pref("nplus-grain")) {
+  :root {
+    --nplus-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+/* ---- Page halo: the site's color glows around the web view ---- */
+@media (-moz-pref("nplus-page-halo")) {
+  #tabbrowser-tabbox {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--nplus-page-color) 35%, transparent),
+      0 0 42px -10px var(--nplus-page-color) !important;
+    transition: box-shadow 0.8s var(--nplus-ease-soft);
+  }
+}
+
+/* ---- Glass edges: a thin specular highlight on floating surfaces ---- */
+@media (-moz-pref("nplus-glass-edge")) {
+  #urlbar[open] > .urlbar-background,
+  #zen-media-controls-toolbar .zen-media-card,
+  #nplus-desktop-card,
+  menupopup::part(content),
+  panel::part(content) {
+    box-shadow:
+      inset 0 1px 0 var(--nplus-edge-light),
+      inset 0 -1px 0 var(--nplus-edge-dark),
+      0 8px 28px -10px rgb(0 0 0 / 35%);
+  }
+}

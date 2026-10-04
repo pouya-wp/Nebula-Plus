@@ -14,5 +14,8 @@
 @import url("modules/tab-folders.css");
 @import url("modules/workspace-buttons.css");
 
+/* ✨ Nebula Plus */
+@import url("plus/plus.css");
+
 /* config import */
 @import url("config.css");

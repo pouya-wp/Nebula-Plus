@@ -1,0 +1,101 @@
+/* ---------------- Motion details ---------------- */
+
+@keyframes nplus-sheen {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: 0% 0;
+  }
+}
+
+@keyframes nplus-breathe {
+  0%,
+  100% {
+    opacity: 0.15;
+    scale: 0.92;
+  }
+
+  50% {
+    opacity: 0.75;
+    scale: 1;
+  }
+}
+
+:root {
+  --nplus-sheen: linear-gradient(
+    105deg,
+    transparent 38%,
+    light-dark(rgb(255 255 255 / 75%), rgb(255 255 255 / 13%)) 50%,
+    transparent 62%
+  );
+}
+
+/* ---- Light sweep when hovering a tab ---- */
+@media (-moz-pref("nplus-shimmer-hover")) {
+  .tabbrowser-tab:hover:not([selected], [visuallyselected], [busy])
+    > .tab-stack
+    > .tab-background {
+    background-image: var(--nplus-sheen) !important;
+    background-size: 250% 100% !important;
+    background-repeat: no-repeat !important;
+    animation: nplus-sheen 0.85s var(--nplus-ease-out) 1 both;
+  }
+}
+
+/* ---- Loading tabs shimmer until the page is ready ---- */
+@media (-moz-pref("nplus-shimmer-loading")) {
+  .tabbrowser-tab[busy] > .tab-stack > .tab-background {
+    background-image: var(--nplus-sheen) !important;
+    background-size: 250% 100% !important;
+    background-repeat: no-repeat !important;
+    animation: nplus-sheen 1.3s var(--nplus-ease-soft) infinite;
+  }
+}
+
+/* ---- Tabs playing audio breathe softly in the music's color ---- */
+@media (-moz-pref("nplus-audible-pulse")) {
+  .tabbrowser-tab[soundplaying]:not([selected], [visuallyselected], [zen-essential], [muted])
+    > .tab-stack
+    > .tab-background::after {
+    content: "" !important;
+    display: block !important;
+    position: absolute !important;
+    inset: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    transform: none !important;
+    border-radius: inherit !important;
+    background: radial-gradient(
+      120% 160% at 0% 50%,
+      color-mix(in srgb, var(--nplus-accent) 38%, transparent),
+      transparent 70%
+    ) !important;
+    animation: nplus-breathe 2.6s ease-in-out infinite !important;
+    pointer-events: none !important;
+  }
+}
+
+/* ---- Tactile press on buttons ---- */
+@media (-moz-pref("nplus-press-feedback")) {
+  :is(toolbarbutton, .urlbar-page-action, .nplus-btn) {
+    & > :is(.toolbarbutton-icon, .urlbar-icon, image) {
+      transition: scale 0.18s var(--nplus-ease-spring);
+    }
+
+    &:active:hover > :is(.toolbarbutton-icon, .urlbar-icon, image) {
+      scale: 0.86;
+      transition-duration: 0.08s;
+    }
+  }
+
+  .tabbrowser-tab:active:not([multiselected]) > .tab-stack {
+    scale: 0.985;
+    transition: scale 0.12s var(--nplus-ease-soft);
+  }
+
+  .tabbrowser-tab > .tab-stack {
+    transition: scale 0.3s var(--nplus-ease-spring);
+  }
+}

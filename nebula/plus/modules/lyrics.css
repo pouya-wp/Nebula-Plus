@@ -1,0 +1,125 @@
+/* ---------------- Synced lyrics ---------------- */
+
+#nplus-lyrics {
+  --nplus-line-h: calc(var(--nplus-lyrics-size) * 1.75);
+  --nplus-lyrics-window: calc(var(--nplus-line-h) * 3);
+
+  position: relative;
+  height: var(--nplus-lyrics-window);
+  overflow: hidden;
+  padding-inline: 6px;
+  font-family: var(--nplus-lyrics-font), "Meem", system-ui, sans-serif;
+  font-size: var(--nplus-lyrics-size);
+  line-height: var(--nplus-line-h);
+  text-align: center;
+  mask: linear-gradient(transparent, #000 32%, #000 68%, transparent);
+  transition:
+    height 0.45s var(--nplus-ease-out),
+    opacity 0.45s var(--nplus-ease-out);
+  animation: nplus-lyrics-in 0.6s var(--nplus-ease-out) both;
+
+  &[lines="1"] {
+    --nplus-lyrics-window: var(--nplus-line-h);
+    mask: none;
+  }
+
+  &[lines="5"] {
+    --nplus-lyrics-window: calc(var(--nplus-line-h) * 5);
+    mask: linear-gradient(transparent, #000 25%, #000 75%, transparent);
+  }
+
+  &[hidden] {
+    display: none;
+  }
+
+  /* Show only while the sidebar is hovered */
+  &[hover-only] {
+    height: 0;
+    opacity: 0;
+
+    #navigator-toolbox:hover & {
+      height: var(--nplus-lyrics-window);
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes nplus-lyrics-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+
+.nplus-lyrics-track {
+  position: relative;
+  will-change: transform;
+  transition: transform 0.55s var(--nplus-ease-out);
+}
+
+.nplus-lyric {
+  --d: 3;
+
+  height: var(--nplus-line-h);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  unicode-bidi: plaintext;
+  color: var(--nplus-text-soft);
+  opacity: calc(0.75 - var(--d) * 0.16);
+  filter: blur(calc(var(--d) * 0.35px));
+  transition:
+    opacity 0.45s var(--nplus-ease-soft),
+    filter 0.45s var(--nplus-ease-soft),
+    color 0.45s var(--nplus-ease-soft),
+    scale 0.45s var(--nplus-ease-spring);
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+    filter: none;
+  }
+
+  &.nplus-lyric-gap {
+    letter-spacing: 0.3em;
+  }
+
+  &[active] {
+    --nplus-line-progress: 1;
+
+    opacity: 1;
+    filter: none;
+    scale: 1.06;
+    font-weight: 700;
+    color: light-dark(rgb(0 0 0 / 90%), white);
+    text-shadow: 0 0 14px color-mix(in srgb, var(--nplus-accent) 70%, transparent);
+  }
+}
+
+/* Karaoke: the active line fills with light as it is sung (RTL aware). */
+@media (-moz-pref("nplus-lyrics-karaoke")) {
+  .nplus-lyric[active] {
+    --nplus-fill: light-dark(rgb(0 0 0 / 92%), white);
+    --nplus-unfilled: light-dark(rgb(0 0 0 / 40%), rgb(255 255 255 / 45%));
+    --nplus-at: calc(var(--nplus-line-progress) * 100%);
+
+    color: transparent;
+    background: linear-gradient(
+        90deg,
+        var(--nplus-fill) var(--nplus-at),
+        var(--nplus-unfilled) calc(var(--nplus-at) + 12%)
+      )
+      text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 8px color-mix(in srgb, var(--nplus-accent) 55%, transparent));
+
+    &:dir(rtl) {
+      background: linear-gradient(
+          270deg,
+          var(--nplus-fill) var(--nplus-at),
+          var(--nplus-unfilled) calc(var(--nplus-at) + 12%)
+        )
+        text;
+    }
+  }
+}

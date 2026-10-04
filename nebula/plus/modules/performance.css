@@ -1,0 +1,50 @@
+/* ---------------- Performance & accessibility ----------------
+   Performance mode (and the OS "reduce motion" setting) freezes the orbiting
+   glows into static rings and drops the heaviest effects. */
+
+@media (-moz-pref("nplus-performance")) {
+  :root {
+    --nplus-grain: none !important;
+  }
+
+  .nplus-card-ring,
+  .tabbrowser-tab > .tab-stack > .tab-background::after,
+  #urlbar > .urlbar-background::after,
+  #nplus-island::after,
+  .nplus-eq > span,
+  .nplus-island-art,
+  #nplus-darkmode-button::before,
+  .zen-media-focus-button > .toolbarbutton-icon {
+    animation: none !important;
+  }
+
+  .tabbrowser-tab > .tab-stack > .tab-background {
+    animation: none !important;
+    background-image: none !important;
+  }
+
+  #nplus-island {
+    backdrop-filter: none !important;
+  }
+
+  #zen-main-app-wrapper::after {
+    transition: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nplus-card-ring,
+  .tabbrowser-tab > .tab-stack > .tab-background::after,
+  #urlbar > .urlbar-background::after,
+  #nplus-island::after,
+  .nplus-island-art,
+  #nplus-darkmode-button::before,
+  .zen-media-focus-button > .toolbarbutton-icon {
+    animation: none !important;
+  }
+
+  .nplus-lyrics-track,
+  #nplus-island {
+    transition-duration: 0.01s !important;
+  }
+}

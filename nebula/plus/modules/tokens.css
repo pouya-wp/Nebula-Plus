@@ -1,0 +1,87 @@
+/* ---------------- Nebula Plus design tokens ---------------- */
+
+/* Registered so colors and angles can animate smoothly. */
+@property --nplus-ambient {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --nplus-page-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --nplus-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+:root {
+  /* Motion */
+  --nplus-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --nplus-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --nplus-ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Glow */
+  --nplus-glow-speed: 4s;
+  --nplus-glow-width: 1.5px;
+  --nplus-glow-a: var(--zen-primary-color);
+  --nplus-glow-b: color-mix(in srgb, var(--zen-primary-color) 55%, white);
+
+  /* The accent that follows the music; falls back to the Zen accent. */
+  --nplus-accent: var(--zen-primary-color);
+
+  /* Glass */
+  --nplus-edge-light: light-dark(rgb(255 255 255 / 70%), rgb(255 255 255 / 9%));
+  --nplus-edge-dark: light-dark(rgb(0 0 0 / 6%), rgb(0 0 0 / 35%));
+  --nplus-glass-strong: light-dark(rgb(255 255 255 / 62%), rgb(22 22 26 / 62%));
+  --nplus-text-soft: light-dark(rgb(0 0 0 / 62%), rgb(255 255 255 / 62%));
+
+  /* Lyrics */
+  --nplus-lyrics-font: "Meem";
+  --nplus-lyrics-size: 11.5px;
+
+  transition: --nplus-ambient 1.4s var(--nplus-ease-soft), --nplus-page-color 0.8s var(--nplus-ease-soft);
+}
+
+:root[nplus-has-ambient] {
+  --nplus-accent: var(--nplus-ambient);
+}
+
+/* Glow color: 1 Zen accent · 2 album color · 3 rainbow · 4 white */
+@media (-moz-pref("nplus-glow-color", 2)) {
+  :root[nplus-has-ambient] {
+    --nplus-glow-a: var(--nplus-ambient);
+    --nplus-glow-b: color-mix(in srgb, var(--nplus-ambient) 50%, white);
+  }
+}
+
+@media (-moz-pref("nplus-glow-color", 4)) {
+  :root {
+    --nplus-glow-a: rgb(255 255 255 / 90%);
+    --nplus-glow-b: rgb(255 255 255 / 40%);
+  }
+}
+
+/* Optional UI font override (Sine setting "UI font") */
+:root[nplus-has-ui-font] {
+  &,
+  & :is(label, description, .tab-label, input, menuitem, menu, button, toolbarbutton) {
+    font-family: var(--nplus-ui-font), system-ui, sans-serif !important;
+  }
+}
+
+@keyframes nplus-orbit {
+  to {
+    --nplus-angle: 360deg;
+  }
+}
+
+@keyframes nplus-spin {
+  to {
+    rotate: 360deg;
+  }
+}

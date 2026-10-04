@@ -2,11 +2,11 @@
   "id": "Nebula",
   "homepage": "https://github.com/JustADumbPrsn/Zen-Nebula",
   "author": "JustADumbPrsn",
-  "name": "Nebula",
-  "description": "A beautiful theme made for Zen Browser :))",
-  "version": "3.3.3",
+  "name": "Nebula Plus",
+  "description": "Nebula, supercharged: music hub, synced lyrics, force-dark, traveling glows.",
+  "version": "3.3.3-plus.1",
   "createdAt": "2025-05-31",
-  "updatedAt": "2025-10-28",
+  "updatedAt": "2026-10-04",
   "readme": "https://raw.githubusercontent.com/JustADumbPrsn/Zen-Nebula/main/README.md",
   "image": "https://i.ibb.co/Lqk4krw/Screenshot-2025-09-03-232353.png",
   "style": {
@@ -17,9 +17,59 @@
     "js/nebula.uc.js": {
       "name": "Core script",
       "description": "Central script for Nebula.",
-      "include": ["chrome://browser/content/browser.xhtml"]
+      "include": [
+        "chrome://browser/content/browser.xhtml"
+      ]
+    },
+    "js/plus/plus-core.uc.js": {
+      "name": "Nebula Plus core",
+      "description": "Prefs, events, colors, island, hotkeys",
+      "include": [
+        "chrome://browser/content/browser.xhtml"
+      ]
+    },
+    "js/plus/plus-media.uc.js": {
+      "name": "Nebula Plus media",
+      "description": "Media hub, ambient color, desktop player",
+      "include": [
+        "chrome://browser/content/browser.xhtml"
+      ]
+    },
+    "js/plus/plus-lyrics.uc.js": {
+      "name": "Nebula Plus lyrics",
+      "description": "Time-synced lyrics",
+      "include": [
+        "chrome://browser/content/browser.xhtml"
+      ]
+    },
+    "js/plus/plus-darkmode.uc.js": {
+      "name": "Nebula Plus dark mode",
+      "description": "One-click dark mode for websites",
+      "include": [
+        "chrome://browser/content/browser.xhtml"
+      ]
+    },
+    "js/plus/plus-ui.uc.js": {
+      "name": "Nebula Plus UI",
+      "description": "Time tint, page halo, clock, download island",
+      "include": [
+        "chrome://browser/content/browser.xhtml"
+      ]
+    },
+    "js/plus/plus-dev.uc.js": {
+      "name": "Nebula Plus live dev",
+      "description": "Hot reload while developing",
+      "include": [
+        "chrome://browser/content/browser.xhtml"
+      ]
     }
   },
-  "tags": ["content", "chrome", "minimal"],
-  "fork": ["zen"]
+  "tags": [
+    "content",
+    "chrome",
+    "minimal"
+  ],
+  "fork": [
+    "zen"
+  ]
 }

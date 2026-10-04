@@ -1,0 +1,17 @@
+/* ✨ Nebula Plus — web content (imported by nebula/content.css) */
+
+/* Selected text uses a soft accent instead of default blue */
+@media (-moz-pref("nplus-content-selection")) {
+  ::selection {
+    background-color: color-mix(in srgb, AccentColor 38%, transparent) !important;
+    color: inherit !important;
+  }
+}
+
+/* Slim, quiet scrollbars on every site */
+@media (-moz-pref("nplus-content-scrollbar")) {
+  :root {
+    scrollbar-width: thin !important;
+    scrollbar-color: light-dark(rgb(0 0 0 / 28%), rgb(255 255 255 / 25%)) transparent !important;
+  }
+}

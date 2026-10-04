@@ -1,0 +1,128 @@
+/* ---------------- Dark mode orb (URL bar) ----------------
+   Off: a warm sun. On: the shadow slides in and carves a silver moon.
+   Skipped site: the moon dims behind a dashed ring. */
+
+@property --nplus-dm-x {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 160%;
+}
+
+@property --nplus-dm-y {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: -60%;
+}
+
+#nplus-darkmode-button {
+  --nplus-dm-x: 160%;
+  --nplus-dm-y: -60%;
+  --nplus-dm-color: #ffc861;
+  --nplus-dm-glow: rgb(255 190 80 / 65%);
+
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    --nplus-dm-x 0.7s var(--nplus-ease-spring),
+    --nplus-dm-y 0.7s var(--nplus-ease-spring),
+    background-color 0.2s ease;
+
+  &:hover {
+    background-color: light-dark(rgb(0 0 0 / 7%), rgb(255 255 255 / 9%));
+  }
+
+  &[state="on"],
+  &[state="skipped"] {
+    --nplus-dm-x: 68%;
+    --nplus-dm-y: 28%;
+    --nplus-dm-color: #dfe6ff;
+    --nplus-dm-glow: rgb(150 170 255 / 60%);
+  }
+
+  &[switching] .nplus-dm-orb {
+    animation: nplus-dm-flip 0.6s var(--nplus-ease-out);
+  }
+
+  &[state="skipped"] .nplus-dm-orb {
+    opacity: 0.45;
+    filter: none;
+
+    & .nplus-dm-shadow {
+      display: block;
+    }
+  }
+}
+
+.nplus-dm-orb {
+  position: relative;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--nplus-dm-color);
+  mask: radial-gradient(
+    circle at var(--nplus-dm-x) var(--nplus-dm-y),
+    transparent 46%,
+    #000 48%
+  );
+  filter: drop-shadow(0 0 4px var(--nplus-dm-glow));
+  transition:
+    background-color 0.5s ease,
+    filter 0.5s ease,
+    opacity 0.3s ease;
+}
+
+/* dashed "skipped" ring */
+.nplus-dm-shadow {
+  display: none;
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px dashed currentColor;
+}
+
+/* Sun rays, visible only while off */
+#nplus-darkmode-button[state="off"]::before {
+  content: "";
+  position: absolute;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    var(--nplus-dm-color) 0deg 9deg,
+    transparent 9deg 45deg
+  );
+  mask: radial-gradient(circle, transparent 8.5px, #000 9px);
+  opacity: 0.85;
+  animation: nplus-spin 18s linear infinite;
+}
+
+#nplus-darkmode-button {
+  position: relative;
+}
+
+@keyframes nplus-dm-flip {
+  0% {
+    rotate: 0deg;
+    scale: 1;
+  }
+
+  45% {
+    scale: 0.6;
+  }
+
+  100% {
+    rotate: 360deg;
+    scale: 1;
+  }
+}
+
+/* While dark mode is on, the URL bar wears a faint moonlight rim. */
+:root[nplus-darkmode] #urlbar:not([focused], [open]) > .urlbar-background {
+  box-shadow: inset 0 0 0 1px rgb(170 185 255 / 14%) !important;
+}

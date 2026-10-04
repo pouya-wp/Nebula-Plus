@@ -1,0 +1,102 @@
+/* ---------------- Traveling glow ----------------
+   A comet of light orbiting the border of the active tab, the focused URL bar
+   and the playing media card. Built from a conic gradient masked down to a
+   thin ring, so it costs one small repaint per frame. */
+
+/* Shared ring recipe */
+:root {
+  --nplus-ring: conic-gradient(
+    from var(--nplus-angle),
+    transparent 0%,
+    transparent 52%,
+    color-mix(in srgb, var(--nplus-glow-a) 25%, transparent) 64%,
+    var(--nplus-glow-a) 80%,
+    var(--nplus-glow-b) 86%,
+    transparent 92%,
+    transparent 100%
+  );
+}
+
+@media (-moz-pref("nplus-glow-color", 3)) {
+  :root {
+    --nplus-ring: conic-gradient(
+      from var(--nplus-angle),
+      #ff5f6d,
+      #ffc371,
+      #47e891,
+      #3fb8ff,
+      #a66bff,
+      #ff5f6d
+    );
+  }
+}
+
+/* ---- Active tab ---- */
+@media (-moz-pref("nplus-glow-tab")) {
+  .tabbrowser-tab:is([selected], [visuallyselected]):not([zen-essential], [multiselected], [zen-glance-tab])
+    > .tab-stack
+    > .tab-background {
+    box-shadow:
+      0 0 14px -4px color-mix(in srgb, var(--nplus-glow-a) 55%, transparent),
+      inset 0 1px 0 var(--nplus-edge-light) !important;
+
+    &::after {
+      content: "" !important;
+      display: block !important;
+      position: absolute !important;
+      inset: 0 !important;
+      left: 0 !important;
+      bottom: 0 !important;
+      width: auto !important;
+      height: auto !important;
+      transform: none !important;
+      border-radius: inherit !important;
+      padding: var(--nplus-glow-width) !important;
+      background: var(--nplus-ring) !important;
+      mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0) !important;
+      mask-composite: exclude !important;
+      animation: nplus-orbit var(--nplus-glow-speed) linear infinite !important;
+      opacity: 0.95 !important;
+      pointer-events: none !important;
+    }
+  }
+}
+
+/* ---- URL bar while typing ---- */
+@media (-moz-pref("nplus-glow-urlbar")) {
+  #urlbar:is([focused], [open]) > .urlbar-background {
+    box-shadow:
+      0 0 0 0.5px color-mix(in srgb, var(--nplus-glow-a) 30%, transparent),
+      0 10px 40px -12px color-mix(in srgb, var(--nplus-glow-a) 55%, transparent),
+      inset 0 1px 0 var(--nplus-edge-light) !important;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: calc(var(--nplus-glow-width) + 0.5px);
+      background: var(--nplus-ring);
+      mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      animation: nplus-orbit calc(var(--nplus-glow-speed) * 1.5) linear infinite;
+      pointer-events: none;
+    }
+  }
+}
+
+/* ---- Media card while playing ---- */
+@media (-moz-pref("nplus-media-glow")) {
+  #zen-media-controls-toolbar .zen-media-card.playing:not([stacked-behind], [muted]),
+  #nplus-desktop-card[playing] {
+    --nplus-angle: 0deg;
+
+    & > .nplus-card-ring {
+      display: block;
+    }
+  }
+}

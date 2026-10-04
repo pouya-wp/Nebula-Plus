@@ -1432,7 +1432,9 @@
   Nebula.register(NebulaTitlebarBackgroundModule);
   //Nebula.register(NebulaNavbarBackgroundModule); NOT NEEDED ANYMORE
   Nebula.register(NebulaURLBarBackgroundModule);
-  Nebula.register(NebulaMediaCoverArtModule);
+  // Nebula Plus: Zen 1.23 replaced setupMediaController with media cards, so
+  // this module polled forever. Replaced by MediaCardDecor in js/plus/plus-media.uc.js.
+  //Nebula.register(NebulaMediaCoverArtModule);
   Nebula.register(NebulaMenuModule);
   Nebula.register(NebulaCtrlTabDualBackgroundModule);
 
