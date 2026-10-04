@@ -26,7 +26,7 @@
   --nplus-ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Glow */
-  --nplus-glow-speed: 4s;
+  --nplus-glow-speed: 6s;
   --nplus-glow-width: 1.5px;
   --nplus-glow-a: var(--zen-primary-color);
   --nplus-glow-b: color-mix(in srgb, var(--zen-primary-color) 55%, white);

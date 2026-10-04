@@ -513,7 +513,7 @@
         NP.html("div", { class: "nplus-dc-bg" }),
         NP.html("div", { class: "nplus-card-ring" }),
         NP.html("div", { class: "nplus-dc-row" }, [
-          NP.html("div", { class: "nplus-dc-art" }),
+          NP.html("div", { class: "nplus-dc-art" }, [NP.html("div", { class: "nplus-dc-art-empty" })]),
           NP.html("div", { class: "nplus-dc-info" }, [
             NP.html("div", { class: "nplus-dc-title" }),
             NP.html("div", { class: "nplus-dc-artist" }),
@@ -574,8 +574,14 @@
       }
       const parentRect = parent.getBoundingClientRect();
       const tabs = document.getElementById("tabbrowser-tabs").getBoundingClientRect();
-      const toolbarShown = !this.toolbar.hidden && this.toolbar.getBoundingClientRect().height > 0;
-      const anchorTop = toolbarShown ? this.toolbar.getBoundingClientRect().top : tabs.bottom;
+      // Sit above whichever comes first: Zen's media cards, the footer buttons
+      // or the end of the tab list (mods move these around).
+      const tops = [tabs.bottom];
+      const toolbarRect = this.toolbar.getBoundingClientRect();
+      if (!this.toolbar.hidden && toolbarRect.height > 0) tops.push(toolbarRect.top);
+      const foot = document.getElementById("zen-sidebar-foot-buttons")?.getBoundingClientRect();
+      if (foot?.height) tops.push(foot.top);
+      const anchorTop = Math.min(...tops);
       dock.style.bottom = `${Math.max(0, parentRect.bottom - anchorTop) + 6}px`;
       NP.root.style.setProperty("--nplus-dock-h", `${Math.ceil(dock.getBoundingClientRect().height) + 10}px`);
     },
@@ -590,6 +596,7 @@
       q(".nplus-dc-app").textContent = m.app;
       const art = m.artwork ? `url("${m.artwork}")` : "none";
       q(".nplus-dc-art").style.backgroundImage = art;
+      q(".nplus-dc-art").toggleAttribute("empty", !m.artwork);
       q(".nplus-dc-bg").style.backgroundImage = art;
       this.card.toggleAttribute("playing", m.playing);
       q(".nplus-dc-toggle").style.setProperty(

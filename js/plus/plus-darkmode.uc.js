@@ -144,7 +144,10 @@
       btn.id = "nplus-darkmode-button";
       btn.className = "urlbar-page-action";
       btn.setAttribute("role", "button");
-      btn.append(NP.html("div", { class: "nplus-dm-orb" }, [NP.html("div", { class: "nplus-dm-shadow" })]));
+      // Zen's own sun/moon icons, styled like every other URL bar icon.
+      const icon = document.createXULElement("image");
+      icon.className = "urlbar-icon nplus-dm-icon";
+      btn.append(icon);
       btn.addEventListener("click", (e) => {
         if (e.button === 0) this.toggle();
       });
@@ -159,10 +162,10 @@
 
     toggle() {
       const on = !NP.prefs.get(PREF_ON);
-      // Animate the orb before the pages flip.
+      // Swap the icon while it is spun out of view, then flip the pages.
       this.button?.setAttribute("switching", "true");
+      setTimeout(() => NP.prefs.set(PREF_ON, on), 220);
       setTimeout(() => this.button?.removeAttribute("switching"), 600);
-      NP.prefs.set(PREF_ON, on);
     },
 
     toggleSite() {

@@ -75,7 +75,13 @@
     // 2) fuzzy search, prefer synced lyrics with the closest duration
     const results =
       (await lrclib("search", q.artist ? { track_name: q.title, artist_name: q.artist } : { q: q.title })) ?? [];
-    const synced = results.filter((r) => r.syncedLyrics);
+    let synced = results.filter((r) => r.syncedLyrics);
+    // 3) free-text search (catches transliterated / reordered titles)
+    if (!synced.length) {
+      const loose = (await lrclib("search", { q: `${q.artist} ${q.title}`.trim() })) ?? [];
+      results.push(...loose);
+      synced = loose.filter((r) => r.syncedLyrics);
+    }
     if (!synced.length) return results.find((r) => r.plainLyrics) ?? null;
     if (!track.duration) return synced[0];
     return synced.reduce((best, r) =>
@@ -140,16 +146,24 @@
       this.startTicking(m?.playing);
     },
 
-    async load(m, key) {
+    async load(m, key, attempt = 0) {
       let lines = this.cache.get(key);
       if (!lines) {
+        this.setStatus("loading");
         try {
           const hit = await findLyrics(m);
           if (hit?.instrumental) lines = [{ time: 0, text: "♪ ♪ ♪" }];
           else lines = hit?.syncedLyrics ? parseLRC(hit.syncedLyrics) : [];
         } catch (err) {
-          NP.logger.warn(`Lyrics lookup failed: ${err}`);
-          return; // don't cache network errors
+          // LRCLIB is often busy (503): retry a few times, don't cache errors.
+          NP.logger.warn(`Lyrics lookup failed (try ${attempt + 1}): ${err}`);
+          if (attempt < 3 && key === this.key) {
+            clearTimeout(this.retryTimer);
+            this.retryTimer = setTimeout(() => this.load(m, key, attempt + 1), [2000, 6000, 15000][attempt]);
+          } else if (key === this.key) {
+            this.setStatus("error");
+          }
+          return;
         }
         if (this.cache.size > 100) this.cache.clear();
         this.cache.set(key, lines);
@@ -157,6 +171,21 @@
       if (key !== this.key) return; // track changed while loading
       this.lines = lines;
       this.render();
+      if (!lines.length) this.setStatus("missing");
+    },
+
+    // A short muted line instead of silently showing nothing.
+    setStatus(status) {
+      clearTimeout(this.statusTimer);
+      this.panel.setAttribute("status", status);
+      if (status === "loading") return;
+      const text = { missing: "لیریک هم‌زمانی برای این آهنگ پیدا نشد", error: "سرور لیریک فعلاً در دسترس نیست" }[status];
+      this.track.replaceChildren(NP.html("div", { class: "nplus-lyric nplus-lyric-status", text, dir: "auto" }));
+      this.track.style.transform = "none";
+      this.panel.removeAttribute("hidden");
+      this.statusTimer = setTimeout(() => {
+        if (!this.lines.length) this.panel.setAttribute("hidden", "true");
+      }, 4000);
     },
 
     render() {
@@ -173,6 +202,7 @@
       );
       this.active = -1;
       if (this.lines.length) {
+        this.panel.removeAttribute("status");
         this.panel.removeAttribute("hidden");
         this.sync(true);
       } else {
@@ -181,6 +211,7 @@
     },
 
     hide() {
+      if (this.panel.getAttribute("status") === "missing" || this.panel.getAttribute("status") === "error") return;
       this.panel.setAttribute("hidden", "true");
       this.startTicking(false);
     },
@@ -236,6 +267,8 @@
 
     destroy() {
       clearInterval(this.timer);
+      clearTimeout(this.retryTimer);
+      clearTimeout(this.statusTimer);
       this.offMedia?.();
       this.offPos?.();
       this.offKey?.();

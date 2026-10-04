@@ -44,7 +44,7 @@
     "nplus-glow-tab": true,
     "nplus-glow-urlbar": true,
     "nplus-glow-color": 2,
-    "var-nplus-glow-speed": "4s",
+    "var-nplus-glow-speed": "6s",
     "var-nplus-glow-width": "1.5px",
     "nplus-shimmer-hover": true,
     "nplus-shimmer-loading": true,
@@ -464,6 +464,8 @@
       } catch {}
     },
     async checkSnap() {
+      // With several windows open, only the most recently used one answers.
+      if (Services.wm.getMostRecentWindow("navigator:browser") !== window) return;
       // .dev/eval.js: run it in this window, write the JSON result to .dev/eval.out
       const evalPath = PathUtils.join(this.dir, "eval.js");
       if (await IOUtils.exists(evalPath)) {

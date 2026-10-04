@@ -71,9 +71,11 @@
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   mask-composite: exclude;
-  animation: nplus-orbit calc(var(--nplus-glow-speed) * 1.6) linear infinite;
+  animation:
+    nplus-orbit calc(var(--nplus-glow-speed) * 1.6) linear infinite,
+    nplus-ring-in 1.2s var(--nplus-ease-out) both;
   pointer-events: none;
-  opacity: 0.85;
+  opacity: 0.7;
 }
 
 /* ---- Typography ---- */
@@ -344,31 +346,38 @@
   opacity: 0.8;
 }
 
+/* Buttons mirror Zen's media card buttons (.toolbarbutton-1): 26px hit
+   area, 16px icon from Zen's own icon set, soft hover, no fills. */
 .nplus-btn {
   appearance: none;
   width: 26px;
   height: 26px;
+  padding: 0;
   border: none;
-  border-radius: 8px;
+  border-radius: 5px;
   background: transparent;
   color: inherit;
   cursor: pointer;
   position: relative;
+  transition: background-color 0.15s ease;
 
   &::before {
     content: "";
     position: absolute;
     inset: 5px;
     background: currentColor;
-    mask: var(--nplus-icon) center / contain no-repeat;
-    transition: scale 0.18s var(--nplus-ease-spring);
+    mask: var(--nplus-icon) center / 16px 16px no-repeat;
+    opacity: 0.85;
+    transition:
+      scale 0.18s var(--nplus-ease-spring),
+      opacity 0.15s ease;
   }
 
   &:hover {
-    background: light-dark(rgb(0 0 0 / 7%), rgb(255 255 255 / 9%));
+    background: var(--toolbarbutton-hover-background, light-dark(rgb(0 0 0 / 7%), rgb(255 255 255 / 9%)));
 
     &::before {
-      scale: 1.1;
+      opacity: 1;
     }
   }
 
@@ -377,13 +386,21 @@
   }
 }
 
-.nplus-dc-toggle {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--nplus-accent) 22%, transparent);
+/* Empty cover: Zen's music icon on a soft glass tile */
+.nplus-dc-art-empty {
+  display: none;
+  width: 100%;
+  height: 100%;
+  background: currentColor;
+  mask: url("chrome://browser/skin/zen-icons/selectable/music.svg") center / 16px 16px no-repeat;
+  opacity: 0.45;
+}
 
-  &:hover {
-    background: color-mix(in srgb, var(--nplus-accent) 35%, transparent);
+.nplus-dc-art[empty] {
+  background-color: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 8%)) !important;
+  box-shadow: inset 0 0 0 1px light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 8%)) !important;
+
+  & > .nplus-dc-art-empty {
+    display: block;
   }
 }

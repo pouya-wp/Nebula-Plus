@@ -1,0 +1,122 @@
+/* ---------------- URL bar, redesigned ----------------
+   A calm glass command bar: one radius for every layer (so the glow ring
+   always matches the shape), a soft accent halo instead of hard borders,
+   rounded result rows with an accent pill for the selection. */
+
+:root {
+  --nplus-urlbar-radius: 16px;
+  --nplus-urlbar-glass: light-dark(rgb(255 255 255 / 80%), rgb(24 24 28 / 74%));
+}
+
+/* Nebula's JS overlay chased the URL bar frame by frame and could be left
+   behind mid-animation (a stray block above the floating URL bar). The
+   background below replaces it. */
+#Nebula-urlbar-background {
+  display: none !important;
+}
+
+/* ---- Idle ---- */
+#urlbar:not([open]) > .urlbar-background {
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.4s var(--nplus-ease-out) !important;
+}
+
+#urlbar:not([open], [focused]):hover > .urlbar-background {
+  box-shadow:
+    inset 0 0 0 1px light-dark(rgb(0 0 0 / 5%), rgb(255 255 255 / 6%)),
+    0 4px 14px -8px rgb(0 0 0 / 30%) !important;
+}
+
+/* ---- Open ---- */
+#urlbar[open] {
+  border-radius: var(--nplus-urlbar-radius) !important;
+  overflow: visible !important;
+  animation: nplus-urlbar-in 0.32s var(--nplus-ease-out) both !important;
+}
+
+#urlbar[open] > .urlbar-background {
+  scale: 1 !important;
+  border-radius: var(--nplus-urlbar-radius) !important;
+  background: var(--nplus-urlbar-glass) !important;
+  backdrop-filter: blur(40px) saturate(180%) !important;
+  box-shadow:
+    inset 0 0 0 1px light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 8%)),
+    inset 0 1px 0 var(--nplus-edge-light),
+    0 0 0 4px color-mix(in srgb, var(--nplus-accent) 10%, transparent),
+    0 28px 70px -24px rgb(0 0 0 / 45%) !important;
+}
+
+/* Only opacity/blur: Zen moves the floating URL bar itself. */
+@keyframes nplus-urlbar-in {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+
+/* Thin divider between the input and the results */
+#urlbar[open] .urlbarView {
+  border-top: none !important;
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    light-dark(rgb(0 0 0 / 9%), rgb(255 255 255 / 9%)) 15%,
+    light-dark(rgb(0 0 0 / 9%), rgb(255 255 255 / 9%)) 85%,
+    transparent
+  ) !important;
+  background-size: 100% 1px !important;
+  background-repeat: no-repeat !important;
+}
+
+/* ---- Result rows ---- */
+#urlbar-results .urlbarView-row {
+  border-radius: 11px !important;
+  transition: background-color 0.18s ease !important;
+
+  &:hover:not([selected]) {
+    background-color: light-dark(rgb(0 0 0 / 4%), rgb(255 255 255 / 5%)) !important;
+  }
+
+  &[selected] {
+    background-color: color-mix(in srgb, var(--nplus-accent) 16%, transparent) !important;
+    box-shadow: inset 3px 0 0 -0.5px var(--nplus-accent);
+  }
+
+  & .urlbarView-favicon {
+    border-radius: 5px;
+  }
+
+  /* "Switch to Tab" pill (other rows keep an empty action element) */
+  &:is([type="switchtab"], [type="remotetab"]) .urlbarView-action {
+    padding: 1px 7px !important;
+    border-radius: 99px !important;
+    background: light-dark(rgb(0 0 0 / 5%), rgb(255 255 255 / 8%)) !important;
+    font-size: 10.5px !important;
+  }
+}
+
+/* Nebula's blurred gradient behind hovered rows, toned down */
+#urlbar[open] #urlbar-results > *:hover::before {
+  opacity: 0.22 !important;
+}
+
+/* ---- The page behind the floating URL bar ----
+   Nebula scaled the page up 7.5% and blurred it; the scaled edges showed up
+   as a block behind the floating URL bar. Dim and soften in place instead. */
+#browser:has(#urlbar[open]) .browserStack {
+  scale: 1 !important;
+  filter: brightness(82%) blur(6px) saturate(120%) !important;
+}
+
+@media (-moz-pref("nebula-urlbar-animation", 0)) {
+  #browser:has(#urlbar[open]) .browserStack {
+    filter: none !important;
+  }
+}
+
+/* ---- Icons inside the bar: same size and weight as Zen's ---- */
+#nplus-darkmode-button > .urlbar-icon {
+  width: 16px;
+  height: 16px;
+}

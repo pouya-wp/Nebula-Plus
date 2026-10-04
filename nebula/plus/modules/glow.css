@@ -1,17 +1,17 @@
 /* ---------------- Traveling glow ----------------
-   A comet of light orbiting the border of the active tab, the focused URL bar
-   and the playing media card. Built from a conic gradient masked down to a
-   thin ring, so it costs one small repaint per frame. */
+   A soft comet of light orbiting the active tab, the open URL bar and the
+   playing card. Mellow by design: a long faded tail, a gentle peak, and it
+   fades in when the element becomes active instead of popping on. */
 
-/* Shared ring recipe */
 :root {
+  --nplus-glow-speed: 6s;
   --nplus-ring: conic-gradient(
     from var(--nplus-angle),
     transparent 0%,
-    transparent 52%,
-    color-mix(in srgb, var(--nplus-glow-a) 25%, transparent) 64%,
-    var(--nplus-glow-a) 80%,
-    var(--nplus-glow-b) 86%,
+    transparent 40%,
+    color-mix(in srgb, var(--nplus-glow-a) 18%, transparent) 58%,
+    color-mix(in srgb, var(--nplus-glow-a) 70%, transparent) 78%,
+    color-mix(in srgb, var(--nplus-glow-b) 85%, transparent) 84%,
     transparent 92%,
     transparent 100%
   );
@@ -21,13 +21,20 @@
   :root {
     --nplus-ring: conic-gradient(
       from var(--nplus-angle),
-      #ff5f6d,
-      #ffc371,
-      #47e891,
-      #3fb8ff,
-      #a66bff,
-      #ff5f6d
+      rgb(255 95 109 / 75%),
+      rgb(255 195 113 / 75%),
+      rgb(71 232 145 / 75%),
+      rgb(63 184 255 / 75%),
+      rgb(166 107 255 / 75%),
+      rgb(255 95 109 / 75%)
     );
+  }
+}
+
+/* The ring itself (used by every glowing surface) */
+@keyframes nplus-ring-in {
+  from {
+    opacity: 0;
   }
 }
 
@@ -36,18 +43,17 @@
   .tabbrowser-tab:is([selected], [visuallyselected]):not([zen-essential], [multiselected], [zen-glance-tab])
     > .tab-stack
     > .tab-background {
-    /* No inset highlight or outline here: a second edge under the ring
-       reads as a border with a different radius. */
-    box-shadow: 0 0 14px -4px color-mix(in srgb, var(--nplus-glow-a) 55%, transparent) !important;
+    /* No inset highlight or outline under the ring: a second edge reads as
+       a border with a different radius. */
+    box-shadow: 0 2px 16px -6px color-mix(in srgb, var(--nplus-glow-a) 45%, transparent) !important;
     outline: none !important;
+    transition: box-shadow 0.8s var(--nplus-ease-out) !important;
 
     &::after {
       content: "" !important;
       display: block !important;
       position: absolute !important;
       inset: 0 !important;
-      left: 0 !important;
-      bottom: 0 !important;
       width: auto !important;
       height: auto !important;
       transform: none !important;
@@ -58,33 +64,33 @@
         linear-gradient(#000 0 0) content-box,
         linear-gradient(#000 0 0) !important;
       mask-composite: exclude !important;
-      animation: nplus-orbit var(--nplus-glow-speed) linear infinite !important;
-      opacity: 0.95 !important;
+      opacity: 0.85;
+      animation:
+        nplus-orbit var(--nplus-glow-speed) linear infinite,
+        nplus-ring-in 0.9s var(--nplus-ease-out) both !important;
       pointer-events: none !important;
     }
   }
 }
 
-/* ---- URL bar while typing ---- */
+/* ---- URL bar while open ---- */
 @media (-moz-pref("nplus-glow-urlbar")) {
-  #urlbar:is([focused], [open]) > .urlbar-background {
-    box-shadow: 0 10px 40px -12px color-mix(in srgb, var(--nplus-glow-a) 55%, transparent) !important;
-    outline: none !important;
-
-    &::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      padding: calc(var(--nplus-glow-width) + 0.5px);
-      background: var(--nplus-ring);
-      mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0);
-      mask-composite: exclude;
-      animation: nplus-orbit calc(var(--nplus-glow-speed) * 1.5) linear infinite;
-      pointer-events: none;
-    }
+  #urlbar[open] > .urlbar-background::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: var(--nplus-glow-width);
+    background: var(--nplus-ring);
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    opacity: 0.7;
+    animation:
+      nplus-orbit calc(var(--nplus-glow-speed) * 1.4) linear infinite,
+      nplus-ring-in 0.9s var(--nplus-ease-out) both;
+    pointer-events: none;
   }
 }
 
@@ -93,7 +99,7 @@
   #zen-media-controls-toolbar .zen-media-card.playing:not([stacked-behind], [muted]),
   #nplus-desktop-card[playing] {
     outline-color: transparent !important;
-    box-shadow: 0 8px 28px -10px rgb(0 0 0 / 35%) !important;
+    box-shadow: 0 8px 28px -12px color-mix(in srgb, var(--nplus-glow-a) 40%, rgb(0 0 0 / 40%)) !important;
 
     & > .nplus-card-ring {
       display: block;
