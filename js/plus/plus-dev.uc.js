@@ -60,12 +60,17 @@
 
     const parts = [];
     let last = 0;
-    const importRe = /@import\s+(?:url\(\s*)?["']?([^"')\s;]+)["']?\s*\)?\s*([^;]*);/g;
+    // @import "x" | @import 'x' | @import url("x") | @import url(x) [media];
+    // Quoted forms may contain parentheses (e.g. "Default (release)-1").
+    const importRe = /@import\s+(?:url\(\s*)?(?:"([^"]*)"|'([^']*)'|([^"'\s)]+))\s*\)?\s*([^;]*);/g;
     for (const m of css.matchAll(importRe)) {
       parts.push(css.slice(last, m.index));
-      const child = await bundle(m[1].startsWith("file:") || m[1].startsWith("chrome:") ? m[1] : resolve(m[1]), files, depth + 1);
-      const condition = m[2].trim();
-      parts.push(condition ? `@media ${condition} {\n${child}\n}` : child);
+      const ref = m[1] ?? m[2] ?? m[3];
+      const child = await bundle(/^(file|chrome):/.test(ref) ? ref : resolve(ref), files, depth + 1);
+      const condition = m[4].trim();
+      parts.push(condition ? `@media ${condition} {
+${child}
+}` : child);
       last = m.index + m[0].length;
     }
     parts.push(css.slice(last));

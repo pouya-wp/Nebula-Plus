@@ -422,6 +422,68 @@
     },
   });
 
+  // ================= Dev tools =================
+  // Only while live dev is on. Writes into <repo>/.dev/ (gitignored):
+  // - console.log: Nebula Plus messages and errors from our scripts/styles
+  // - touch .dev/snap to save the window's UI as .dev/snap.png
+  NP.feature({
+    name: "DevTools",
+    init() {
+      if (!Services.prefs.getBoolPref("nplus-dev-live", true)) return;
+      this.dir = PathUtils.join(PathUtils.profileDir, "chrome", "sine-mods", "Nebula", ".dev");
+      this.logPath = PathUtils.join(this.dir, "console.log");
+      this.queue = [];
+      IOUtils.makeDirectory(this.dir, { ignoreExisting: true }).then(() =>
+        IOUtils.writeUTF8(this.logPath, `--- ${new Date().toISOString()} ---\n`),
+      );
+
+      this.listener = {
+        observe: (msg) => {
+          let text = msg.message ?? String(msg);
+          if (msg instanceof Ci.nsIScriptError) {
+            const src = msg.sourceName || "";
+            if (!/nplus|plus-|sine|Nebula|data:text\/css/i.test(src + text)) return;
+            text = `${msg.flags & Ci.nsIScriptError.warningFlag ? "WARN" : "ERROR"} ${msg.errorMessage} @ ${src.slice(-80)}:${msg.lineNumber}`;
+          } else if (!text.includes("[Nebula+]")) {
+            return;
+          }
+          this.queue.push(text);
+          clearTimeout(this.flushTimer);
+          this.flushTimer = setTimeout(() => this.flush(), 300);
+        },
+      };
+      Services.console.registerListener(this.listener);
+
+      this.snapTrigger = PathUtils.join(this.dir, "snap");
+      this.snapTimer = setInterval(() => this.checkSnap(), 700);
+    },
+    async flush() {
+      const lines = this.queue.splice(0).join("\n") + "\n";
+      try {
+        await IOUtils.writeUTF8(this.logPath, lines, { mode: "append" });
+      } catch {}
+    },
+    async checkSnap() {
+      if (!(await IOUtils.exists(this.snapTrigger))) return;
+      await IOUtils.remove(this.snapTrigger);
+      const canvas = document.createElementNS(HTML_NS, "canvas");
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * scale;
+      canvas.height = window.innerHeight * scale;
+      const ctx = canvas.getContext("2d");
+      ctx.scale(scale, scale);
+      ctx.drawWindow(window, 0, 0, window.innerWidth, window.innerHeight, "rgb(128,128,128)");
+      const blob = await new Promise((r) => canvas.toBlob(r, "image/png"));
+      await IOUtils.write(PathUtils.join(this.dir, "snap.png"), new Uint8Array(await blob.arrayBuffer()));
+    },
+    destroy() {
+      if (this.listener) Services.console.unregisterListener(this.listener);
+      clearInterval(this.snapTimer);
+      clearTimeout(this.flushTimer);
+      this.flush?.();
+    },
+  });
+
   // Other Nebula Plus scripts register their features synchronously after this
   // file runs; start once the window is ready so they are all included.
   const boot = () => {
