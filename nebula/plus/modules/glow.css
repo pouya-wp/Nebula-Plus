@@ -4,7 +4,6 @@
    fades in when the element becomes active instead of popping on. */
 
 :root {
-  --nplus-glow-speed: 6s;
   --nplus-ring: conic-gradient(
     from var(--nplus-angle),
     transparent 0%,
@@ -31,11 +30,30 @@
   }
 }
 
-/* The ring itself (used by every glowing surface) */
+/* Rings fade in once, then breathe very slowly while they orbit:
+   opacity = fade-in × breath × max. */
 @keyframes nplus-ring-in {
   from {
-    opacity: 0;
+    --nplus-ring-in: 0;
   }
+}
+
+@keyframes nplus-breathe-ring {
+  0%,
+  100% {
+    --nplus-breath: 0.45;
+  }
+
+  50% {
+    --nplus-breath: 1;
+  }
+}
+
+:root {
+  --nplus-ring-anim:
+    nplus-orbit var(--nplus-glow-speed) linear infinite,
+    nplus-ring-in 1.4s var(--nplus-ease-out) both,
+    nplus-breathe-ring calc(var(--nplus-glow-speed) * 0.7) ease-in-out infinite;
 }
 
 /* ---- Active tab ---- */
@@ -45,7 +63,7 @@
     > .tab-background {
     /* No inset highlight or outline under the ring: a second edge reads as
        a border with a different radius. */
-    box-shadow: 0 2px 16px -6px color-mix(in srgb, var(--nplus-glow-a) 45%, transparent) !important;
+    box-shadow: 0 2px 18px -8px color-mix(in srgb, var(--nplus-glow-a) 30%, transparent) !important;
     outline: none !important;
     transition: box-shadow 0.8s var(--nplus-ease-out) !important;
 
@@ -58,16 +76,15 @@
       height: auto !important;
       transform: none !important;
       border-radius: inherit !important;
+      corner-shape: var(--nplus-corner) !important;
       padding: var(--nplus-glow-width) !important;
       background: var(--nplus-ring) !important;
       mask:
         linear-gradient(#000 0 0) content-box,
         linear-gradient(#000 0 0) !important;
       mask-composite: exclude !important;
-      opacity: 0.85;
-      animation:
-        nplus-orbit var(--nplus-glow-speed) linear infinite,
-        nplus-ring-in 0.9s var(--nplus-ease-out) both !important;
+      opacity: calc(var(--nplus-ring-in) * var(--nplus-breath) * var(--nplus-glow-max)) !important;
+      animation: var(--nplus-ring-anim) !important;
       pointer-events: none !important;
     }
   }
@@ -80,16 +97,15 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
+    corner-shape: var(--nplus-corner);
     padding: var(--nplus-glow-width);
     background: var(--nplus-ring);
     mask:
       linear-gradient(#000 0 0) content-box,
       linear-gradient(#000 0 0);
     mask-composite: exclude;
-    opacity: 0.7;
-    animation:
-      nplus-orbit calc(var(--nplus-glow-speed) * 1.4) linear infinite,
-      nplus-ring-in 0.9s var(--nplus-ease-out) both;
+    opacity: calc(var(--nplus-ring-in) * var(--nplus-breath) * var(--nplus-glow-max));
+    animation: var(--nplus-ring-anim);
     pointer-events: none;
   }
 }

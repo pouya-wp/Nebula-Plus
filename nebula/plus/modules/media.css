@@ -35,9 +35,9 @@
     inset: 0;
     z-index: -1;
     border-radius: inherit;
+    corner-shape: var(--nplus-corner);
     background: var(--nplus-card-art) center / cover no-repeat;
     filter: blur(22px) saturate(1.7) brightness(0.9);
-    clip-path: inset(0 round var(--nebula-border-radius, 13px));
     opacity: 0.38;
     pointer-events: none;
     transition: opacity 0.5s var(--nplus-ease-soft);
@@ -54,7 +54,9 @@
   }
 }
 
-#nplus-desktop-card {
+/* Clip the blurred cover to the card's own (squircle) shape. */
+#nplus-desktop-card,
+#zen-media-controls-toolbar .zen-media-card[nplus-art] {
   overflow: clip;
 }
 
@@ -65,17 +67,16 @@
   inset: 0;
   z-index: 2;
   border-radius: inherit;
+  corner-shape: var(--nplus-corner);
   padding: var(--nplus-glow-width);
   background: var(--nplus-ring);
   mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   mask-composite: exclude;
-  animation:
-    nplus-orbit calc(var(--nplus-glow-speed) * 1.6) linear infinite,
-    nplus-ring-in 1.2s var(--nplus-ease-out) both;
+  animation: var(--nplus-ring-anim);
   pointer-events: none;
-  opacity: 0.7;
+  opacity: calc(var(--nplus-ring-in) * var(--nplus-breath) * var(--nplus-glow-max));
 }
 
 /* ---- Typography ---- */

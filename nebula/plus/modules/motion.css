@@ -67,6 +67,7 @@
     height: auto !important;
     transform: none !important;
     border-radius: inherit !important;
+    corner-shape: var(--nplus-corner) !important;
     background: radial-gradient(
       120% 160% at 0% 50%,
       color-mix(in srgb, var(--nplus-accent) 38%, transparent),

@@ -761,8 +761,8 @@
     "type": "string",
     "property": "var-nplus-glow-speed",
     "label": "Glow orbit speed",
-    "defaultValue": "6s",
-    "placeholder": "e.g. 6s"
+    "defaultValue": "9s",
+    "placeholder": "e.g. 9s"
   },
   {
     "type": "string",

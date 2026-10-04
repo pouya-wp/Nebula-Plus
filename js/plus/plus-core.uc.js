@@ -44,7 +44,7 @@
     "nplus-glow-tab": true,
     "nplus-glow-urlbar": true,
     "nplus-glow-color": 2,
-    "var-nplus-glow-speed": "6s",
+    "var-nplus-glow-speed": "9s",
     "var-nplus-glow-width": "1.5px",
     "nplus-shimmer-hover": true,
     "nplus-shimmer-loading": true,

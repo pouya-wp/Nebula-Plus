@@ -13,6 +13,18 @@
   initial-value: transparent;
 }
 
+@property --nplus-breath {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
+@property --nplus-ring-in {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
 @property --nplus-angle {
   syntax: "<angle>";
   inherits: false;
@@ -25,8 +37,14 @@
   --nplus-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --nplus-ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
 
+  /* Zen draws every element as a squircle (corner-shape: superellipse).
+     Pseudo-elements don't get it, so ours copy it from this token, or rings
+     and backdrops won't line up with the shape they sit on. */
+  --nplus-corner: superellipse(var(--zen-squircle-value, 1));
+
   /* Glow */
-  --nplus-glow-speed: 6s;
+  --nplus-glow-max: 0.42;
+  --nplus-glow-speed: 9s;
   --nplus-glow-width: 1.5px;
   --nplus-glow-a: var(--zen-primary-color);
   --nplus-glow-b: color-mix(in srgb, var(--zen-primary-color) 55%, white);

@@ -67,6 +67,7 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
+    corner-shape: var(--nplus-corner);
     padding: 1.5px;
     background: conic-gradient(
       from var(--nplus-angle),
@@ -79,7 +80,8 @@
       linear-gradient(#000 0 0) content-box,
       linear-gradient(#000 0 0);
     mask-composite: exclude;
-    animation: nplus-orbit 2.4s linear infinite;
+    opacity: 0.6;
+    animation: nplus-orbit 5s linear infinite;
     pointer-events: none;
   }
 }
