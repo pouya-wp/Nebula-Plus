@@ -43,7 +43,7 @@
   --nplus-corner: superellipse(var(--zen-squircle-value, 1));
 
   /* Glow */
-  --nplus-glow-max: 0.42;
+  --nplus-glow-max: 0.7;
   --nplus-glow-speed: 9s;
   --nplus-glow-width: 1.5px;
   --nplus-glow-a: var(--zen-primary-color);

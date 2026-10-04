@@ -280,6 +280,7 @@ const player = {
   },
 
   async loadLyrics(st, key) {
+    $("#player").removeAttribute("lyrics-found");
     try {
       const params = new URLSearchParams({ track_name: st.title, artist_name: st.artist });
       let res = await (await fetch(`https://lrclib.net/api/search?${params}`)).json();
@@ -290,6 +291,8 @@ const player = {
         .filter((r) => r.syncedLyrics)
         .sort((a, b) => Math.abs(a.duration - st.duration) - Math.abs(b.duration - st.duration))[0];
       if (key !== this.key || !hit) return;
+      // a little moment when lyrics arrive
+      $("#player").setAttribute("lyrics-found", "");
       this.lines = hit.syncedLyrics
         .split("\n")
         .map((l) => l.match(/^\[(\d+):(\d+(?:\.\d+)?)\](.*)$/))
@@ -311,11 +314,7 @@ const player = {
     const el = $("#p-lyrics");
     if (el.dataset.line !== String(idx)) {
       el.dataset.line = idx;
-      el.classList.add("swap");
-      setTimeout(() => {
-        el.textContent = text;
-        el.classList.remove("swap");
-      }, 180);
+      showLyric(el, text);
     }
   },
 };
@@ -327,6 +326,29 @@ $(".p-controls").addEventListener("click", async (e) => {
     await fetch(`${BRIDGE}/cmd/${cmd}`, { method: "POST" });
   } catch {}
 });
+
+// Each new lyric line: the old one floats up and blurs away, the new one
+// arrives word by word (blur → sharp, rising), then a light sweeps across.
+function showLyric(el, text) {
+  const old = el.querySelector(".line");
+  if (old) {
+    old.classList.add("out");
+    setTimeout(() => old.remove(), 450);
+  }
+  if (!text) return;
+  const line = document.createElement("div");
+  line.className = "line";
+  line.dir = "auto";
+  text.split(/(\s+)/).forEach((part, i) => {
+    if (!part.trim()) return line.append(part);
+    const w = document.createElement("span");
+    w.className = "w";
+    w.textContent = part;
+    w.style.setProperty("--i", i / 2);
+    line.append(w);
+  });
+  el.append(line);
+}
 
 // Accent color from the album art (glows, ambient light, buttons follow it).
 async function accentFrom(url) {

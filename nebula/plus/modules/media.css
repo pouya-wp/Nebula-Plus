@@ -66,18 +66,15 @@
 
 /* ---- Orbiting glow ring (enabled in glow.css) ---- */
 .nplus-card-ring {
+  /* soft inner light, see glow.css */
   display: none;
   position: absolute;
   inset: 0;
   z-index: 2;
   border-radius: inherit;
   corner-shape: var(--nplus-corner);
-  padding: var(--nplus-glow-width);
-  background: var(--nplus-ring);
-  mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  mask-composite: exclude;
+  box-shadow: var(--nplus-glow-light);
+  mask: var(--nplus-glow-mask);
   animation: var(--nplus-ring-anim);
   pointer-events: none;
   opacity: calc(var(--nplus-ring-in) * var(--nplus-breath) * var(--nplus-glow-max));

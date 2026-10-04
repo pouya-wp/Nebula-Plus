@@ -2,6 +2,7 @@
    Imported by nebula/chrome.css after the Nebula modules, so it can refine them. */
 
 @import url("modules/tokens.css");
+@import url("modules/edges.css");
 @import url("modules/glow.css");
 @import url("modules/urlbar.css");
 @import url("modules/motion.css");

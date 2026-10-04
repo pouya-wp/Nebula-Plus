@@ -1,37 +1,10 @@
 /* ---------------- Traveling glow ----------------
-   A soft comet of light orbiting the active tab, the open URL bar and the
-   playing card. Mellow by design: a long faded tail, a gentle peak, and it
-   fades in when the element becomes active instead of popping on. */
+   Not a line on the edge (a partly visible stroke reads as a broken
+   border). It is a soft inner light, painted with an inset box-shadow so it
+   follows every element's exact shape (squircles included), and revealed
+   through a rotating conic mask: a faint glow drifting around the inside
+   of the edge. It fades in, breathes slowly, and never draws a hard line. */
 
-:root {
-  --nplus-ring: conic-gradient(
-    from var(--nplus-angle),
-    transparent 0%,
-    transparent 40%,
-    color-mix(in srgb, var(--nplus-glow-a) 18%, transparent) 58%,
-    color-mix(in srgb, var(--nplus-glow-a) 70%, transparent) 78%,
-    color-mix(in srgb, var(--nplus-glow-b) 85%, transparent) 84%,
-    transparent 92%,
-    transparent 100%
-  );
-}
-
-@media (-moz-pref("nplus-glow-color", 3)) {
-  :root {
-    --nplus-ring: conic-gradient(
-      from var(--nplus-angle),
-      rgb(255 95 109 / 75%),
-      rgb(255 195 113 / 75%),
-      rgb(71 232 145 / 75%),
-      rgb(63 184 255 / 75%),
-      rgb(166 107 255 / 75%),
-      rgb(255 95 109 / 75%)
-    );
-  }
-}
-
-/* Rings fade in once, then breathe very slowly while they orbit:
-   opacity = fade-in × breath × max. */
 @keyframes nplus-ring-in {
   from {
     --nplus-ring-in: 0;
@@ -41,11 +14,17 @@
 @keyframes nplus-breathe-ring {
   0%,
   100% {
-    --nplus-breath: 0.45;
+    --nplus-breath: 0.5;
   }
 
   50% {
     --nplus-breath: 1;
+  }
+}
+
+@keyframes nplus-hue {
+  to {
+    filter: hue-rotate(360deg);
   }
 }
 
@@ -54,6 +33,33 @@
     nplus-orbit var(--nplus-glow-speed) linear infinite,
     nplus-ring-in 1.4s var(--nplus-ease-out) both,
     nplus-breathe-ring calc(var(--nplus-glow-speed) * 0.7) ease-in-out infinite;
+
+  /* where the light is visible along the edge */
+  --nplus-glow-mask: conic-gradient(
+    from var(--nplus-angle),
+    transparent 0%,
+    transparent 38%,
+    rgb(0 0 0 / 35%) 55%,
+    #000 74%,
+    #000 80%,
+    transparent 96%
+  );
+  --nplus-glow-light:
+    inset 0 0 12px 0 color-mix(in srgb, var(--nplus-glow-a) 75%, transparent),
+    inset 0 0 3px 0 color-mix(in srgb, var(--nplus-glow-b) 60%, transparent);
+}
+
+/* Rainbow: the same light slowly cycling through hues */
+@media (-moz-pref("nplus-glow-color", 3)) {
+  :root {
+    --nplus-glow-a: rgb(255 95 109);
+    --nplus-glow-b: rgb(255 195 113);
+    --nplus-ring-anim:
+      nplus-orbit var(--nplus-glow-speed) linear infinite,
+      nplus-ring-in 1.4s var(--nplus-ease-out) both,
+      nplus-breathe-ring calc(var(--nplus-glow-speed) * 0.7) ease-in-out infinite,
+      nplus-hue calc(var(--nplus-glow-speed) * 2) linear infinite;
+  }
 }
 
 /* ---- Active tab ---- */
@@ -61,11 +67,7 @@
   .tabbrowser-tab:is([selected], [visuallyselected]):not([zen-essential], [multiselected], [zen-glance-tab])
     > .tab-stack
     > .tab-background {
-    /* No inset highlight or outline under the ring: a second edge reads as
-       a border with a different radius. */
-    box-shadow: 0 2px 18px -8px color-mix(in srgb, var(--nplus-glow-a) 30%, transparent) !important;
     outline: none !important;
-    transition: box-shadow 0.8s var(--nplus-ease-out) !important;
 
     &::after {
       content: "" !important;
@@ -75,14 +77,12 @@
       width: auto !important;
       height: auto !important;
       transform: none !important;
+      padding: 0 !important;
       border-radius: inherit !important;
       corner-shape: var(--nplus-corner) !important;
-      padding: var(--nplus-glow-width) !important;
-      background: var(--nplus-ring) !important;
-      mask:
-        linear-gradient(#000 0 0) content-box,
-        linear-gradient(#000 0 0) !important;
-      mask-composite: exclude !important;
+      background: none !important;
+      box-shadow: var(--nplus-glow-light) !important;
+      mask: var(--nplus-glow-mask) !important;
       opacity: calc(var(--nplus-ring-in) * var(--nplus-breath) * var(--nplus-glow-max)) !important;
       animation: var(--nplus-ring-anim) !important;
       pointer-events: none !important;
@@ -98,12 +98,10 @@
     inset: 0;
     border-radius: inherit;
     corner-shape: var(--nplus-corner);
-    padding: var(--nplus-glow-width);
-    background: var(--nplus-ring);
-    mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    mask-composite: exclude;
+    box-shadow:
+      inset 0 0 18px 0 color-mix(in srgb, var(--nplus-glow-a) 70%, transparent),
+      inset 0 0 4px 0 color-mix(in srgb, var(--nplus-glow-b) 55%, transparent);
+    mask: var(--nplus-glow-mask);
     opacity: calc(var(--nplus-ring-in) * var(--nplus-breath) * var(--nplus-glow-max));
     animation: var(--nplus-ring-anim);
     pointer-events: none;
@@ -114,10 +112,6 @@
 @media (-moz-pref("nplus-media-glow")) {
   #zen-media-controls-toolbar .zen-media-card.playing:not([stacked-behind], [muted]),
   #nplus-desktop-card[playing] {
-    box-shadow:
-      0 0 0 0.5px light-dark(rgb(0 0 0 / 9%), rgb(255 255 255 / 9%)),
-      0 8px 28px -12px color-mix(in srgb, var(--nplus-glow-a) 40%, rgb(0 0 0 / 40%)) !important;
-
     & > .nplus-card-ring {
       display: block;
     }

@@ -1,0 +1,34 @@
+/* ---------------- One edge system ----------------
+   Zen, Nebula and other mods (SuperPins, ...) each draw their own border,
+   outline or inset line on tabs and tiles, and on Zen's squircle corners
+   those stack into mismatched double edges. Here every tab-like surface gets
+   the same single hairline (a 0.5px shadow, which follows corner-shape).
+   The #navigator-toolbox prefix outranks the mods loaded after Nebula. */
+
+#navigator-toolbox .tabbrowser-tab > .tab-stack > .tab-background {
+  border: none !important;
+  outline: none !important;
+}
+
+/* Essentials tiles, pinned tabs and folders: hairline only */
+#navigator-toolbox .tabbrowser-tab:is([zen-essential], [pinned]) > .tab-stack > .tab-background {
+  box-shadow: 0 0 0 0.5px light-dark(rgb(0 0 0 / 8%), rgb(255 255 255 / 8%)) !important;
+}
+
+#navigator-toolbox .tabbrowser-tab:is([zen-essential], [pinned]):hover > .tab-stack > .tab-background {
+  box-shadow:
+    0 0 0 0.5px light-dark(rgb(0 0 0 / 10%), rgb(255 255 255 / 10%)),
+    0 4px 14px -8px rgb(0 0 0 / 30%) !important;
+}
+
+/* Selected tab: hairline + soft depth (the inner glow sits on top) */
+#navigator-toolbox .tabbrowser-tab:is([selected], [visuallyselected]) > .tab-stack > .tab-background {
+  box-shadow:
+    0 0 0 0.5px light-dark(rgb(0 0 0 / 8%), rgb(255 255 255 / 9%)),
+    0 3px 12px -8px rgb(0 0 0 / 35%) !important;
+}
+
+/* Zen's media cards use their own outline variable */
+#zen-media-controls-toolbar {
+  --zen-sidebar-notification-outline: none;
+}
