@@ -956,6 +956,13 @@
   },
   {
     "type": "checkbox",
+    "property": "nplus-focus-music",
+    "label": "Play music when focus starts, pause it on breaks",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
     "property": "nplus-meet-pill",
     "label": "Floating call pill for Google Meet & other calls (Ctrl+Alt+G opens Meet)",
     "margin": "12px 0",
@@ -965,6 +972,13 @@
     "type": "checkbox",
     "property": "nplus-meet-style",
     "label": "Meem font and rounded tiles on Google Meet",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-meet-pip",
+    "label": "Picture-in-picture of the call when you leave its tab",
     "margin": "12px 0",
     "defaultValue": true
   },
@@ -1076,6 +1090,27 @@
         "value": 2
       }
     ]
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-folder-suggest",
+    "label": "Offer to move new tabs into the matching AI folder",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-tab-sleep",
+    "label": "Put idle tabs to sleep to free memory",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "string",
+    "property": "nplus-tab-sleep-minutes",
+    "label": "Sleep after (minutes)",
+    "defaultValue": "30",
+    "placeholder": "30"
   },
   {
     "type": "separator",

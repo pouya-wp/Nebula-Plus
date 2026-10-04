@@ -126,3 +126,24 @@
   font-size: 10.5px;
   color: var(--nplus-text-soft);
 }
+
+/* ---------------- Island progress (downloads) ----------------
+   A ring around the icon that fills as the file arrives. */
+#nplus-island[progress] .nplus-island-art {
+  position: relative;
+  overflow: visible;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 12px;
+    corner-shape: round;
+    background: conic-gradient(var(--nplus-island-color) calc(var(--nplus-island-p, 0) * 360deg), light-dark(rgb(0 0 0 / 10%), rgb(255 255 255 / 12%)) 0);
+    mask:
+      linear-gradient(#000 0 0) content-box exclude,
+      linear-gradient(#000 0 0);
+    padding: 2px;
+    transition: background 0.4s linear;
+  }
+}

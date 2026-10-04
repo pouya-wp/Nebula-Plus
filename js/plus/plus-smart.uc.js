@@ -19,6 +19,9 @@
   NP.DEFAULTS["nplus-name"] = "";
   NP.DEFAULTS["nplus-ui-sounds"] = true;
   NP.DEFAULTS["nplus-wallpaper-accent"] = true;
+  NP.DEFAULTS["nplus-tab-sleep"] = true;
+  NP.DEFAULTS["nplus-tab-sleep-minutes"] = "30";
+  NP.DEFAULTS["nplus-folder-suggest"] = true;
 
   const BRIDGE = "http://127.0.0.1:47321";
   const fa = (n) => new Intl.NumberFormat("fa-IR").format(n);
@@ -181,6 +184,14 @@
             NP.logger.error(`Folder "${g.name}" failed`, err);
           }
         }
+        const memory = await NP.store.get("aiFolders", []);
+        groups.forEach((g, i) => {
+          const folder = folders[i];
+          if (!folder) return;
+          const sites = [...new Set(g.tabs.map((t) => { try { return t.linkedBrowser.currentURI.host.replace(/^www\./, ""); } catch { return ""; } }).filter(Boolean))];
+          memory.push({ id: folder.id, label: g.name, sites });
+        });
+        NP.store.set("aiFolders", memory.slice(-30));
         NP.sound?.("done");
         NP.island?.show({
           title: `${fa(used.size)} تب در ${fa(folders.length)} پوشه`,
@@ -349,6 +360,113 @@
       clearInterval(this.timer);
       NP.root.style.removeProperty("--nplus-wall");
       NP.root.removeAttribute("nplus-has-wall");
+    },
+  });
+
+  // ================= Folder suggestions =================
+  // After the AI made folders, a new tab from one of their sites gets an
+  // island: "move it into 🎨 …?". Click to move, ignore to keep it.
+  NP.feature({
+    name: "FolderSuggest",
+    init() {
+      this.asked = new WeakSet();
+      this.listener = {
+        onLocationChange: (browser, webProgress, request, location) => {
+          if (!webProgress?.isTopLevel || !NP.prefs.get("nplus-folder-suggest")) return;
+          const tab = gBrowser.getTabForBrowser(browser);
+          if (!tab || tab.pinned || tab.group || this.asked.has(tab) || tab.hasAttribute("zen-essential")) return;
+          let host = "";
+          try {
+            host = location.host.replace(/^www\./, "");
+          } catch {}
+          if (host) this.suggest(tab, host);
+        },
+      };
+      gBrowser.addTabsProgressListener(this.listener);
+    },
+    async suggest(tab, host) {
+      const memory = await NP.store.get("aiFolders", []);
+      for (const f of [...memory].reverse()) {
+        if (!f.sites?.includes(host)) continue;
+        const folder = document.getElementById(f.id);
+        if (!folder?.isConnected) continue;
+        this.asked.add(tab);
+        NP.island?.show({
+          title: `بره توی ${f.label}؟`,
+          subtitle: `${tab.label.slice(0, 40)} · کلیک کن تا منتقل بشه`,
+          icon: tab.image,
+          duration: 6000,
+          onClick: () => {
+            try {
+              gBrowser.pinTab(tab);
+              folder.addTabs([tab]);
+            } catch (err) {
+              NP.logger.warn(`Move to folder failed: ${err}`);
+            }
+          },
+        });
+        return;
+      }
+    },
+    destroy() {
+      gBrowser.removeTabsProgressListener(this.listener);
+    },
+  });
+
+  // ================= Tab sleep =================
+  // Tabs you haven't looked at for a while are unloaded to free memory and
+  // shown dimmed; they reload when you click them. Never: the selected
+  // tab, pinned/essential tabs, tabs playing sound or in a call.
+  NP.feature({
+    name: "TabSleep",
+    init() {
+      this.timer = setInterval(() => this.check(), 60_000);
+    },
+    async check() {
+      if (!NP.prefs.get("nplus-tab-sleep")) return;
+      const minutes = Math.max(5, Number.parseFloat(NP.prefs.get("nplus-tab-sleep-minutes")) || 30);
+      const cutoff = Date.now() - minutes * 60_000;
+      const sleepy = gBrowser.tabs.filter(
+        (t) =>
+          !t.selected &&
+          !t.pinned &&
+          !t.hasAttribute("zen-essential") &&
+          !t.hasAttribute("pending") &&
+          !t.hasAttribute("soundplaying") &&
+          !t.hasAttribute("sharing") &&
+          !t.linkedBrowser?.docShellIsActive &&
+          t.linkedPanel &&
+          (t.lastAccessed || Date.now()) < cutoff,
+      );
+      if (!sleepy.length) return;
+      const before = await this.memory();
+      for (const t of sleepy) {
+        try {
+          gBrowser.discardBrowser(t);
+        } catch {}
+      }
+      // let the content processes shrink before measuring
+      setTimeout(async () => {
+        const after = await this.memory();
+        const freed = before != null && after != null ? before - after : 0;
+        const mb = Math.max(0, Math.round(freed / 1048576));
+        NP.island?.show({
+          title: `${new Intl.NumberFormat("fa-IR").format(sleepy.length)} تب خوابید 💤`,
+          subtitle: mb > 20 ? `حدود ${new Intl.NumberFormat("fa-IR").format(mb)} مگابایت رم آزاد شد` : "با کلیک دوباره بیدار می‌شن",
+          duration: 3500,
+        });
+      }, 4000);
+    },
+    async memory() {
+      try {
+        const info = await ChromeUtils.requestProcInfo();
+        return info.children.reduce((sum, p) => sum + (p.memory || 0), info.memory || 0);
+      } catch {
+        return null;
+      }
+    },
+    destroy() {
+      clearInterval(this.timer);
     },
   });
 })();

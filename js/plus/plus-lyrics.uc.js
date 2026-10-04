@@ -61,6 +61,15 @@
     const q = cleanQuery(track);
     if (!q.title) return null;
 
+    // 0) a version you picked by hand for this track
+    const picked = (await NP.store.get("lyricsPicks", {}))[`${track.title}|${track.artist}`];
+    if (picked) {
+      try {
+        const hit = await (await fetch(`${API}/get/${picked}`, { headers: { "Lrclib-Client": CLIENT } })).json();
+        if (hit?.syncedLyrics || hit?.plainLyrics) return hit;
+      } catch {}
+    }
+
     // 1) exact match (fast path, uses duration to pick the right version)
     if (q.artist) {
       const params = { track_name: q.title, artist_name: q.artist };
@@ -97,14 +106,36 @@
       this.lines = [];
       this.active = -1;
 
+      const tool = (cls, text, title, fn) =>
+        NP.html("button", { class: `nplus-ly-tool ${cls}`, text, title, onclick: (e) => (e.stopPropagation(), fn()) });
       this.panel = NP.html("div", { id: "nplus-lyrics", hidden: "true" }, [
-        NP.html("div", { class: "nplus-lyrics-track" }),
+        // the window clips and fades the lines; the tools sit outside it
+        NP.html("div", { class: "nplus-lyrics-window" }, [NP.html("div", { class: "nplus-lyrics-track" })]),
+        NP.html("div", { class: "nplus-ly-tools" }, [
+          tool("ly-earlier", "−", "Lyrics earlier (0.5 s)", () => this.nudge(-0.5)),
+          NP.html("span", { class: "ly-offset" }),
+          tool("ly-later", "+", "Lyrics later (0.5 s)", () => this.nudge(0.5)),
+          tool("ly-pick", "⇄", "Choose another version", () => this.openPicker()),
+        ]),
       ]);
-      this.track = this.panel.firstChild;
+      this.track = this.panel.querySelector(".nplus-lyrics-track");
       this.panel.addEventListener("click", (e) => {
+        if (e.target.closest(".nplus-lyric-status")) return this.openPicker();
         const line = e.target.closest(".nplus-lyric");
         if (!line || !NP.prefs.get("nplus-lyrics-seek")) return;
         NP.media?.seek(Number(line.dataset.time) + 0.01);
+      });
+      this.picker = NP.html("div", { id: "nplus-ly-picker", hidden: "true" }, [
+        NP.html("div", { class: "lp-head" }, [
+          NP.html("input", { class: "lp-q", type: "text", dir: "auto", placeholder: "اسم آهنگ و خواننده…" }),
+          NP.html("button", { class: "lp-close", text: "✕", onclick: () => this.closePicker() }),
+        ]),
+        NP.html("div", { class: "lp-list" }),
+      ]);
+      document.body.append(this.picker);
+      this.picker.querySelector(".lp-q").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") this.searchPicker(e.target.value);
+        if (e.key === "Escape") this.closePicker();
       });
 
       const mount = () => {
@@ -138,6 +169,8 @@
       const key = m ? `${m.title}|${m.artist}` : null;
       if (key !== this.key || force) {
         this.key = key;
+        this.trackOffset = key ? ((await NP.store.get("lyricsOffsets", {}))[key] ?? 0) : 0;
+        this.showOffset();
         this.lines = [];
         this.active = -1;
         this.render();
@@ -174,6 +207,91 @@
       if (!lines.length) this.setStatus("missing");
     },
 
+    // ---- per-track timing ----
+    async nudge(sec) {
+      if (!this.key) return;
+      this.trackOffset = Math.round(((this.trackOffset || 0) + sec) * 10) / 10;
+      const all = await NP.store.get("lyricsOffsets", {});
+      if (this.trackOffset) all[this.key] = this.trackOffset;
+      else delete all[this.key];
+      NP.store.set("lyricsOffsets", all);
+      this.showOffset();
+      this.sync(true);
+    },
+
+    showOffset() {
+      const o = this.trackOffset || 0;
+      const el = this.panel.querySelector(".ly-offset");
+      el.textContent = o ? `${o > 0 ? "+" : ""}${o.toFixed(1)}s` : "";
+      this.panel.toggleAttribute("has-offset", !!o);
+    },
+
+    // ---- choose another version ----
+    openPicker() {
+      const m = NP.media?.current;
+      if (!m) return;
+      const r = this.panel.getBoundingClientRect();
+      this.picker.hidden = false;
+      this.picker.style.left = `${Math.round(r.right + 10)}px`;
+      this.picker.style.top = `${Math.round(Math.max(10, Math.min(r.top - 40, window.innerHeight - 380)))}px`;
+      const q = this.picker.querySelector(".lp-q");
+      q.value = `${cleanQuery(m).artist} ${cleanQuery(m).title}`.trim();
+      this.picker.getBoundingClientRect();
+      this.picker.setAttribute("open", "true");
+      this.searchPicker(q.value);
+      q.focus();
+    },
+
+    closePicker() {
+      this.picker.removeAttribute("open");
+      setTimeout(() => !this.picker.hasAttribute("open") && (this.picker.hidden = true), 200);
+    },
+
+    async searchPicker(text) {
+      const list = this.picker.querySelector(".lp-list");
+      list.replaceChildren(NP.html("div", { class: "lp-empty", text: "در حال جستجو…" }));
+      let results = [];
+      try {
+        results = (await lrclib("search", { q: text })) ?? [];
+      } catch {}
+      const m = NP.media?.current;
+      results.sort((a, b) => !!b.syncedLyrics - !!a.syncedLyrics || Math.abs(a.duration - (m?.duration ?? 0)) - Math.abs(b.duration - (m?.duration ?? 0)));
+      if (!results.length) {
+        list.replaceChildren(NP.html("div", { class: "lp-empty", text: "چیزی پیدا نشد؛ اسم رو عوض کن و Enter بزن" }));
+        return;
+      }
+      list.replaceChildren(
+        ...results.slice(0, 12).map((r) => {
+          const first = (r.syncedLyrics || r.plainLyrics || "").replace(/\[[^\]]*\]/g, "").trim().split("\n").find(Boolean) ?? "";
+          const row = NP.html("button", { class: "lp-row" }, [
+            NP.html("div", { class: "lp-title", dir: "auto", text: `${r.trackName} — ${r.artistName}` }),
+            NP.html("div", { class: "lp-meta", dir: "auto", text: `${NP.formatTime(r.duration)} · ${r.syncedLyrics ? "هم‌زمان" : "بدون زمان"} · ${first.slice(0, 40)}` }),
+          ]);
+          row.toggleAttribute("synced", !!r.syncedLyrics);
+          row.addEventListener("click", () => this.choose(r));
+          return row;
+        }),
+      );
+    },
+
+    async choose(r) {
+      const m = NP.media?.current;
+      if (!m) return;
+      const key = `${m.title}|${m.artist}`;
+      const picks = await NP.store.get("lyricsPicks", {});
+      picks[key] = r.id;
+      NP.store.set("lyricsPicks", picks);
+      const lines = r.syncedLyrics ? parseLRC(r.syncedLyrics) : [];
+      this.cache.set(key, lines);
+      this.closePicker();
+      if (key === this.key) {
+        this.lines = lines;
+        this.render();
+        if (!lines.length) this.setStatus("missing");
+      }
+      NP.island?.show({ title: "لیریک انتخاب شد", subtitle: `${r.trackName} — ${r.artistName}`, duration: 2000 });
+    },
+
     // A short muted line instead of silently showing nothing.
     setStatus(status) {
       NP.lyricsState = { key: this.key, lines: this.lines, status };
@@ -181,7 +299,7 @@
       clearTimeout(this.statusTimer);
       this.panel.setAttribute("status", status);
       if (status === "loading") return;
-      const text = { missing: "لیریک هم‌زمانی برای این آهنگ پیدا نشد", error: "سرور لیریک فعلاً در دسترس نیست" }[status];
+      const text = { missing: "لیریک پیدا نشد · کلیک کن تا انتخاب کنی", error: "سرور لیریک فعلاً در دسترس نیست" }[status];
       this.track.replaceChildren(NP.html("div", { class: "nplus-lyric nplus-lyric-status", text, dir: "auto" }));
       this.track.style.transform = "none";
       this.panel.removeAttribute("hidden");
@@ -231,7 +349,7 @@
 
     sync(force = false) {
       if (!this.lines.length || !NP.media?.current) return;
-      const pos = NP.media.position() + (this.offset || 0);
+      const pos = NP.media.position() + (this.offset || 0) + (this.trackOffset || 0);
 
       // Binary search for the last line that started.
       let lo = 0;
@@ -278,6 +396,7 @@
       this.offPos?.();
       this.offKey?.();
       this.panel?.remove();
+      this.picker?.remove();
     },
   });
   // ================= Lyrics stage =================

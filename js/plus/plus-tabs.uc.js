@@ -148,6 +148,7 @@
   // slowly fills the active tab like an hourglass; when it ends a 5-minute
   // break starts by itself. Ctrl+Alt+F starts/pauses.
   NP.DEFAULTS["nplus-focus-compact"] = true;
+  NP.DEFAULTS["nplus-focus-music"] = true;
 
   NP.feature({
     name: "FocusMode",
@@ -199,6 +200,18 @@
       this.offKey = NP.hotkey?.("ctrl+alt+f", () => this.main());
       NP.focus = { toggle: () => this.main(), get active() { return NP.root.hasAttribute("nplus-focus"); } };
       this.timer = setInterval(() => this.tick(), 1000);
+      // a call pauses the session; it resumes when the call ends
+      this.offCall = NP.on("call", (live) => {
+        if (live && this.phase === "focus" && this.running) {
+          this.pausedByCall = true;
+          this.pause();
+          NP.island?.show({ title: "تمرکز متوقف شد", subtitle: "به‌خاطر تماس · بعدش ادامه می‌دم", duration: 3000 });
+        } else if (!live && this.pausedByCall) {
+          this.pausedByCall = false;
+          this.resume();
+          NP.island?.show({ title: "تمرکز ادامه پیدا کرد", duration: 2000 });
+        }
+      });
       this.render();
     },
 
@@ -232,6 +245,10 @@
       this.total = minutes * 60_000;
       this.end = Date.now() + this.total;
       this.running = true;
+      if (NP.prefs.get("nplus-focus-music") && NP.media?.current) {
+        if (phase === "focus") NP.media.play();
+        else NP.media.pause();
+      }
       if (phase === "focus") {
         NP.setRootAttr("nplus-focus", true);
         if (NP.prefs.get("nplus-focus-compact") && window.gZenCompactModeManager) {
@@ -340,6 +357,7 @@
     destroy() {
       clearInterval(this.timer);
       this.offKey?.();
+      this.offCall?.();
       window.removeEventListener("mousedown", this.onDocDown, true);
       this.leaveFocus();
       NP.root.removeAttribute("nplus-break");
@@ -365,6 +383,7 @@
         NP.html("div", { class: "mn-text" }, [
           NP.html("div", { class: "mn-title", dir: "auto" }),
           NP.html("div", { class: "mn-artist", dir: "auto" }),
+          NP.html("div", { class: "mn-lyric", dir: "auto" }),
         ]),
         btn("mn-prev", "prev", () => NP.media?.prev()),
         btn("mn-toggle", "play", () => NP.media?.toggle()),
@@ -394,7 +413,18 @@
     tick() {
       const m = NP.media?.current;
       if (!m || !this.el.hasAttribute("active")) return;
-      this.el.querySelector(".mn-fill").style.setProperty("--p", m.duration ? NP.media.position() / m.duration : 0);
+      const pos = NP.media.position();
+      this.el.querySelector(".mn-fill").style.setProperty("--p", m.duration ? pos / m.duration : 0);
+      // the current lyric line, in place of the artist while it plays
+      const st = NP.lyricsState;
+      let line = "";
+      if (st?.key === `${m.title}|${m.artist}` && st.lines?.length) {
+        const t = pos + (Number.parseFloat(NP.prefs.get("nplus-lyrics-offset")) || 0) / 1000;
+        for (const l of st.lines) if (l.time <= t) line = l.text;
+      }
+      const el = this.el.querySelector(".mn-lyric");
+      if (el.textContent !== line) el.textContent = line;
+      this.el.toggleAttribute("has-lyric", !!line);
     },
 
     destroy() {

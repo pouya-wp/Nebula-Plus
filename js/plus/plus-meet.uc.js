@@ -17,6 +17,7 @@
 
   NP.DEFAULTS["nplus-meet-pill"] = true;
   NP.DEFAULTS["nplus-meet-style"] = true;
+  NP.DEFAULTS["nplus-meet-pip"] = true;
 
   const MEET = "https://meet.google.com/";
   const isMeet = (tab) => {
@@ -53,6 +54,22 @@
       };
       window.addEventListener("TabAttrModified", this.onAttr);
       window.addEventListener("TabSelect", this.update);
+      // Leaving the call's tab: show the video in picture-in-picture;
+      // coming back closes it (the same toggle as Ctrl+Shift+]).
+      this.onSelectPip = () => {
+        if (!this.callTab || !NP.prefs.get("nplus-meet-pip")) return;
+        const away = !this.callTab.selected && !this.callTab.linkedBrowser?.docShellIsActive;
+        if (away === !!this.pipOpen) return;
+        try {
+          this.callTab.linkedBrowser.browsingContext.currentWindowGlobal
+            .getActor("PictureInPictureLauncher")
+            .sendAsyncMessage("PictureInPicture:KeyToggle");
+          this.pipOpen = away;
+        } catch (err) {
+          NP.logger.warn(`Meet PiP: ${err}`);
+        }
+      };
+      window.addEventListener("TabSelect", this.onSelectPip);
       window.addEventListener("TabClose", this.update);
       this.timer = setInterval(() => this.tickTime(), 1000);
       this.offKey = NP.hotkey?.("ctrl+alt+g", () => this.open());
@@ -92,6 +109,7 @@
       const calls = gBrowser.tabs.filter((t) => /camera|microphone|screen/.test(t.getAttribute("sharing") ?? ""));
       const tab = calls.find(isMeet) ?? calls[0] ?? null;
       if (tab !== this.callTab) {
+        if (!!tab !== !!this.callTab) NP.emit("call", !!tab);
         this.callTab = tab;
         this.since = tab ? Date.now() : 0;
         this.muted = { Microphone: false, Camera: false };
@@ -142,6 +160,7 @@
       clearTimeout(this.hideTimer);
       window.removeEventListener("TabAttrModified", this.onAttr);
       window.removeEventListener("TabSelect", this.update);
+      window.removeEventListener("TabSelect", this.onSelectPip);
       window.removeEventListener("TabClose", this.update);
       this.offKey?.();
       this.pill?.remove();

@@ -64,6 +64,8 @@
         },
         position: () => self.position(),
         toggle: () => self.command("toggle"),
+        play: () => self.command("play"),
+        pause: () => self.command("pause"),
         next: () => self.command("next"),
         prev: () => self.command("prev"),
         seek: (sec) => self.seek(sec),
@@ -316,6 +318,8 @@
         const c = this.browserSrc.controller;
         try {
           if (action === "toggle") c.isPlaying ? c.pause() : c.play();
+          else if (action === "play") c.play();
+          else if (action === "pause") c.pause();
           else if (action === "next") c.nextTrack();
           else if (action === "prev") c.prevTrack();
         } catch (err) {

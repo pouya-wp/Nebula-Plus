@@ -222,6 +222,34 @@
     },
   });
 
+  // ================= Store =================
+  // Small persistent JSON (per-track lyrics picks and offsets, AI folders…)
+  // kept in the profile as nebula-plus-store.json.
+  NP.store = {
+    path: PathUtils.join(PathUtils.profileDir, "nebula-plus-store.json"),
+    data: null,
+    async load() {
+      if (this.data) return this.data;
+      try {
+        this.data = await IOUtils.readJSON(this.path);
+      } catch {
+        this.data = {};
+      }
+      return this.data;
+    },
+    async get(key, fallback = undefined) {
+      const d = await this.load();
+      return key in d ? d[key] : fallback;
+    },
+    async set(key, value) {
+      const d = await this.load();
+      if (value === undefined) delete d[key];
+      else d[key] = value;
+      clearTimeout(this.saveTimer);
+      this.saveTimer = setTimeout(() => IOUtils.writeJSON(this.path, d).catch(() => {}), 400);
+    },
+  };
+
   // ================= Color tools =================
   // Extracts a vivid, readable accent color from an image (album art, favicon).
   NP.color = {
@@ -352,7 +380,11 @@
     // opts: { title, subtitle, art (url), icon (url), color [r,g,b], duration, onClick }
     show(opts) {
       clearTimeout(this.timer);
+      // same id while visible: update the text quietly, no entrance replay
+      const sameId = opts.id && this.current?.id === opts.id && this.el.hasAttribute("open");
       this.current = opts;
+      this.el.toggleAttribute("progress", typeof opts.progress === "number");
+      this.el.style.setProperty("--nplus-island-p", opts.progress ?? 0);
       const art = this.el.querySelector(".nplus-island-art");
       const image = opts.art || opts.icon;
       art.style.backgroundImage = image ? `url("${image}")` : "none";
@@ -367,10 +399,12 @@
       }
 
       this.el.removeAttribute("hidden");
-      // Restart the entrance animation even if already visible.
-      this.el.removeAttribute("open");
-      this.el.getBoundingClientRect();
-      this.el.setAttribute("open", "true");
+      if (!sameId) {
+        // Restart the entrance animation even if already visible.
+        this.el.removeAttribute("open");
+        this.el.getBoundingClientRect();
+        this.el.setAttribute("open", "true");
+      }
       this.timer = setTimeout(() => this.hide(), opts.duration ?? 4000);
     },
 

@@ -170,13 +170,34 @@
           if (dl.succeeded) this.seen.add(dl);
         },
         onDownloadChanged: (dl) => {
+          // live progress while it downloads (throttled)
+          if (!dl.succeeded && !dl.error && !dl.canceled && dl.hasProgress && NP.prefs.get("nplus-download-island")) {
+            const now = Date.now();
+            if (now - (this.lastProgress ?? 0) > 400) {
+              this.lastProgress = now;
+              const name = PathUtils.filename(dl.target.path);
+              // all-Persian text keeps the right-to-left order clean
+              const fa = (n, d = 1) => new Intl.NumberFormat("fa-IR", { maximumFractionDigits: d }).format(n);
+              const mb = (b) => fa(b / 1048576, b > 104857600 ? 0 : 1);
+              const speed = dl.speed ? ` · ${mb(dl.speed)} مگ/ثانیه` : "";
+              NP.island?.show({
+                id: "download",
+                title: name,
+                subtitle: `${fa(dl.progress, 0)}٪ · ${mb(dl.currentBytes)} از ${mb(dl.totalBytes)} مگابایت${speed}`,
+                icon: `moz-icon://${encodeURIComponent(name)}?size=32`,
+                progress: dl.progress / 100,
+                duration: 4000,
+              });
+            }
+          }
           if (!dl.succeeded || this.seen.has(dl)) return;
           this.seen.add(dl);
           if (!NP.prefs.get("nplus-download-island")) return;
           const name = PathUtils.filename(dl.target.path);
           NP.island?.show({
+            id: "download-done",
             title: name,
-            subtitle: "Download complete · click to open",
+            subtitle: "دانلود تموم شد · کلیک کن تا باز بشه",
             icon: `moz-icon://${encodeURIComponent(name)}?size=32`,
             onClick: () => dl.launch().catch(() => {}),
             duration: 5000,

@@ -139,3 +139,210 @@
   cursor: default;
   animation: nplus-lyrics-in 0.5s var(--nplus-ease-out) both;
 }
+
+/* ---------------- Lyrics tools (hover): timing nudge + pick another version */
+.nplus-ly-tools {
+  position: absolute;
+  top: 2px;
+  inset-inline-end: 2px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 99px;
+  corner-shape: round;
+  background: light-dark(rgb(255 255 255 / 70%), rgb(30 30 36 / 70%));
+  backdrop-filter: blur(12px);
+  opacity: 0;
+  translate: 0 -3px;
+  transition:
+    opacity 0.2s ease,
+    translate 0.25s var(--nplus-ease-out);
+  z-index: 3;
+  mask: none;
+}
+
+#nplus-lyrics {
+  overflow: visible;
+
+  &:hover .nplus-ly-tools,
+  &[has-offset] .nplus-ly-tools {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  &[has-offset]:not(:hover) .nplus-ly-tools > :not(.ly-offset) {
+    display: none;
+  }
+}
+
+/* The fade + clipping live on the window, so the tools stay crisp. */
+#nplus-lyrics {
+  mask: none !important;
+}
+
+.nplus-lyrics-window {
+  height: 100%;
+  overflow: hidden;
+  mask: linear-gradient(transparent, #000 32%, #000 68%, transparent);
+
+  #nplus-lyrics[lines="5"] & {
+    mask: linear-gradient(transparent, #000 25%, #000 75%, transparent);
+  }
+
+  #nplus-lyrics:is([lines="1"], [status="missing"], [status="error"]) & {
+    mask: none;
+  }
+}
+
+.nplus-ly-tool {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  corner-shape: round;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    background: light-dark(rgb(0 0 0 / 8%), rgb(255 255 255 / 12%));
+  }
+}
+
+.ly-offset {
+  font-size: 9.5px;
+  font-variant-numeric: tabular-nums;
+  padding-inline: 2px;
+  color: var(--nplus-accent);
+
+  &:empty {
+    display: none;
+  }
+}
+
+.nplus-lyric-status {
+  cursor: pointer !important;
+}
+
+/* ---------------- Lyrics picker ---------------- */
+#nplus-ly-picker {
+  position: fixed;
+  z-index: 2147482700;
+  width: 320px;
+  max-height: 380px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
+  background: light-dark(rgb(255 255 255 / 90%), rgb(26 26 32 / 90%));
+  backdrop-filter: blur(40px) saturate(180%);
+  box-shadow:
+    0 0 0 0.5px light-dark(rgb(0 0 0 / 10%), rgb(255 255 255 / 10%)),
+    0 24px 60px -20px rgb(0 0 0 / 45%);
+  opacity: 0;
+  translate: -6px 0;
+  transition:
+    opacity 0.2s ease,
+    translate 0.3s var(--nplus-ease-out);
+  -moz-window-dragging: no-drag;
+
+  &[open] {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.lp-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px;
+  border-bottom: 0.5px solid light-dark(rgb(0 0 0 / 8%), rgb(255 255 255 / 8%));
+}
+
+.lp-q {
+  flex: 1;
+  appearance: none !important;
+  border: none !important;
+  outline: none !important;
+  padding: 6px 10px !important;
+  border-radius: 9px;
+  background: light-dark(rgb(0 0 0 / 5%), rgb(255 255 255 / 8%)) !important;
+  color: inherit;
+  font: inherit;
+  font-size: 13px;
+}
+
+.lp-close {
+  appearance: none;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  corner-shape: round;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.lp-list {
+  overflow-y: auto;
+  padding: 6px;
+  scrollbar-width: thin;
+}
+
+.lp-row {
+  appearance: none;
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+
+  &:hover {
+    background: color-mix(in srgb, var(--nplus-accent) 14%, transparent);
+  }
+
+  &:not([synced]) {
+    opacity: 0.6;
+  }
+}
+
+.lp-title {
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  unicode-bidi: plaintext;
+}
+
+.lp-meta {
+  font-size: 11px;
+  color: var(--nplus-text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  unicode-bidi: plaintext;
+}
+
+.lp-empty {
+  padding: 16px;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--nplus-text-soft);
+}
