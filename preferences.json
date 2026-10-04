@@ -983,6 +983,13 @@
     "defaultValue": true
   },
   {
+    "type": "checkbox",
+    "property": "nplus-call-pause-music",
+    "label": "Pause music during calls, resume afterwards",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
     "type": "dropdown",
     "property": "nplus-weather-fx",
     "label": "Gentle rain / snow over the browser UI",

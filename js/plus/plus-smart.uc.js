@@ -160,13 +160,14 @@
       ];
 
       try {
-        const result = await askLLM(messages);
+        const result = await (this.askOverride ?? askLLM)(messages);
         const used = new Set();
         const groups = (result.groups ?? [])
           .map((g) => ({
             name: String(g.name ?? "").slice(0, 40) || "Folder",
             tabs: (g.tabs ?? [])
-              .map((id) => tabs[Number(id)])
+              // ids may come back as 3, "3", "t3" or "#3"
+              .map((id) => tabs[Number.parseInt(String(id).replace(/\D+/g, ""), 10)])
               .filter((t) => t && !used.has(t) && used.add(t)),
           }))
           .filter((g) => g.tabs.length >= 2);
@@ -176,16 +177,28 @@
           return groups.map((g) => ({ name: g.name, tabs: g.tabs.map((t) => t.label) }));
         }
 
+        // One at a time with our own ids: Zen's default id is time + a
+        // random 0-100, which can collide when folders are made in a burst.
         const folders = [];
-        for (const g of groups) {
+        const made = [];
+        for (const [i, g] of groups.entries()) {
           try {
-            folders.push(gZenFolders.createFolder(g.tabs, { label: g.name, renameFolder: false }));
+            const tabsLeft = g.tabs.filter((t) => t.isConnected && !t.closing);
+            if (tabsLeft.length < 2) continue;
+            const folder = gZenFolders.createFolder(tabsLeft, {
+              id: `nplus-${Date.now()}-${i}-${Math.floor(Math.random() * 1e6)}`,
+              label: g.name,
+              renameFolder: false,
+            });
+            folders.push(folder);
+            made.push(g);
           } catch (err) {
             NP.logger.error(`Folder "${g.name}" failed`, err);
           }
+          await new Promise((r) => setTimeout(r, 150));
         }
         const memory = await NP.store.get("aiFolders", []);
-        groups.forEach((g, i) => {
+        made.forEach((g, i) => {
           const folder = folders[i];
           if (!folder) return;
           const sites = [...new Set(g.tabs.map((t) => { try { return t.linkedBrowser.currentURI.host.replace(/^www\./, ""); } catch { return ""; } }).filter(Boolean))];
@@ -219,10 +232,23 @@
       }
     },
 
+    // Zen's own unpackTabs() walks a list it mutates and fails after the
+    // first tab, so undo by hand: snapshot the items, drop the folder's
+    // placeholder tab, ungroup and unpin the rest.
     async undo(folders) {
       for (const f of folders) {
+        if (!f?.isConnected) continue;
         try {
-          await f?.unpackTabs?.();
+          const items = [...(f.allItems ?? f.tabs ?? [])];
+          for (const tab of items) {
+            if (tab.hasAttribute?.("zen-empty-tab")) {
+              gBrowser.removeTab(tab, { animate: false });
+              continue;
+            }
+            if (tab.group) gBrowser.ungroupTab(tab);
+            if (tab.pinned) gBrowser.unpinTab(tab);
+          }
+          if (f.isConnected) await gBrowser.removeTabGroup(f, { isUserTriggered: false }).catch(() => {});
         } catch (err) {
           NP.logger.warn(`Undo failed: ${err}`);
         }
@@ -467,6 +493,31 @@
     },
     destroy() {
       clearInterval(this.timer);
+    },
+  });
+
+  // ================= Zen fix: folder "Unpack" =================
+  // Zen's unpackTabs() iterates a list it mutates and stops with an error
+  // after the first tab (tab.group becomes undefined). Patch it for the
+  // folder context menu too; restored on unload.
+  NP.feature({
+    name: "ZenFolderFix",
+    init() {
+      const proto = customElements.get("zen-folder")?.prototype;
+      if (!proto?.unpackTabs) return;
+      this.proto = proto;
+      this.original = proto.unpackTabs;
+      proto.unpackTabs = async function () {
+        this.collapsed = false;
+        for (let tab of [...this.allItems].reverse()) {
+          if (tab.group?.hasAttribute?.("split-view-group")) tab = tab.group;
+          if (tab.hasAttribute?.("zen-empty-tab")) gBrowser.removeTab(tab);
+          else if (tab.group) gBrowser.ungroupTab(tab);
+        }
+      };
+    },
+    destroy() {
+      if (this.proto && this.original) this.proto.unpackTabs = this.original;
     },
   });
 })();

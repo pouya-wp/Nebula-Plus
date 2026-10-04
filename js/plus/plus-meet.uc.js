@@ -18,6 +18,7 @@
   NP.DEFAULTS["nplus-meet-pill"] = true;
   NP.DEFAULTS["nplus-meet-style"] = true;
   NP.DEFAULTS["nplus-meet-pip"] = true;
+  NP.DEFAULTS["nplus-call-pause-music"] = true;
 
   const MEET = "https://meet.google.com/";
   const isMeet = (tab) => {
@@ -76,6 +77,23 @@
       NP.prefs.watch("nplus-meet-pill", this.update);
 
       NP.meet = { open: () => this.open() };
+
+      // Music steps aside for calls and comes back when they end.
+      this.offCall = NP.on("call", (live) => {
+        if (!NP.prefs.get("nplus-call-pause-music")) return;
+        const m = NP.media?.current;
+        if (live) {
+          const isCallItself = m?.browser && this.callTab && m.browser === this.callTab.linkedBrowser;
+          if (m?.playing && !isCallItself) {
+            this.musicPaused = true;
+            NP.media.pause();
+            NP.island?.show({ title: "موزیک متوقف شد", subtitle: "به‌خاطر تماس · بعدش ادامه پیدا می‌کنه", art: m.artwork, duration: 2500 });
+          }
+        } else if (this.musicPaused) {
+          this.musicPaused = false;
+          setTimeout(() => NP.media?.play(), 600);
+        }
+      });
       this.update();
     },
 
@@ -158,6 +176,7 @@
     destroy() {
       clearInterval(this.timer);
       clearTimeout(this.hideTimer);
+      this.offCall?.();
       window.removeEventListener("TabAttrModified", this.onAttr);
       window.removeEventListener("TabSelect", this.update);
       window.removeEventListener("TabSelect", this.onSelectPip);

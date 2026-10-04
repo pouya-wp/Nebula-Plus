@@ -85,9 +85,13 @@
     _features: [],
 
     logger: {
-      log: (msg) => console.log(`[Nebula+] ${msg}`),
-      warn: (msg) => console.warn(`[Nebula+] ${msg}`),
-      error: (msg, err) => console.error(`[Nebula+] ${msg}`, err ?? ""),
+      // also mirrored into the dev log (.dev/console.log) while live dev is on
+      log: (msg) => (console.log(`[Nebula+] ${msg}`), NP.devLog?.(`LOG ${msg}`)),
+      warn: (msg) => (console.warn(`[Nebula+] ${msg}`), NP.devLog?.(`WARN ${msg}`)),
+      error: (msg, err) => (
+        console.error(`[Nebula+] ${msg}`, err ?? ""),
+        NP.devLog?.(`ERROR ${msg} ${err ?? ""} ${String(err?.stack ?? "").split("\n").slice(0, 3).join(" | ")}`)
+      ),
     },
 
     // ---------- events ----------
@@ -468,6 +472,11 @@
       this.dir = PathUtils.join(PathUtils.profileDir, "chrome", "sine-mods", "Nebula", ".dev");
       this.logPath = PathUtils.join(this.dir, "console.log");
       this.queue = [];
+      NP.devLog = (line) => {
+        this.queue.push(`${new Date().toLocaleTimeString()} ${line}`);
+        clearTimeout(this.flushTimer);
+        this.flushTimer = setTimeout(() => this.flush(), 300);
+      };
       IOUtils.makeDirectory(this.dir, { ignoreExisting: true }).then(() =>
         IOUtils.writeUTF8(this.logPath, `--- ${new Date().toISOString()} ---\n`),
       );

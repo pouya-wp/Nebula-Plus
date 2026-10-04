@@ -58,6 +58,7 @@
     { t: "Toggle lyrics", k: "لیریک lyrics", icon: ICON("selectable/music"), run: () => NP.prefs.set("nplus-lyrics", !NP.prefs.get("nplus-lyrics")) },
     { t: "Toggle dark mode", k: "دارک تاریک شب dark mode night", icon: ICON("selectable/moon"), run: () => NP.prefs.set("nplus-darkmode", !NP.prefs.get("nplus-darkmode")) },
     { t: "Focus mode", k: "تمرکز فوکوس پومودورو focus pomodoro", icon: ICON("selectable/time"), run: () => NP.focus?.toggle() },
+    { t: "Sleep this folder", k: "خواب پوشه آزاد کردن رم unload folder sleep", icon: ICON("selectable/moon"), when: () => gBrowser.selectedTab.group?.isZenFolder, run: () => { const f = gBrowser.selectedTab.group; for (const t of f.tabs) if (!t.selected && !t.hasAttribute("zen-empty-tab") && !t.hasAttribute("pending")) gBrowser.discardBrowser(t); NP.island?.show({ title: `${f.label} خوابید 💤`, duration: 2000 }); } },
     { t: "Organize tabs with AI", k: "دسته بندی هوشمند مرتب تب ها پوشه ai organize group", icon: ICON("sparkles"), run: () => NP.autoGroup?.run() },
     { t: "Google Meet", k: "میت جلسه تماس meet call meeting", icon: ICON("selectable/video"), run: () => NP.meet?.open() },
     { t: "New tab", k: "تب جدید new tab", icon: ICON("plus"), run: () => BrowserCommands.openTab() },
@@ -181,6 +182,28 @@
         if (c.when && !c.when()) continue;
         const s = score(`${c.t} ${c.k}`, q);
         if (s > 0) items.push({ kind: "Action", title: c.t, icon: c.icon, mask: true, s: s + (q ? 1 : -2), run: c.run });
+      }
+
+      // Lyrics of the song that's playing: type a line, jump right to it
+      const st = NP.lyricsState;
+      const m = NP.media?.current;
+      if (q.length >= 2 && m && st?.key === `${m.title}|${m.artist}` && st.lines?.length) {
+        const seen = new Set();
+        for (const l of st.lines) {
+          if (!l.text || seen.has(l.text)) continue;
+          const sc = score(l.text, q);
+          if (sc < 60) continue; // real matches only
+          seen.add(l.text);
+          items.push({
+            kind: NP.formatTime(l.time),
+            title: l.text,
+            sub: `${m.title} — ${m.artist}`,
+            icon: ICON("selectable/music"),
+            mask: true,
+            s: sc + 5,
+            run: () => NP.media.seek(l.time + 0.01),
+          });
+        }
       }
 
       items.sort((a, b) => b.s - a.s);
