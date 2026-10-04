@@ -22,6 +22,8 @@
     name: "TabPreview",
     init() {
       this.cache = new WeakMap();
+      // shared with the tab galaxy
+      NP.tabShot = (tab) => this.cache.get(tab)?.bitmap ?? null;
       this.el = NP.html("div", { id: "nplus-preview", hidden: "true" }, [
         NP.html("canvas", { class: "pv-shot" }),
         NP.html("div", { class: "pv-meta" }, [

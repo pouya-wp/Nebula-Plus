@@ -1,0 +1,378 @@
+/* ---------------- Assistant ---------------- */
+
+/* the hidden Gemini tab never shows up anywhere */
+.tabbrowser-tab[nplus-assistant] {
+  display: none !important;
+}
+
+/* toolbar button, next to the pomodoro */
+#nplus-ai-button {
+  align-self: center;
+  width: 30px;
+  height: 30px;
+  margin-inline: 2px;
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
+  -moz-window-dragging: no-drag;
+  transition: background-color 0.2s ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    background: currentColor;
+    mask: url("chrome://browser/skin/zen-icons/sparkles.svg") center / 16px no-repeat;
+    opacity: 0.85;
+  }
+
+  &:hover,
+  &[open] {
+    background: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 8%));
+  }
+
+  &[open]::before {
+    background: var(--nplus-accent);
+    opacity: 1;
+  }
+}
+
+#nplus-ai {
+  position: fixed;
+  top: 48px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2147482400;
+  width: min(400px, 42vw);
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  overflow: hidden;
+  background: light-dark(rgb(255 255 255 / 84%), rgb(24 24 30 / 84%));
+  backdrop-filter: blur(44px) saturate(180%);
+  box-shadow:
+    0 0 0 0.5px light-dark(rgb(0 0 0 / 10%), rgb(255 255 255 / 10%)),
+    0 30px 80px -24px rgb(0 0 0 / 50%);
+  font-family: var(--nplus-lyrics-font), "Meem", system-ui, sans-serif;
+  direction: rtl;
+  opacity: 0;
+  translate: 24px 0;
+  transition:
+    opacity 0.25s ease,
+    translate 0.45s var(--nplus-ease-spring);
+  -moz-window-dragging: no-drag;
+
+  &[open] {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+
+  /* soft inner light while it thinks */
+  &[busy]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: var(--nplus-glow-light);
+    mask: var(--nplus-glow-mask);
+    animation: nplus-orbit 3s linear infinite;
+    pointer-events: none;
+  }
+}
+
+.ai-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px 8px;
+}
+
+.ai-title {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.ai-star {
+  color: var(--nplus-accent);
+}
+
+.ai-engine {
+  font-size: 10.5px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  corner-shape: round;
+  color: var(--nplus-text-soft);
+  background: light-dark(rgb(0 0 0 / 5%), rgb(255 255 255 / 8%));
+  direction: ltr;
+}
+
+.ai-icon-btn {
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: inherit;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    background: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 9%));
+  }
+}
+
+.ai-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 2px 14px 10px;
+  border-bottom: 0.5px solid light-dark(rgb(0 0 0 / 8%), rgb(255 255 255 / 8%));
+}
+
+.ai-chip {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 99px;
+  corner-shape: round;
+  background: light-dark(rgb(0 0 0 / 5%), rgb(255 255 255 / 7%));
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    scale 0.2s var(--nplus-ease-spring);
+
+  &:hover {
+    background: color-mix(in srgb, var(--nplus-accent) 18%, transparent);
+  }
+
+  &:active {
+    scale: 0.95;
+  }
+
+  #nplus-ai[busy] & {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.ai-chip-icon {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--nplus-accent);
+}
+
+.ai-thread {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scrollbar-width: thin;
+}
+
+.ai-empty {
+  margin: auto;
+  text-align: center;
+  font-size: 13px;
+  color: var(--nplus-text-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.ai-empty-star {
+  font-size: 34px;
+  color: var(--nplus-accent);
+  animation: w-float 5s ease-in-out infinite;
+}
+
+@keyframes w-float {
+  50% {
+    translate: 0 -4px;
+  }
+}
+
+.ai-empty-sub {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.ai-msg {
+  max-width: 92%;
+  font-size: 13.5px;
+  line-height: 1.75;
+  animation: nplus-ai-in 0.35s var(--nplus-ease-out) both;
+}
+
+@keyframes nplus-ai-in {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+    filter: blur(3px);
+  }
+}
+
+.ai-user {
+  align-self: flex-start;
+  padding: 7px 12px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--nplus-accent) 18%, transparent);
+  white-space: pre-wrap;
+  unicode-bidi: plaintext;
+  max-height: 7.5em;
+  overflow: hidden;
+  mask: linear-gradient(#000 75%, transparent);
+}
+
+.ai-bot {
+  align-self: stretch;
+
+  & .ai-text {
+    & p,
+    & h4,
+    & ul,
+    & pre {
+      margin: 0 0 8px;
+    }
+
+    & h4 {
+      font-size: 14px;
+    }
+
+    & ul {
+      padding-inline-start: 18px;
+    }
+
+    & li {
+      margin-bottom: 3px;
+    }
+
+    & code {
+      padding: 1px 5px;
+      border-radius: 5px;
+      background: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 8%));
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.9em;
+    }
+
+    & pre {
+      padding: 10px;
+      border-radius: 10px;
+      background: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 6%));
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+      text-align: left;
+    }
+  }
+
+  &[thinking] .ai-text::before {
+    content: "در حال فکر…";
+    background: linear-gradient(90deg, var(--nplus-text-soft) 40%, var(--nplus-accent) 50%, var(--nplus-text-soft) 60%) 0 0 / 300% 100% text;
+    color: transparent;
+    animation: nplus-sheen 1.4s linear infinite;
+  }
+
+  &[error] .ai-text {
+    color: #e5484d;
+  }
+}
+
+.ai-compose {
+  padding: 10px 12px 12px;
+  border-top: 0.5px solid light-dark(rgb(0 0 0 / 8%), rgb(255 255 255 / 8%));
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ai-ctx {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--nplus-text-soft);
+  cursor: pointer;
+
+  & input {
+    margin: 0;
+    accent-color: var(--nplus-accent);
+  }
+}
+
+.ai-input-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 6px 6px 6px 12px;
+  border-radius: 14px;
+  background: light-dark(rgb(0 0 0 / 5%), rgb(255 255 255 / 7%));
+}
+
+.ai-input {
+  flex: 1;
+  appearance: none !important;
+  border: none !important;
+  outline: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  resize: none;
+  padding: 5px 0 !important;
+  margin: 0 !important;
+  max-height: 140px;
+  color: inherit;
+  font: inherit;
+  font-size: 13.5px;
+  line-height: 1.6;
+  unicode-bidi: plaintext;
+}
+
+.ai-send {
+  appearance: none;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 10px;
+  background: var(--nplus-accent);
+  cursor: pointer;
+  position: relative;
+  transition: scale 0.2s var(--nplus-ease-spring);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    background: white;
+    mask: url("chrome://browser/skin/zen-icons/arrow-up.svg") center / 16px no-repeat;
+  }
+
+  &:active {
+    scale: 0.92;
+  }
+
+  #nplus-ai[busy] & {
+    opacity: 0.5;
+  }
+}
