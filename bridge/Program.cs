@@ -63,10 +63,26 @@ static string AppName(string aumid)
     return name.Length > 0 ? char.ToUpperInvariant(name[0]) + name[1..] : name;
 }
 
+// Last requests, for debugging clients: GET /debug/requests
+var recent = new System.Collections.Concurrent.ConcurrentQueue<string>();
+
 app.Use(async (ctx, next) =>
 {
+    recent.Enqueue($"{DateTime.Now:HH:mm:ss} {ctx.Request.Method} {ctx.Request.Path} origin={ctx.Request.Headers.Origin} ct={ctx.Request.ContentType} len={ctx.Request.ContentLength}");
+    while (recent.Count > 20) recent.TryDequeue(out _);
     ctx.Response.Headers["Access-Control-Allow-Origin"] = "*";
     ctx.Response.Headers["Cache-Control"] = "no-store";
+    // Pages (the new tab) preflight POSTs to a local server, including
+    // Private/Local Network Access checks.
+    if (HttpMethods.IsOptions(ctx.Request.Method))
+    {
+        ctx.Response.Headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS";
+        ctx.Response.Headers["Access-Control-Allow-Headers"] = "*";
+        ctx.Response.Headers["Access-Control-Allow-Private-Network"] = "true";
+        ctx.Response.Headers["Access-Control-Max-Age"] = "600";
+        ctx.Response.StatusCode = StatusCodes.Status204NoContent;
+        return;
+    }
     await next();
 });
 
@@ -146,6 +162,8 @@ app.MapPost("/seek", async (double pos) =>
     var ok = await session.TryChangePlaybackPositionAsync(TimeSpan.FromSeconds(pos).Ticks);
     return Results.Json(new { ok });
 });
+
+app.MapGet("/debug/requests", () => Results.Text(string.Join('\n', recent)));
 
 app.MapGet("/", () => Results.Text("Nebula Bridge is running."));
 

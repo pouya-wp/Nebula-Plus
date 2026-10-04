@@ -207,6 +207,10 @@ async function loadWeather() {
 }
 
 // ---------------- player (Nebula Bridge) + lyrics ----------------
+const fmt = (sec) => {
+  sec = Math.max(0, Math.floor(sec || 0));
+  return `${num(Math.floor(sec / 60))}:${num(sec % 60, 2)}`;
+};
 const player = {
   key: null,
   lines: [],
@@ -256,13 +260,23 @@ const player = {
     if (key !== this.key) {
       this.key = key;
       this.lines = [];
-      $("#p-lyrics").textContent = "";
-      const art = st.artId ? `${BRIDGE}/art/${st.artId}` : null;
+      const lyr = $("#p-lyrics");
+      lyr.textContent = "";
+      lyr.dataset.line = "";
+      this.loadLyrics(st, key);
+    }
+    // Players often publish the cover a moment after the title: follow
+    // the art id itself, not just the track.
+    const artId = st.artId ?? null;
+    if (artId !== this.artId) {
+      this.artId = artId;
+      const art = artId ? `${BRIDGE}/art/${artId}` : null;
       $("#p-art").style.backgroundImage = art ? `url("${art}")` : "";
       $(".p-bg").style.backgroundImage = art ? `url("${art}")` : "";
       if (art) accentFrom(art);
-      this.loadLyrics(st, key);
+      else document.documentElement.style.removeProperty("--accent");
     }
+    $("#p-dur").textContent = fmt(st.duration);
   },
 
   async loadLyrics(st, key) {
@@ -289,6 +303,7 @@ const player = {
     if (!st) return;
     const pos = this.position();
     $("#p-fill").style.setProperty("--p", st.duration ? pos / st.duration : 0);
+    $("#p-time").textContent = fmt(pos);
     if (!this.lines.length) return;
     let idx = -1;
     for (let i = 0; i < this.lines.length; i++) if (this.lines[i].t <= pos) idx = i;

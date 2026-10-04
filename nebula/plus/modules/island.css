@@ -5,7 +5,7 @@
 
   position: fixed;
   left: 50%;
-  top: 10px;
+  top: 46px; /* below the top toolbar and URL bar */
   z-index: 2147483000;
   display: flex;
   align-items: center;
@@ -13,13 +13,15 @@
   max-width: min(420px, 70vw);
   padding: 7px 16px 7px 7px;
   border-radius: 999px;
+  /* A true pill: Zen's squircle corners turn a 999px radius into a lumpy
+     rectangle, and the ring would not follow it. */
+  corner-shape: round !important;
   background: var(--nplus-glass-strong);
   backdrop-filter: blur(28px) saturate(180%);
+  /* One hairline + depth; no stacked edges that read as a second border */
   box-shadow:
-    inset 0 1px 0 var(--nplus-edge-light),
-    0 0 0 1px light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 7%)),
-    0 14px 40px -12px color-mix(in srgb, var(--nplus-island-color) 70%, black),
-    0 0 30px -10px var(--nplus-island-color);
+    0 0 0 0.5px light-dark(rgb(0 0 0 / 10%), rgb(255 255 255 / 10%)),
+    0 14px 40px -14px color-mix(in srgb, var(--nplus-island-color) 55%, black);
   color: light-dark(black, white);
   cursor: pointer;
 
@@ -67,8 +69,8 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    corner-shape: var(--nplus-corner);
-    padding: 1.5px;
+    corner-shape: round;
+    padding: 1px;
     background: conic-gradient(
       from var(--nplus-angle),
       transparent 55%,
@@ -80,8 +82,8 @@
       linear-gradient(#000 0 0) content-box,
       linear-gradient(#000 0 0);
     mask-composite: exclude;
-    opacity: 0.6;
-    animation: nplus-orbit 5s linear infinite;
+    opacity: 0.45;
+    animation: nplus-orbit 7s linear infinite;
     pointer-events: none;
   }
 }
@@ -91,12 +93,14 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
+  corner-shape: round !important;
   background: center / cover no-repeat;
   box-shadow: 0 0 16px -2px var(--nplus-island-color);
   animation: nplus-spin 6s linear infinite;
 
   &[icon] {
     border-radius: 10px;
+    corner-shape: var(--nplus-corner) !important;
     background-size: 22px;
     background-color: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 8%));
     animation: none;

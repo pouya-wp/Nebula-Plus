@@ -114,8 +114,9 @@
 @media (-moz-pref("nplus-media-glow")) {
   #zen-media-controls-toolbar .zen-media-card.playing:not([stacked-behind], [muted]),
   #nplus-desktop-card[playing] {
-    outline-color: transparent !important;
-    box-shadow: 0 8px 28px -12px color-mix(in srgb, var(--nplus-glow-a) 40%, rgb(0 0 0 / 40%)) !important;
+    box-shadow:
+      0 0 0 0.5px light-dark(rgb(0 0 0 / 9%), rgb(255 255 255 / 9%)),
+      0 8px 28px -12px color-mix(in srgb, var(--nplus-glow-a) 40%, rgb(0 0 0 / 40%)) !important;
 
     & > .nplus-card-ring {
       display: block;

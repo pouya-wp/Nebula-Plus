@@ -505,7 +505,7 @@
 
       const btn = (cls, icon, onclick, label) => {
         const b = NP.html("button", { class: `nplus-btn ${cls}`, title: label, onclick });
-        b.style.setProperty("--nplus-icon", `url("${ZEN_ICONS}/${icon}.svg")`);
+        b.style.setProperty("--nplus-icon", `var(--nplus-i-${icon})`);
         return b;
       };
 
@@ -526,9 +526,9 @@
         ]),
         NP.html("div", { class: "nplus-dc-controls" }, [
           NP.html("span", { class: "nplus-dc-app" }),
-          btn("nplus-dc-prev", "media-previous", () => NP.media.prev(), "Previous"),
-          btn("nplus-dc-toggle", "media-play", () => NP.media.toggle(), "Play / Pause"),
-          btn("nplus-dc-next", "media-next", () => NP.media.next(), "Next"),
+          btn("nplus-dc-prev", "prev", () => NP.media.prev(), "Previous"),
+          btn("nplus-dc-toggle", "play", () => NP.media.toggle(), "Play / Pause"),
+          btn("nplus-dc-next", "next", () => NP.media.next(), "Next"),
         ]),
       ]);
 
@@ -601,7 +601,7 @@
       this.card.toggleAttribute("playing", m.playing);
       q(".nplus-dc-toggle").style.setProperty(
         "--nplus-icon",
-        `url("${ZEN_ICONS}/${m.playing ? "media-pause" : "media-play"}.svg")`,
+        `var(--nplus-i-${m.playing ? "pause" : "play"})`,
       );
       this.card.toggleAttribute("can-seek", m.canSeek);
       this.tick();

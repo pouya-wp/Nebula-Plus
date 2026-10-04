@@ -17,9 +17,10 @@
   --accent: #7aa2ff;
   --text: light-dark(rgb(20 20 26), rgb(246 246 250));
   --text-soft: light-dark(rgb(20 20 26 / 62%), rgb(246 246 250 / 62%));
-  --glass: light-dark(rgb(255 255 255 / 42%), rgb(18 18 24 / 42%));
-  --glass-strong: light-dark(rgb(255 255 255 / 72%), rgb(22 22 28 / 72%));
-  --glass-blur: blur(32px) saturate(150%);
+  /* Very light glass: the browser's own background shows through */
+  --glass: light-dark(rgb(255 255 255 / 16%), rgb(18 18 24 / 18%));
+  --glass-strong: light-dark(rgb(255 255 255 / 40%), rgb(22 22 28 / 42%));
+  --glass-blur: blur(24px) saturate(160%);
   --edge: light-dark(rgb(255 255 255 / 70%), rgb(255 255 255 / 8%));
   --edge-dark: light-dark(rgb(0 0 0 / 6%), rgb(0 0 0 / 30%));
   --radius: 18px;
@@ -41,12 +42,21 @@
   display: none !important;
 }
 
+/* pills and bars stay truly round (squircle corners distort them) */
+.pill,
+.p-progress,
+#p-fill {
+  corner-shape: round;
+}
+
 html,
 body {
   margin: 0;
   height: 100%;
   overflow: hidden;
-  background: light-dark(#e9e6ef, #121219);
+  /* Transparent: with browser.tabs.allow_transparent_browser (on here)
+     Zen's own glass background shows through. */
+  background: transparent;
 }
 
 button,
@@ -60,11 +70,10 @@ textarea {
 #wallpaper {
   position: fixed;
   inset: -40px;
+  /* only a faint wash unless you pick a wallpaper */
   background:
-    radial-gradient(60% 50% at 20% 15%, light-dark(#f6d6c8, #3a2a4a) 0%, transparent 70%),
-    radial-gradient(50% 50% at 85% 80%, light-dark(#c9d8f2, #1f3550) 0%, transparent 70%),
-    radial-gradient(70% 60% at 60% 40%, light-dark(#ece4f4, #221b30) 0%, transparent 80%),
-    light-dark(#ece8f1, #14141c);
+    radial-gradient(60% 50% at 20% 15%, light-dark(rgb(246 214 200 / 30%), rgb(58 42 74 / 30%)) 0%, transparent 70%),
+    radial-gradient(50% 50% at 85% 80%, light-dark(rgb(201 216 242 / 30%), rgb(31 53 80 / 30%)) 0%, transparent 70%);
   background-size: cover;
   background-position: center;
   filter: blur(var(--wall-blur, 0px)) brightness(calc(1 - var(--wall-dim, 0) / 100));
@@ -111,10 +120,10 @@ body[playing] #ambient {
   background: var(--glass);
   backdrop-filter: var(--glass-blur);
   border-radius: var(--radius);
+  /* one hairline, no stacked edges */
   box-shadow:
-    inset 0 1px 0 var(--edge),
-    inset 0 0 0 1px light-dark(rgb(255 255 255 / 25%), rgb(255 255 255 / 4%)),
-    0 18px 50px -24px rgb(0 0 0 / 35%);
+    0 0 0 0.5px light-dark(rgb(255 255 255 / 55%), rgb(255 255 255 / 10%)),
+    0 18px 50px -26px rgb(0 0 0 / 30%);
 }
 
 /* the same slow, faint orbiting glow as the browser */
@@ -173,7 +182,7 @@ body[playing] #ambient {
 
 #clock {
   font-size: clamp(64px, 11vw, 132px);
-  font-weight: 200;
+  font-weight: 600;
   line-height: 1;
   letter-spacing: 0.01em;
   font-variant-numeric: tabular-nums;
@@ -222,6 +231,7 @@ body[playing] #ambient {
 /* ---------------- search ---------------- */
 #search {
   position: relative;
+  z-index: 20; /* keeps the engine menu above the links and widgets */
   width: min(640px, 92vw);
   height: 56px;
   display: flex;
@@ -236,9 +246,9 @@ body[playing] #ambient {
   &:focus-within {
     background: var(--glass-strong);
     box-shadow:
-      inset 0 1px 0 var(--edge),
+      0 0 0 0.5px light-dark(rgb(255 255 255 / 60%), rgb(255 255 255 / 12%)),
       0 0 0 5px color-mix(in srgb, var(--accent) 12%, transparent),
-      0 24px 60px -24px rgb(0 0 0 / 45%);
+      0 24px 60px -24px rgb(0 0 0 / 40%);
   }
 
   &:not(:focus-within)::after {
@@ -293,7 +303,11 @@ body[playing] #ambient {
   display: flex;
   flex-direction: column;
   min-width: 190px;
-  background: var(--glass-strong);
+  background: light-dark(rgb(255 255 255 / 88%), rgb(26 26 32 / 88%));
+  backdrop-filter: blur(40px) saturate(180%);
+  box-shadow:
+    0 0 0 0.5px light-dark(rgb(0 0 0 / 10%), rgb(255 255 255 / 10%)),
+    0 20px 50px -18px rgb(0 0 0 / 45%);
   animation: pop 0.25s var(--ease);
 
   & button {
@@ -441,13 +455,14 @@ body[playing] #ambient {
   opacity: 0.8;
 }
 
-/* player */
+/* player (left-to-right like every music app; text keeps its own direction) */
 #player {
-  width: 300px;
+  width: 320px;
   overflow: clip;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  padding: 14px;
 }
 
 .p-bg {
@@ -455,9 +470,9 @@ body[playing] #ambient {
   inset: 0;
   z-index: -1;
   background: center / cover;
-  filter: blur(28px) saturate(1.6);
-  opacity: 0.45;
-  scale: 1.3;
+  filter: blur(30px) saturate(1.6);
+  opacity: 0.4;
+  scale: 1.4;
 }
 
 .p-row {
@@ -468,32 +483,41 @@ body[playing] #ambient {
 }
 
 #p-art {
-  width: 52px;
-  height: 52px;
+  width: 54px;
+  height: 54px;
   flex-shrink: 0;
-  border-radius: 12px;
-  background: light-dark(rgb(0 0 0 / 8%), rgb(255 255 255 / 8%)) center / cover;
-  box-shadow: 0 8px 22px -8px color-mix(in srgb, var(--accent) 70%, black);
+  border-radius: 13px;
+  background: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 8%)) center / cover;
+  box-shadow: 0 8px 22px -10px color-mix(in srgb, var(--accent) 70%, black);
+  transition: scale 0.4s var(--spring);
+
+  body:not([playing]) & {
+    scale: 0.92;
+  }
 }
 
 .p-info {
+  flex: 1;
   min-width: 0;
+}
+
+#p-title,
+#p-artist {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  unicode-bidi: plaintext;
+  text-align: start;
 }
 
 #p-title {
   font-weight: 700;
   font-size: 15px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 #p-artist {
   font-size: 12.5px;
   color: var(--text-soft);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 #p-lyrics {
@@ -506,7 +530,13 @@ body[playing] #ambient {
   text-overflow: ellipsis;
   unicode-bidi: plaintext;
   text-shadow: 0 0 16px color-mix(in srgb, var(--accent) 60%, transparent);
-  transition: opacity 0.35s ease, filter 0.35s ease;
+  transition:
+    opacity 0.35s ease,
+    filter 0.35s ease;
+
+  &:empty {
+    display: none;
+  }
 
   &.swap {
     opacity: 0;
@@ -514,31 +544,36 @@ body[playing] #ambient {
   }
 }
 
+.p-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-soft);
+}
+
 .p-progress {
+  flex: 1;
   height: 4px;
   border-radius: 99px;
-  background: light-dark(rgb(0 0 0 / 10%), rgb(255 255 255 / 12%));
+  background: light-dark(rgb(0 0 0 / 10%), rgb(255 255 255 / 14%));
   overflow: hidden;
 }
 
 #p-fill {
   height: 100%;
-  width: 100%;
-  transform-origin: right;
+  border-radius: inherit;
+  transform-origin: left;
   transform: scaleX(var(--p, 0));
-  background: linear-gradient(270deg, color-mix(in srgb, var(--accent) 60%, white), var(--accent));
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 60%, white), var(--accent));
   transition: transform 0.5s linear;
-}
-
-[dir="rtl"] #p-fill {
-  transform-origin: right;
 }
 
 .p-controls {
   display: flex;
   justify-content: center;
-  gap: 6px;
-  direction: ltr;
+  gap: 10px;
 
   & button {
     width: 34px;
@@ -552,12 +587,17 @@ body[playing] #ambient {
     transition: background-color 0.15s ease;
 
     &:hover {
-      background: light-dark(rgb(0 0 0 / 7%), rgb(255 255 255 / 9%));
+      background: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 9%));
     }
 
     &:active i {
       scale: 0.85;
     }
+  }
+
+  & #p-toggle i {
+    width: 18px;
+    height: 18px;
   }
 }
 
@@ -584,19 +624,19 @@ i {
 }
 
 .i-play {
-  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M15.17 7.59 6.91 3.02a1.61 1.61 0 0 0-1.62.02A1.6 1.6 0 0 0 4.5 4.43v9.14c0 .58.3 1.1.79 1.39.26.15.54.23.83.23.27 0 .54-.07.79-.21l8.26-4.57c.51-.28.83-.82.83-1.41s-.32-1.12-.83-1.41z'/%3E%3C/svg%3E");
+  --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22 fill=%22none%22 stroke=%22black%22 stroke-width=%221.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M5 3.4v9.2l7.6-4.6z%22/%3E%3C/svg%3E");
 }
 
 .i-pause {
-  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5.25 2h-1.5A1.75 1.75 0 0 0 2 3.75v10.5c0 .966.784 1.75 1.75 1.75h1.5A1.75 1.75 0 0 0 7 14.25V3.75A1.75 1.75 0 0 0 5.25 2m9 0h-1.5A1.75 1.75 0 0 0 11 3.75v10.5c0 .966.784 1.75 1.75 1.75h1.5A1.75 1.75 0 0 0 16 14.25V3.75A1.75 1.75 0 0 0 14.25 2'/%3E%3C/svg%3E");
+  --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22 fill=%22none%22 stroke=%22black%22 stroke-width=%221.7%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M5.6 3.5v9M10.4 3.5v9%22/%3E%3C/svg%3E");
 }
 
 .i-next {
-  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M12.667 7.59 4.413 3.021a1.61 1.61 0 0 0-1.618.022A1.6 1.6 0 0 0 2 4.43v9.14c0 .575.297 1.094.795 1.387.258.152.542.23.828.23.271 0 .542-.07.791-.208l8.254-4.57c.514-.285.833-.825.833-1.41s-.319-1.125-.833-1.41zM15.25 2a.75.75 0 0 0-.75.75v12.5a.75.75 0 0 0 1.5 0V2.75a.75.75 0 0 0-.75-.75'/%3E%3C/svg%3E");
+  --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22 fill=%22none%22 stroke=%22black%22 stroke-width=%221.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M3.6 3.6v8.8l7-4.4z%22/%3E%3Cpath d=%22M12.6 3.5v9%22/%3E%3C/svg%3E");
 }
 
 .i-prev {
-  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cg transform='translate(18 0) scale(-1 1)'%3E%3Cpath d='M12.667 7.59 4.413 3.021a1.61 1.61 0 0 0-1.618.022A1.6 1.6 0 0 0 2 4.43v9.14c0 .575.297 1.094.795 1.387.258.152.542.23.828.23.271 0 .542-.07.791-.208l8.254-4.57c.514-.285.833-.825.833-1.41s-.319-1.125-.833-1.41zM15.25 2a.75.75 0 0 0-.75.75v12.5a.75.75 0 0 0 1.5 0V2.75a.75.75 0 0 0-.75-.75'/%3E%3C/g%3E%3C/svg%3E");
+  --icon: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22 fill=%22none%22 stroke=%22black%22 stroke-width=%221.5%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22M12.4 3.6v8.8l-7-4.4z%22/%3E%3Cpath d=%22M3.4 3.5v9%22/%3E%3C/svg%3E");
 }
 
 .i-gear {
@@ -692,7 +732,9 @@ i {
   max-height: 84vh;
   overflow: auto;
   padding: 18px 22px 20px;
-  background: var(--glass-strong);
+  /* dialogs need to be readable over anything: denser glass */
+  background: light-dark(rgb(255 255 255 / 86%), rgb(24 24 30 / 86%));
+  backdrop-filter: blur(40px) saturate(180%);
   animation: pop 0.35s var(--spring);
   scrollbar-width: thin;
 }
@@ -764,6 +806,8 @@ i {
     &.row {
       flex-direction: row;
       align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
     }
   }
 

@@ -116,9 +116,6 @@
 
 /* ---- Glass edges: a thin specular highlight on floating surfaces ---- */
 @media (-moz-pref("nplus-glass-edge")) {
-  #urlbar[open] > .urlbar-background,
-  #zen-media-controls-toolbar .zen-media-card,
-  #nplus-desktop-card,
   menupopup::part(content),
   panel::part(content) {
     box-shadow:
