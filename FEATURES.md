@@ -36,6 +36,11 @@ Every feature can be toggled from Sine → Nebula Plus settings.
 28. Ctrl+Alt+L toggles lyrics
 29. Depth-of-field: distant lines blur and fade
 
+### Lyrics stage
+- Full-window now playing: drifting blurred cover, big synced lyrics in Meem,
+  depth-of-field on distant lines, click a line to jump, progress and controls
+- Open with Ctrl+Alt+M or double-click the player; Esc closes
+
 ## 🌙 Dark mode
 30. One-click force-dark for every website
 31. Animated sun ↔ moon button in the URL bar

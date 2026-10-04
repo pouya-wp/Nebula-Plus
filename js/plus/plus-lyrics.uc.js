@@ -176,6 +176,8 @@
 
     // A short muted line instead of silently showing nothing.
     setStatus(status) {
+      NP.lyricsState = { key: this.key, lines: this.lines, status };
+      NP.emit("lyrics", NP.lyricsState);
       clearTimeout(this.statusTimer);
       this.panel.setAttribute("status", status);
       if (status === "loading") return;
@@ -189,6 +191,9 @@
     },
 
     render() {
+      // shared with the lyrics stage
+      NP.lyricsState = { key: this.key, lines: this.lines, status: this.lines.length ? "ok" : this.panel.getAttribute("status") };
+      NP.emit("lyrics", NP.lyricsState);
       this.track.replaceChildren(
         ...this.lines.map((l, i) =>
           NP.html("div", {
@@ -273,6 +278,164 @@
       this.offPos?.();
       this.offKey?.();
       this.panel?.remove();
+    },
+  });
+  // ================= Lyrics stage =================
+  // Full-window "now playing": drifting blurred cover, the record and its
+  // controls on one side, big synced lyrics in Meem on the other.
+  // Open: Ctrl+Alt+M, or double-click the player. Close: Esc / ✕.
+  NP.feature({
+    name: "LyricsStage",
+    init() {
+      const btn = (cls, icon, fn, title) => {
+        const b = NP.html("button", { class: `nplus-btn ${cls}`, title, onclick: fn });
+        b.style.setProperty("--nplus-icon", `var(--nplus-i-${icon})`);
+        return b;
+      };
+      this.el = NP.html("div", { id: "nplus-stage", hidden: "true" }, [
+        NP.html("div", { class: "st-bg" }),
+        NP.html("div", { class: "st-shade" }),
+        NP.html("button", { class: "st-close", title: "Close (Esc)", text: "✕", onclick: () => this.close() }),
+        NP.html("div", { class: "st-side" }, [
+          NP.html("div", { class: "st-art" }),
+          NP.html("div", { class: "st-title", dir: "auto" }),
+          NP.html("div", { class: "st-artist", dir: "auto" }),
+          NP.html("div", { class: "st-progress" }, [
+            NP.html("span", { class: "st-time" }),
+            NP.html("div", { class: "st-bar" }, [NP.html("div", { class: "st-fill" })]),
+            NP.html("span", { class: "st-dur" }),
+          ]),
+          NP.html("div", { class: "st-controls" }, [
+            btn("st-prev", "prev", () => NP.media?.prev(), "Previous"),
+            btn("st-toggle", "play", () => NP.media?.toggle(), "Play / Pause"),
+            btn("st-next", "next", () => NP.media?.next(), "Next"),
+          ]),
+        ]),
+        NP.html("div", { class: "st-lyrics" }, [NP.html("div", { class: "st-track" })]),
+      ]);
+      document.body.append(this.el);
+      this.track = this.el.querySelector(".st-track");
+
+      this.el.querySelector(".st-bar").addEventListener("click", (e) => {
+        const m = NP.media?.current;
+        if (!m?.duration || !m.canSeek) return;
+        const r = e.currentTarget.getBoundingClientRect();
+        NP.media.seek(((e.clientX - r.left) / r.width) * m.duration);
+      });
+      this.track.addEventListener("click", (e) => {
+        const line = e.target.closest(".st-line");
+        if (line?.dataset.time) NP.media?.seek(Number(line.dataset.time) + 0.01);
+      });
+
+      this.onKey = (e) => {
+        if (e.key === "Escape" && this.isOpen) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.close();
+        }
+      };
+      window.addEventListener("keydown", this.onKey, true);
+      this.offKey = NP.hotkey?.("ctrl+alt+m", () => (this.isOpen ? this.close() : this.open()));
+      this.onDbl = (e) => {
+        if (e.target.closest("#nplus-desktop-card, #nplus-lyrics, .zen-media-card")) this.open();
+      };
+      document.addEventListener("dblclick", this.onDbl);
+
+      this.offMedia = NP.on("media", (m) => this.isOpen && this.renderMedia(m));
+      this.offLyrics = NP.on("lyrics", () => this.isOpen && this.renderLyrics());
+      NP.stage = { open: () => this.open(), close: () => this.close() };
+    },
+
+    open() {
+      if (!NP.media?.current) {
+        NP.island?.show({ title: "Nothing is playing", subtitle: "Play something to open the stage", duration: 2000 });
+        return;
+      }
+      this.isOpen = true;
+      this.el.removeAttribute("hidden");
+      this.el.getBoundingClientRect();
+      this.el.setAttribute("open", "true");
+      this.renderMedia(NP.media.current);
+      this.renderLyrics();
+      clearInterval(this.timer);
+      this.timer = setInterval(() => this.tick(), 100);
+    },
+
+    close() {
+      this.isOpen = false;
+      clearInterval(this.timer);
+      this.el.removeAttribute("open");
+      setTimeout(() => !this.isOpen && this.el.setAttribute("hidden", "true"), 500);
+    },
+
+    renderMedia(m) {
+      if (!m) return this.close();
+      const q = (s) => this.el.querySelector(s);
+      const art = m.artwork ? `url("${m.artwork.replace(/"/g, '\\"')}")` : "none";
+      q(".st-art").style.backgroundImage = art;
+      q(".st-bg").style.backgroundImage = art;
+      q(".st-art").toggleAttribute("empty", !m.artwork);
+      q(".st-title").textContent = m.title;
+      q(".st-artist").textContent = [m.artist, m.app].filter(Boolean).join(" · ");
+      q(".st-toggle").style.setProperty("--nplus-icon", `var(--nplus-i-${m.playing ? "pause" : "play"})`);
+      this.el.toggleAttribute("playing", m.playing);
+      q(".st-dur").textContent = NP.formatTime(m.duration);
+    },
+
+    renderLyrics() {
+      const st = NP.lyricsState;
+      const key = NP.media?.current ? `${NP.media.current.title}|${NP.media.current.artist}` : null;
+      const lines = st?.key === key ? st.lines : [];
+      this.lines = lines;
+      this.active = -2;
+      if (!lines.length) {
+        const msg = st?.key === key && st.status === "loading" ? "…" : "لیریک هم‌زمانی برای این آهنگ پیدا نشد";
+        this.track.replaceChildren(NP.html("div", { class: "st-line st-empty", dir: "auto", text: msg }));
+        this.track.style.transform = "none";
+        return;
+      }
+      this.track.replaceChildren(
+        ...lines.map((l) =>
+          NP.html("div", { class: "st-line", dir: "auto", "data-time": l.time, text: l.text || "♪" }),
+        ),
+      );
+      this.tick();
+    },
+
+    tick() {
+      const m = NP.media?.current;
+      if (!m) return;
+      const pos = NP.media.position();
+      this.el.querySelector(".st-time").textContent = NP.formatTime(pos);
+      this.el.querySelector(".st-fill").style.setProperty("--p", m.duration ? pos / m.duration : 0);
+      if (!this.lines?.length) return;
+      const offset = (Number.parseFloat(NP.prefs.get("nplus-lyrics-offset")) || 0) / 1000;
+      const t = pos + offset;
+      let idx = -1;
+      for (let i = 0; i < this.lines.length; i++) if (this.lines[i].time <= t) idx = i;
+      if (idx === this.active) return;
+      this.active = idx;
+      const nodes = this.track.children;
+      for (let i = 0; i < nodes.length; i++) {
+        nodes[i].toggleAttribute("active", i === idx);
+        nodes[i].style.setProperty("--d", Math.min(Math.abs(i - idx), 5));
+      }
+      const node = nodes[Math.max(idx, 0)];
+      if (node) {
+        const box = this.el.querySelector(".st-lyrics").clientHeight;
+        this.track.style.transform = `translateY(${box * 0.42 - node.offsetTop - node.offsetHeight / 2}px)`;
+      }
+    },
+
+    destroy() {
+      clearInterval(this.timer);
+      window.removeEventListener("keydown", this.onKey, true);
+      document.removeEventListener("dblclick", this.onDbl);
+      this.offKey?.();
+      this.offMedia?.();
+      this.offLyrics?.();
+      this.el?.remove();
+      delete NP.stage;
     },
   });
 })();
