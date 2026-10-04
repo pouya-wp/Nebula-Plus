@@ -25,6 +25,7 @@ var app = builder.Build();
 
 var manager = await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
 var art = new ArtCache();
+var spectrum = new NebulaBridge.Spectrum();
 
 bool IsBrowser(string aumid) =>
     ignoredApps.Any(a => aumid.Contains(a, StringComparison.OrdinalIgnoreCase)) ||
@@ -68,7 +69,7 @@ var recent = new System.Collections.Concurrent.ConcurrentQueue<string>();
 
 app.Use(async (ctx, next) =>
 {
-    recent.Enqueue($"{DateTime.Now:HH:mm:ss} {ctx.Request.Method} {ctx.Request.Path} origin={ctx.Request.Headers.Origin} ct={ctx.Request.ContentType} len={ctx.Request.ContentLength}");
+    if (ctx.Request.Path != "/bands") recent.Enqueue($"{DateTime.Now:HH:mm:ss} {ctx.Request.Method} {ctx.Request.Path} origin={ctx.Request.Headers.Origin} ct={ctx.Request.ContentType} len={ctx.Request.ContentLength}");
     while (recent.Count > 20) recent.TryDequeue(out _);
     ctx.Response.Headers["Access-Control-Allow-Origin"] = "*";
     ctx.Response.Headers["Cache-Control"] = "no-store";
@@ -162,6 +163,9 @@ app.MapPost("/seek", async (double pos) =>
     var ok = await session.TryChangePlaybackPositionAsync(TimeSpan.FromSeconds(pos).Ticks);
     return Results.Json(new { ok });
 });
+
+// Live spectrum of the system audio: { b: [28 values 0..1] }
+app.MapGet("/bands", () => Results.Json(new { b = spectrum.Read() }));
 
 app.MapGet("/debug/requests", () => Results.Text(string.Join('\n', recent)));
 

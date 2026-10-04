@@ -563,6 +563,13 @@
     "defaultValue": true
   },
   {
+    "type": "checkbox",
+    "property": "nplus-visualizer",
+    "label": "Live visualizer outline behind the players",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
     "type": "dropdown",
     "property": "nplus-media-ambient",
     "label": "Album color ambience",

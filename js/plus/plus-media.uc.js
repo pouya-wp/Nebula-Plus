@@ -694,4 +694,138 @@
       this.offs?.forEach((off) => off());
     },
   });
+
+  // ================= Visualizer =================
+  // A faint outline of the live spectrum (system audio via Nebula Bridge)
+  // drawn behind the players: sidebar card, Zen's media card, mini player
+  // and the lyrics stage. Polls only while music plays and a player shows.
+  NP.DEFAULTS["nplus-visualizer"] = true;
+
+  NP.feature({
+    name: "Visualizer",
+    init() {
+      this.bands = new Array(28).fill(0);
+      this.shown = new Array(28).fill(0);
+      this.loop = this.loop.bind(this);
+      this.off = NP.on("media", () => this.wake());
+      NP.prefs.watch("nplus-visualizer", () => this.wake());
+      this.wake();
+    },
+
+    targets() {
+      const list = [];
+      const add = (el, cls) => {
+        if (!el) return;
+        let c = el.querySelector(":scope > canvas.nplus-viz");
+        if (!c) {
+          c = NP.html("canvas", { class: `nplus-viz ${cls}` });
+          el.prepend(c);
+        }
+        list.push(c);
+      };
+      const card = document.getElementById("nplus-desktop-card");
+      if (card && !card.hidden) add(card, "viz-card");
+      const front = window.gZenMediaController?.frontCard?.element;
+      if (front && !front.hidden) add(front, "viz-card");
+      const mini = document.getElementById("nplus-mini");
+      if (mini?.hasAttribute("active") && mini.getBoundingClientRect().width) add(mini, "viz-mini");
+      const stage = document.getElementById("nplus-stage");
+      if (stage?.hasAttribute("open")) add(stage, "viz-stage");
+      return list;
+    },
+
+    wake() {
+      const on = NP.prefs.get("nplus-visualizer") && NP.media?.current?.playing;
+      NP.setRootAttr("nplus-viz", !!on);
+      if (on && !this.raf) this.raf = requestAnimationFrame(this.loop);
+    },
+
+    async poll() {
+      if (this.inflight) return;
+      this.inflight = true;
+      try {
+        const res = await fetch("http://127.0.0.1:47321/bands", { cache: "no-store" });
+        const { b } = await res.json();
+        if (Array.isArray(b)) this.bands = b;
+      } catch {
+        this.bands = this.bands.map((v) => v * 0.8);
+      }
+      this.inflight = false;
+    },
+
+    loop(now) {
+      const on = NP.prefs.get("nplus-visualizer") && NP.media?.current?.playing && !document.hidden;
+      const targets = on ? this.targets() : [];
+      if (!targets.length) {
+        // fade out, then sleep until music plays again
+        let alive = false;
+        for (const c of document.querySelectorAll("canvas.nplus-viz")) c.getContext("2d").clearRect(0, 0, c.width, c.height);
+        this.shown.fill(0);
+        this.raf = alive ? requestAnimationFrame(this.loop) : null;
+        return;
+      }
+      if (!this.lastPoll || now - this.lastPoll > 55) {
+        this.lastPoll = now;
+        this.poll();
+      }
+      // ease toward the latest values for a fluid line
+      for (let i = 0; i < this.shown.length; i++) this.shown[i] += ((this.bands[i] ?? 0) - this.shown[i]) * 0.25;
+      const color = getComputedStyle(NP.root).getPropertyValue("--nplus-accent").trim() || "rgb(140 160 255)";
+      for (const c of targets) this.draw(c, color);
+      this.raf = requestAnimationFrame(this.loop);
+    },
+
+    draw(canvas, color) {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const W = Math.max(1, Math.round(rect.width * dpr));
+      const H = Math.max(1, Math.round(rect.height * dpr));
+      if (canvas.width !== W || canvas.height !== H) {
+        canvas.width = W;
+        canvas.height = H;
+      }
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, W, H);
+      const v = this.shown;
+      const n = v.length;
+      const amp = H * (canvas.classList.contains("viz-stage") ? 0.28 : 0.62);
+      const pts = v.map((val, i) => [(i / (n - 1)) * W, H - Math.pow(val, 1.3) * amp - dpr]);
+
+      const path = new Path2D();
+      path.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < n - 1; i++) {
+        const mx = (pts[i][0] + pts[i + 1][0]) / 2;
+        const my = (pts[i][1] + pts[i + 1][1]) / 2;
+        path.quadraticCurveTo(pts[i][0], pts[i][1], mx, my);
+      }
+      path.lineTo(pts[n - 1][0], pts[n - 1][1]);
+
+      // faint fill under the line
+      const fill = new Path2D(path);
+      fill.lineTo(W, H);
+      fill.lineTo(0, H);
+      fill.closePath();
+      const g = ctx.createLinearGradient(0, H - amp, 0, H);
+      g.addColorStop(0, color);
+      g.addColorStop(1, "transparent");
+      ctx.globalAlpha = 0.1;
+      ctx.fillStyle = g;
+      ctx.fill(fill);
+
+      // the outline itself
+      ctx.globalAlpha = 0.5;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.2 * dpr;
+      ctx.lineJoin = "round";
+      ctx.stroke(path);
+      ctx.globalAlpha = 1;
+    },
+
+    destroy() {
+      cancelAnimationFrame(this.raf);
+      this.off?.();
+      for (const c of document.querySelectorAll("canvas.nplus-viz")) c.remove();
+      NP.root.removeAttribute("nplus-viz");
+    },
+  });
 })();

@@ -407,3 +407,35 @@
     display: block;
   }
 }
+
+/* ---------------- Visualizer ----------------
+   A faint spectrum outline behind each player (drawn by plus-media.uc.js). */
+canvas.nplus-viz {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 70%;
+  width: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.9;
+  border-radius: inherit;
+  mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+
+canvas.nplus-viz.viz-mini {
+  height: 85%;
+}
+
+canvas.nplus-viz.viz-stage {
+  height: 40vh;
+  z-index: 1;
+  opacity: 0.8;
+}
+
+/* keep player content above the line */
+#nplus-desktop-card > :not(canvas, .nplus-dc-bg, .nplus-card-ring),
+#zen-media-controls-toolbar .zen-media-card > :not(canvas, .nplus-card-ring),
+#nplus-mini > :not(canvas, .mn-bar) {
+  position: relative;
+  z-index: 1;
+}
