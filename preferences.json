@@ -948,6 +948,39 @@
     "defaultValue": true
   },
   {
+    "type": "dropdown",
+    "property": "nplus-weather-fx",
+    "label": "Gentle rain / snow over the browser UI",
+    "value": "number",
+    "defaultValue": 1,
+    "placeholder": false,
+    "options": [
+      {
+        "label": "Off",
+        "value": 0
+      },
+      {
+        "label": "Follow the real weather",
+        "value": 1
+      },
+      {
+        "label": "Always rain",
+        "value": 2
+      },
+      {
+        "label": "Always snow",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "type": "string",
+    "property": "nplus-weather-city",
+    "label": "Weather city",
+    "defaultValue": "Tehran",
+    "placeholder": "e.g. Rasht"
+  },
+  {
     "type": "separator",
     "label": "🛠️ Developer",
     "margin": "15px 0 15px 0"

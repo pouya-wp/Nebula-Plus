@@ -420,39 +420,135 @@ body[playing] #ambient {
 }
 
 /* weather */
-.w-main {
+#weather {
+  width: 290px;
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
 }
 
-#w-icon {
-  font-size: 40px;
-  line-height: 1;
+.w-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12.5px;
+  color: var(--text-soft);
+}
+
+.w-city {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.w-pin {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  corner-shape: round;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+#w-updated {
+  font-size: 11px;
+}
+
+.w-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #w-temp {
-  font-size: 34px;
-  font-weight: 300;
+  font-size: 46px;
+  font-weight: 700;
   line-height: 1;
+  letter-spacing: -0.02em;
 }
 
 #w-desc {
+  margin-top: 6px;
   font-size: 13px;
   color: var(--text-soft);
-  margin-top: 4px;
 }
 
-#w-meta,
-#w-city {
+#w-icon {
+  font-size: 48px;
+  line-height: 1;
+  filter: drop-shadow(0 6px 14px rgb(0 0 0 / 15%));
+  animation: w-float 6s ease-in-out infinite;
+}
+
+@keyframes w-float {
+  50% {
+    translate: 0 -4px;
+  }
+}
+
+#w-hours {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 4px;
+  border-radius: 12px;
+  background: light-dark(rgb(255 255 255 / 22%), rgb(255 255 255 / 5%));
+}
+
+.w-hour {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
   font-size: 12px;
-  color: var(--text-soft);
-  margin-top: 10px;
 }
 
-#w-city {
-  margin-top: 4px;
-  opacity: 0.8;
+.w-h-t {
+  font-size: 10.5px;
+  color: var(--text-soft);
+}
+
+.w-h-i {
+  font-size: 17px;
+  line-height: 1.1;
+}
+
+.w-h-v {
+  font-weight: 600;
+}
+
+#w-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.w-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 99px;
+  corner-shape: round;
+  font-size: 11.5px;
+  background: light-dark(rgb(0 0 0 / 4%), rgb(255 255 255 / 6%));
+
+  & b {
+    font-weight: 400;
+    opacity: 0.7;
+  }
+}
+
+/* gentle rain / snow over the page */
+#sky {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* player (left-to-right like every music app; text keeps its own direction) */

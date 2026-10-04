@@ -12,6 +12,8 @@
   NP.DEFAULTS["nplus-tab-preview"] = true;
   NP.DEFAULTS["nplus-mini-player"] = true;
   NP.DEFAULTS["nplus-focus-minutes"] = "25";
+  NP.DEFAULTS["nplus-weather-fx"] = 1;
+  NP.DEFAULTS["nplus-weather-city"] = "Tehran";
 
   // ================= Tab hover preview =================
   NP.feature({
@@ -260,6 +262,140 @@
       clearInterval(this.timer);
       this.off?.();
       this.el?.remove();
+    },
+  });
+
+  // ================= Weather sky =================
+  // On rainy or snowy days a handful of faint drops / flakes drift over the
+  // browser's own UI (sidebar, toolbar, margins), never over web pages.
+  // nplus-weather-fx: 0 off · 1 follow the real weather · 2 rain · 3 snow
+  const RAIN = [51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99];
+  const SNOW = [71, 73, 75, 77, 85, 86];
+
+  NP.feature({
+    name: "WeatherSky",
+    init() {
+      this.canvas = NP.html("canvas", { id: "nplus-sky" });
+      document.body.append(this.canvas);
+      this.ctx = this.canvas.getContext("2d");
+      this.resize = () => {
+        this.canvas.width = window.innerWidth * devicePixelRatio;
+        this.canvas.height = window.innerHeight * devicePixelRatio;
+      };
+      window.addEventListener("resize", this.resize);
+      this.resize();
+      this.real = "clear";
+      NP.prefs.watch("nplus-weather-fx", () => this.apply());
+      NP.prefs.watch("nplus-weather-city", () => this.fetchWeather());
+      NP.prefs.watch("nplus-performance", () => this.apply());
+      this.poll = setInterval(() => this.fetchWeather(), 30 * 60 * 1000);
+      this.onVis = () => this.apply();
+      document.addEventListener("visibilitychange", this.onVis);
+      NP.sky = { set: (kind) => this.start(kind) };
+    },
+
+    async fetchWeather() {
+      try {
+        const city = NP.prefs.get("nplus-weather-city") || "Tehran";
+        const geo = await (await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`)).json();
+        const p = geo.results?.[0];
+        if (p) {
+          const w = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.latitude}&longitude=${p.longitude}&current=weather_code`)).json();
+          const code = w.current?.weather_code;
+          this.real = SNOW.includes(code) ? "snow" : RAIN.includes(code) ? "rain" : "clear";
+          NP.setRootAttr("nplus-weather", this.real);
+        }
+      } catch {}
+      this.apply();
+    },
+
+    apply() {
+      const mode = NP.prefs.get("nplus-weather-fx");
+      let kind = mode === 2 ? "rain" : mode === 3 ? "snow" : mode === 1 ? this.real : "clear";
+      if (
+        NP.prefs.get("nplus-performance") ||
+        document.hidden ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
+        kind = "clear";
+      }
+      this.start(kind);
+    },
+
+    spawn(kind, anywhere) {
+      const W = this.canvas.width;
+      const H = this.canvas.height;
+      const p = { x: Math.random() * W, y: anywhere ? Math.random() * H : -20, ph: Math.random() * 6.28, f: 0.4 + Math.random() * 0.6 };
+      if (kind === "rain") Object.assign(p, { vx: -0.8, vy: 9 + Math.random() * 5, len: 12 + Math.random() * 12, a: 0.2 + Math.random() * 0.14 });
+      else Object.assign(p, { vx: -0.15, vy: 0.45 + Math.random() * 0.6, r: 1.1 + Math.random() * 1.6, a: 0.4 + Math.random() * 0.3 });
+      return p;
+    },
+
+    start(kind) {
+      if (kind === this.kind) return;
+      this.kind = kind;
+      cancelAnimationFrame(this.raf);
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.canvas.toggleAttribute("active", kind !== "clear");
+      if (kind === "clear") return;
+
+      const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const rainColor = dark ? "200, 215, 235" : "90, 110, 140";
+      const snowColor = dark ? "255, 255, 255" : "250, 252, 255";
+      const particles = Array.from({ length: kind === "rain" ? 34 : 26 }, () => this.spawn(kind, true));
+      const tabbox = document.getElementById("tabbrowser-tabbox");
+      let last = performance.now();
+      let skip = false;
+
+      const frame = (now) => {
+        this.raf = requestAnimationFrame(frame);
+        // ~30 fps is plenty for this and halves the cost
+        skip = !skip;
+        if (skip) return;
+        const dt = Math.min(80, now - last) / 16.7;
+        last = now;
+        const { ctx, canvas } = this;
+        const dpr = devicePixelRatio;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        // keep web pages clear
+        const r = tabbox?.getBoundingClientRect();
+        if (r && r.width) {
+          ctx.beginPath();
+          ctx.rect(0, 0, canvas.width, canvas.height);
+          ctx.rect(r.x * dpr, r.y * dpr, r.width * dpr, r.height * dpr);
+          ctx.clip("evenodd");
+        }
+        for (const p of particles) {
+          p.y += p.vy * dt * dpr;
+          p.x += (p.vx + (kind === "snow" ? Math.sin((now / 1000) * p.f + p.ph) * 0.3 : 0)) * dt * dpr;
+          if (p.y > canvas.height + 20 || p.x < -20 || p.x > canvas.width + 20) Object.assign(p, this.spawn(kind, false));
+          if (kind === "rain") {
+            ctx.strokeStyle = `rgba(${rainColor}, ${p.a})`;
+            ctx.lineWidth = dpr;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p.x - p.vx * 2 * dpr, p.y - p.len * dpr);
+            ctx.stroke();
+          } else {
+            ctx.fillStyle = `rgba(${snowColor}, ${p.a})`;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r * dpr, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+        ctx.restore();
+      };
+      this.raf = requestAnimationFrame(frame);
+    },
+
+    destroy() {
+      cancelAnimationFrame(this.raf);
+      clearInterval(this.poll);
+      window.removeEventListener("resize", this.resize);
+      document.removeEventListener("visibilitychange", this.onVis);
+      this.canvas?.remove();
+      delete NP.sky;
     },
   });
 })();

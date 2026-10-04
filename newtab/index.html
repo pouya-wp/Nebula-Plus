@@ -11,6 +11,7 @@
   <body>
     <div id="wallpaper"></div>
     <div id="ambient"></div>
+    <canvas id="sky"></canvas>
 
     <main id="stage">
       <!-- Clock & greeting -->
@@ -42,15 +43,19 @@
       <!-- Widgets row -->
       <section id="widgets">
         <article id="weather" class="glass widget" hidden>
+          <div class="w-head">
+            <div class="w-city"><span class="w-pin"></span><span id="w-city"></span></div>
+            <div id="w-updated"></div>
+          </div>
           <div class="w-main">
-            <div id="w-icon"></div>
             <div>
               <div id="w-temp"></div>
               <div id="w-desc"></div>
             </div>
+            <div id="w-icon"></div>
           </div>
-          <div id="w-meta"></div>
-          <div id="w-city"></div>
+          <div id="w-hours"></div>
+          <div id="w-chips"></div>
         </article>
 
         <article id="player" class="glass widget glow-host" dir="ltr" hidden>

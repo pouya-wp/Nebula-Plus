@@ -168,10 +168,12 @@ const WMO = {
   95: ["رعدوبرق", "⛈️"], 96: ["رعدوبرق و تگرگ", "⛈️"], 99: ["رعدوبرق و تگرگ", "⛈️"],
 };
 
+const wIcon = (code, day = 1) => (day === 0 && code <= 1 ? "🌙" : day === 0 && code === 2 ? "☁️" : (WMO[code] ?? ["", "🌡️"])[1]);
+
 async function loadWeather() {
   const box = $("#weather");
   if (!S.weather) return (box.hidden = true);
-  const cacheKey = `nplus-weather-${S.city}`;
+  const cacheKey = `nplus-weather2-${S.city}`;
   let data;
   try {
     const cached = JSON.parse(localStorage.getItem(cacheKey) || "null");
@@ -186,25 +188,120 @@ async function loadWeather() {
         await fetch(
           `https://api.open-meteo.com/v1/forecast?latitude=${place.latitude}&longitude=${place.longitude}` +
             `&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day` +
-            `&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1`,
+            `&hourly=temperature_2m,weather_code,is_day&forecast_hours=12` +
+            `&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=1`,
         )
       ).json();
       data = { at: Date.now(), place: place.name, w };
       localStorage.setItem(cacheKey, JSON.stringify(data));
     }
-    const c = data.w.current;
-    const [desc, icon] = WMO[c.weather_code] ?? ["", "🌡️"];
-    $("#w-icon").textContent = c.is_day === 0 && c.weather_code <= 1 ? "🌙" : icon;
-    $("#w-temp").textContent = `${num(Math.round(c.temperature_2m))}°`;
-    $("#w-desc").textContent = `${desc} · حس ${num(Math.round(c.apparent_temperature))}°`;
-    $("#w-meta").textContent =
-      `بیشینه ${num(Math.round(data.w.daily.temperature_2m_max[0]))}° · کمینه ${num(Math.round(data.w.daily.temperature_2m_min[0]))}° · رطوبت ${num(c.relative_humidity_2m)}٪`;
-    $("#w-city").textContent = `📍 ${data.place}`;
+    renderWeather(data);
     box.hidden = false;
   } catch {
     box.hidden = true;
   }
 }
+
+function renderWeather(data) {
+  const c = data.w.current;
+  const d = data.w.daily;
+  const [desc] = WMO[c.weather_code] ?? [""];
+  document.body.dataset.weather = weatherKind(c.weather_code);
+  $("#w-city").textContent = data.place;
+  const mins = Math.round((Date.now() - data.at) / 60000);
+  $("#w-updated").textContent = mins < 1 ? "همین الان" : `${num(mins)} دقیقه پیش`;
+  $("#w-icon").textContent = wIcon(c.weather_code, c.is_day);
+  $("#w-temp").textContent = `${num(Math.round(c.temperature_2m))}°`;
+  $("#w-desc").textContent = `${desc} · حس ${num(Math.round(c.apparent_temperature))}°`;
+
+  // next hours, every 2 hours
+  const h = data.w.hourly;
+  const hours = [];
+  for (let i = 1; i < h.time.length && hours.length < 5; i += 2) {
+    const t = new Date(h.time[i]);
+    hours.push(
+      `<div class="w-hour"><span class="w-h-t">${num(t.getHours(), 2)}</span>` +
+        `<span class="w-h-i">${wIcon(h.weather_code[i], h.is_day[i])}</span>` +
+        `<span class="w-h-v">${num(Math.round(h.temperature_2m[i]))}°</span></div>`,
+    );
+  }
+  $("#w-hours").innerHTML = hours.join("");
+
+  const chip = (label, value) => `<span class="w-chip"><b>${label}</b>${value}</span>`;
+  $("#w-chips").innerHTML = [
+    chip("↑", `${num(Math.round(d.temperature_2m_max[0]))}°`),
+    chip("↓", `${num(Math.round(d.temperature_2m_min[0]))}°`),
+    chip("💧", `${num(c.relative_humidity_2m)}٪`),
+    d.precipitation_probability_max?.[0] ? chip("☔", `${num(d.precipitation_probability_max[0])}٪`) : "",
+  ].join("");
+  // ?sky=rain / ?sky=snow forces an effect (for testing)
+  sky.set(new URLSearchParams(location.search).get("sky") || weatherKind(c.weather_code));
+}
+
+// rain | snow | clear (drives the gentle weather effect)
+function weatherKind(code) {
+  if ([71, 73, 75, 77, 85, 86].includes(code)) return "snow";
+  if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82) || code >= 95) return "rain";
+  return "clear";
+}
+
+// ---------------- gentle rain / snow ----------------
+// Very few, very faint particles: atmosphere, not a screensaver.
+const sky = {
+  kind: "clear",
+  set(kind) {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) kind = "clear";
+    if (kind === this.kind) return;
+    this.kind = kind;
+    cancelAnimationFrame(this.raf);
+    const cv = $("#sky");
+    const ctx = cv.getContext("2d");
+    if (kind === "clear") return ctx.clearRect(0, 0, cv.width, cv.height);
+    const resize = () => {
+      cv.width = innerWidth * devicePixelRatio;
+      cv.height = innerHeight * devicePixelRatio;
+    };
+    resize();
+    addEventListener("resize", resize);
+    const n = kind === "rain" ? 38 : 28;
+    const P = Array.from({ length: n }, () => this.spawn(kind, true));
+    let last = performance.now();
+    const frame = (now) => {
+      const dt = Math.min(50, now - last) / 16.7;
+      last = now;
+      const W = cv.width;
+      const H = cv.height;
+      const dpr = devicePixelRatio;
+      ctx.clearRect(0, 0, W, H);
+      for (const p of P) {
+        p.y += p.vy * dt * dpr;
+        p.x += (p.vx + (kind === "snow" ? Math.sin((now / 1000) * p.f + p.ph) * 0.35 : 0)) * dt * dpr;
+        if (p.y > H + 20 || p.x < -20 || p.x > W + 20) Object.assign(p, this.spawn(kind, false, W, H));
+        if (kind === "rain") {
+          ctx.strokeStyle = `rgba(200, 215, 235, ${p.a})`;
+          ctx.lineWidth = 1 * dpr;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p.x - p.vx * 2.2 * dpr, p.y - p.len * dpr);
+          ctx.stroke();
+        } else {
+          ctx.fillStyle = `rgba(255, 255, 255, ${p.a})`;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r * dpr, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      this.raf = requestAnimationFrame(frame);
+    };
+    this.raf = requestAnimationFrame(frame);
+  },
+  spawn(kind, anywhere, W = innerWidth * devicePixelRatio, H = innerHeight * devicePixelRatio) {
+    const p = { x: Math.random() * W, y: anywhere ? Math.random() * H : -20, ph: Math.random() * 6.28, f: 0.4 + Math.random() * 0.6 };
+    if (kind === "rain") Object.assign(p, { vx: -0.8, vy: 9 + Math.random() * 5, len: 12 + Math.random() * 12, a: 0.22 + Math.random() * 0.14 });
+    else Object.assign(p, { vx: -0.15, vy: 0.5 + Math.random() * 0.7, r: 1.1 + Math.random() * 1.8, a: 0.45 + Math.random() * 0.3 });
+    return p;
+  },
+};
 
 // ---------------- player (Nebula Bridge) + lyrics ----------------
 const fmt = (sec) => {
