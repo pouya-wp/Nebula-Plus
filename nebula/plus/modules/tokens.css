@@ -40,7 +40,7 @@
   /* Zen draws every element as a squircle (corner-shape: superellipse).
      Pseudo-elements don't get it, so ours copy it from this token, or rings
      and backdrops won't line up with the shape they sit on. */
-  --nplus-corner: superellipse(var(--zen-squircle-value, 1));
+  --nplus-corner: round; /* see edges.css: squircles are off everywhere */
 
   /* Glow */
   --nplus-glow-max: 0.7;

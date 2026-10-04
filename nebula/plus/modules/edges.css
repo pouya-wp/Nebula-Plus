@@ -1,3 +1,15 @@
+/* ---------------- One corner shape ----------------
+   Zen draws every element as a squircle (corner-shape: superellipse), but
+   overflow clipping, inset shadows and pseudo-elements still render plain
+   rounded corners, so any two stacked layers (a cover over a card, a glow
+   over a tab) end up with a rounder layer on top of a squarer one.
+   Setting the squircle factor to 1 makes every corner, in Zen, Nebula, other
+   mods and ours, the same ordinary rounded corner. */
+:root,
+:root:root {
+  --zen-squircle-value: 1 !important;
+}
+
 /* ---------------- One edge system ----------------
    Zen, Nebula and other mods (SuperPins, ...) each draw their own border,
    outline or inset line on tabs and tiles, and on Zen's squircle corners

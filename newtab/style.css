@@ -24,7 +24,7 @@
   --edge: light-dark(rgb(255 255 255 / 70%), rgb(255 255 255 / 8%));
   --edge-dark: light-dark(rgb(0 0 0 / 6%), rgb(0 0 0 / 30%));
   --radius: 18px;
-  --corner: superellipse(2.3);
+  --corner: round;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
@@ -53,7 +53,8 @@ html,
 body {
   margin: 0;
   height: 100%;
-  overflow: hidden;
+  overflow: hidden auto;
+  scrollbar-width: none;
   /* Transparent: with browser.tabs.allow_transparent_browser (on here)
      Zen's own glass background shows through. */
   background: transparent;
@@ -98,13 +99,13 @@ body[playing] #ambient {
 /* ---------------- layout ---------------- */
 #stage {
   position: relative;
-  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 26px;
-  padding: 40px 24px 70px;
+  gap: clamp(14px, 3vh, 26px);
+  padding: clamp(18px, 4vh, 40px) 24px 80px;
   animation: rise 0.9s var(--ease) both;
 }
 
@@ -181,7 +182,7 @@ body[playing] #ambient {
 }
 
 #clock {
-  font-size: clamp(64px, 11vw, 132px);
+  font-size: clamp(56px, min(11vw, 15vh), 132px);
   font-weight: 600;
   line-height: 1;
   letter-spacing: 0.01em;
@@ -521,8 +522,8 @@ body[playing] #ambient {
 
 #p-lyrics {
   position: relative;
-  height: 1.9em;
-  font-size: 15.5px;
+  height: 2.9em; /* room for two lines */
+  font-size: 14.5px;
   font-weight: 700;
   text-align: center;
   overflow: hidden;
@@ -531,10 +532,11 @@ body[playing] #ambient {
     position: absolute;
     inset: 0;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
-    gap: 0.28em;
-    white-space: nowrap;
+    align-content: center;
+    column-gap: 0.28em;
+    line-height: 1.45;
     unicode-bidi: plaintext;
     /* light sweep once the words have landed */
     background: linear-gradient(
@@ -739,11 +741,11 @@ i {
   }
 }
 
+/* corner buttons stay clear of the centered content */
 #hafez-btn {
   position: fixed;
   bottom: 22px;
-  left: 50%;
-  translate: -50% 0;
+  right: 22px;
   display: flex;
   gap: 8px;
   align-items: center;
