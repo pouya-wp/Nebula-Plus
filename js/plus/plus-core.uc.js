@@ -464,6 +464,23 @@
       } catch {}
     },
     async checkSnap() {
+      // .dev/eval.js: run it in this window, write the JSON result to .dev/eval.out
+      const evalPath = PathUtils.join(this.dir, "eval.js");
+      if (await IOUtils.exists(evalPath)) {
+        const code = await IOUtils.readUTF8(evalPath);
+        await IOUtils.remove(evalPath);
+        let out;
+        try {
+          // eval/Function are blocked by the chrome CSP; a subscript is not.
+          const runPath = PathUtils.join(this.dir, "eval.run.js");
+          await IOUtils.writeUTF8(runPath, `window.__nplusEval = (async () => { ${code}\n})();`);
+          Services.scriptloader.loadSubScript(`chrome://sine/content/Nebula/.dev/eval.run.js?t=${Date.now()}`, window);
+          out = await window.__nplusEval;
+        } catch (err) {
+          out = { error: String(err), stack: err?.stack };
+        }
+        await IOUtils.writeUTF8(PathUtils.join(this.dir, "eval.out"), JSON.stringify(out, null, 2) ?? "undefined");
+      }
       if (!(await IOUtils.exists(this.snapTrigger))) return;
       await IOUtils.remove(this.snapTrigger);
       const canvas = document.createElementNS(HTML_NS, "canvas");

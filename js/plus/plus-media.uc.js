@@ -13,6 +13,33 @@
   const BRIDGE = "http://127.0.0.1:47321";
   const ZEN_ICONS = "chrome://browser/skin/zen-icons";
 
+  // Cover art for tracks whose player does not share one (many desktop apps,
+  // some web players). Looked up once per track on the iTunes Search API.
+  const artCache = new Map();
+  const norm = (t) => (t || "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+  async function lookupArtwork(title, artist) {
+    const key = `${title}|${artist}`;
+    if (artCache.has(key)) return artCache.get(key);
+    artCache.set(key, null);
+    try {
+      const term = encodeURIComponent(`${artist} ${title}`.trim());
+      const res = await fetch(`https://itunes.apple.com/search?term=${term}&entity=song&limit=8`, {
+        signal: AbortSignal.timeout(6000),
+      });
+      const { results = [] } = await res.json();
+      const a = norm(artist.split(/[,&]| feat/i)[0]);
+      const hit =
+        results.find((r) => a && norm(r.artistName).includes(a) && norm(r.trackName) === norm(title)) ??
+        results.find((r) => a && norm(r.artistName).includes(a));
+      const url = hit?.artworkUrl100?.replace(/100x100bb/, "600x600bb") ?? null;
+      artCache.set(key, url);
+      return url;
+    } catch {
+      artCache.delete(key); // retry on the next track change
+      return null;
+    }
+  }
+
   // ================= Media Hub =================
   // One source of truth for "what is playing", whether it comes from a tab
   // (MediaController API) or a desktop app like Spotify (via Nebula Bridge).
@@ -168,11 +195,13 @@
         const data = await res.json();
         if (data.active) {
           const prev = this.systemSrc;
+          const sameTrack = prev?.title === data.title && prev?.artist === data.artist;
           this.systemSrc = {
             title: data.title,
             artist: data.artist,
             album: data.album,
-            artwork: data.artId ? `${BRIDGE}/art/${data.artId}` : null,
+            artwork: data.artId ? `${BRIDGE}/art/${data.artId}` : sameTrack ? prev.artwork : null,
+            artLookup: !data.artId && sameTrack ? prev.artLookup : false,
             app: data.app,
             playing: data.playing,
             position: data.position,
@@ -229,6 +258,15 @@
       }
 
       const key = `${source}|${st.title}|${st.artist}`;
+      if (!st.artwork && st.title && !st.artLookup) {
+        st.artLookup = true;
+        lookupArtwork(st.title, st.artist).then((url) => {
+          if (url && this.stateOf(source) === st && !st.artwork) {
+            st.artwork = url;
+            this.publish();
+          }
+        });
+      }
       const next = {
         source,
         key,
@@ -454,8 +492,11 @@
   });
 
   // ================= Media dock + desktop player card =================
-  // A dock right above Zen's media stack. It hosts the desktop-app card
-  // (Spotify etc. through Nebula Bridge) and the lyrics panel.
+  // A dock floating right above Zen's media stack. It hosts the desktop-app
+  // card (Spotify etc. through Nebula Bridge) and the lyrics panel.
+  // It floats (position: absolute) instead of joining the sidebar's flow:
+  // mods like SuperPins pin #tabbrowser-tabs to a fixed height, which would
+  // push anything added below it out of the window.
   NP.feature({
     name: "MediaDock",
     init() {
@@ -506,6 +547,37 @@
       this.offPos = NP.on("mediaposition", () => this.tick());
       NP.prefs.watch("nplus-desktop-card", () => this.render(NP.media?.current));
       this.timer = setInterval(() => this.tick(), 500);
+
+      this.toolbar = toolbar;
+      this.layout = this.layout.bind(this);
+      this.resizeObserver = new ResizeObserver(this.layout);
+      this.resizeObserver.observe(this.dock);
+      this.resizeObserver.observe(toolbar);
+      this.resizeObserver.observe(document.getElementById("tabbrowser-tabs"));
+      this.attrObserver = new MutationObserver(this.layout);
+      this.attrObserver.observe(toolbar, { attributes: true, attributeFilter: ["hidden"] });
+      this.attrObserver.observe(this.dock, { subtree: true, attributes: true, attributeFilter: ["hidden"] });
+      window.addEventListener("resize", this.layout);
+      this.layout();
+    },
+
+    // Anchor the dock above Zen's media cards (or the end of the tab list)
+    // and reserve its height at the bottom of the tab list.
+    layout() {
+      const dock = this.dock;
+      const visible = [...dock.children].some((c) => !c.hidden);
+      dock.toggleAttribute("empty", !visible);
+      const parent = dock.parentElement;
+      if (!visible || !parent) {
+        NP.root.style.setProperty("--nplus-dock-h", "0px");
+        return;
+      }
+      const parentRect = parent.getBoundingClientRect();
+      const tabs = document.getElementById("tabbrowser-tabs").getBoundingClientRect();
+      const toolbarShown = !this.toolbar.hidden && this.toolbar.getBoundingClientRect().height > 0;
+      const anchorTop = toolbarShown ? this.toolbar.getBoundingClientRect().top : tabs.bottom;
+      dock.style.bottom = `${Math.max(0, parentRect.bottom - anchorTop) + 6}px`;
+      NP.root.style.setProperty("--nplus-dock-h", `${Math.ceil(dock.getBoundingClientRect().height) + 10}px`);
     },
 
     render(m) {
@@ -543,6 +615,10 @@
       this.off?.();
       this.offPos?.();
       clearInterval(this.timer);
+      this.resizeObserver?.disconnect();
+      this.attrObserver?.disconnect();
+      window.removeEventListener("resize", this.layout);
+      NP.root.style.removeProperty("--nplus-dock-h");
       this.dock?.remove();
       delete NP.dock;
     },

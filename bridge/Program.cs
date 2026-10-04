@@ -54,8 +54,13 @@ static string AppName(string aumid)
     var name = aumid.Split('!').Last();
     name = name.Split('\\').Last();
     if (name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)) name = name[..^4];
-    if (name.Contains('.')) name = name.Split('.').First();
-    return name;
+    if (name.Contains('.'))
+    {
+        // Reverse-DNS ids ("com.limusic.desktop") -> the most specific real word.
+        string[] generic = ["com", "org", "net", "io", "app", "desktop", "music", "player", "exe"];
+        name = name.Split('.').FirstOrDefault(p => !generic.Contains(p.ToLowerInvariant())) ?? name.Split('.')[0];
+    }
+    return name.Length > 0 ? char.ToUpperInvariant(name[0]) + name[1..] : name;
 }
 
 app.Use(async (ctx, next) =>
@@ -149,6 +154,7 @@ app.Run();
 class ArtCache
 {
     private string? _key;
+    private DateTime _lastTry;
     public string? Id { get; private set; }
     public byte[]? Bytes { get; private set; }
     public string ContentType { get; private set; } = "image/jpeg";
@@ -156,8 +162,11 @@ class ArtCache
     public async Task<string?> UpdateAsync(
         GlobalSystemMediaTransportControlsSessionMediaProperties? props, string key)
     {
-        if (key == _key) return Id;
+        // Players often publish the thumbnail a moment after the title, so a
+        // track without art is retried (at most every 2 seconds).
+        if (key == _key && (Id != null || DateTime.UtcNow - _lastTry < TimeSpan.FromSeconds(2))) return Id;
         _key = key;
+        _lastTry = DateTime.UtcNow;
         Id = null;
         Bytes = null;
         if (props?.Thumbnail == null) return null;

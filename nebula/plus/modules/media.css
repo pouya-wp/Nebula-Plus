@@ -192,16 +192,33 @@
   }
 }
 
-/* ================ Media dock ================ */
+/* ================ Media dock ================
+   Floats above Zen's media cards; plus-media.uc.js sets `bottom` and
+   --nplus-dock-h (its height), which the tab list keeps free. */
 #nplus-media-dock {
+  position: absolute;
+  left: calc(var(--zen-element-separation, 8px) / 2);
+  right: calc(var(--zen-element-separation, 8px) / 2);
+  z-index: 3;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin: 0 calc(var(--zen-element-separation) / 2) 6px;
+  width: auto !important;
+  min-width: 0 !important;
 
-  &:empty {
+  &[empty] {
     display: none;
   }
+
+  /* lyrics sit above the player */
+  & > #nplus-lyrics {
+    order: -1;
+  }
+}
+
+#tabbrowser-tabs {
+  padding-bottom: var(--nplus-dock-h, 0px) !important;
+  transition: padding-bottom 0.35s var(--nplus-ease-out);
 }
 
 :root:not([zen-sidebar-expanded="true"]) #nplus-media-dock {

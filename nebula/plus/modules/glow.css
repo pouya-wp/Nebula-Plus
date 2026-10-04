@@ -36,9 +36,10 @@
   .tabbrowser-tab:is([selected], [visuallyselected]):not([zen-essential], [multiselected], [zen-glance-tab])
     > .tab-stack
     > .tab-background {
-    box-shadow:
-      0 0 14px -4px color-mix(in srgb, var(--nplus-glow-a) 55%, transparent),
-      inset 0 1px 0 var(--nplus-edge-light) !important;
+    /* No inset highlight or outline here: a second edge under the ring
+       reads as a border with a different radius. */
+    box-shadow: 0 0 14px -4px color-mix(in srgb, var(--nplus-glow-a) 55%, transparent) !important;
+    outline: none !important;
 
     &::after {
       content: "" !important;
@@ -67,10 +68,8 @@
 /* ---- URL bar while typing ---- */
 @media (-moz-pref("nplus-glow-urlbar")) {
   #urlbar:is([focused], [open]) > .urlbar-background {
-    box-shadow:
-      0 0 0 0.5px color-mix(in srgb, var(--nplus-glow-a) 30%, transparent),
-      0 10px 40px -12px color-mix(in srgb, var(--nplus-glow-a) 55%, transparent),
-      inset 0 1px 0 var(--nplus-edge-light) !important;
+    box-shadow: 0 10px 40px -12px color-mix(in srgb, var(--nplus-glow-a) 55%, transparent) !important;
+    outline: none !important;
 
     &::after {
       content: "";
@@ -93,7 +92,8 @@
 @media (-moz-pref("nplus-media-glow")) {
   #zen-media-controls-toolbar .zen-media-card.playing:not([stacked-behind], [muted]),
   #nplus-desktop-card[playing] {
-    --nplus-angle: 0deg;
+    outline-color: transparent !important;
+    box-shadow: 0 8px 28px -10px rgb(0 0 0 / 35%) !important;
 
     & > .nplus-card-ring {
       display: block;
