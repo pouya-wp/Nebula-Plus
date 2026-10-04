@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>تب جدید</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="wallpaper"></div>
+    <div id="ambient"></div>
+
+    <main id="stage">
+      <!-- Clock & greeting -->
+      <section id="hero">
+        <div id="clock" aria-live="off">
+          <span id="clock-h"></span><span id="clock-sep">:</span><span id="clock-m"></span>
+        </div>
+        <div id="date-line">
+          <span id="date-jalali"></span>
+          <span class="dot">•</span>
+          <span id="date-greg" dir="ltr"></span>
+          <span class="dot">•</span>
+          <span id="date-hijri"></span>
+        </div>
+        <h1 id="greeting"></h1>
+      </section>
+
+      <!-- Search -->
+      <form id="search" class="glass glow-host" autocomplete="off">
+        <button type="button" id="engine-btn" title="موتور جستجو"></button>
+        <input id="q" name="q" type="text" dir="auto" placeholder="جستجو کن یا آدرس بزن…" autofocus />
+        <kbd id="search-hint">/</kbd>
+        <div id="engines" class="glass" hidden></div>
+      </form>
+
+      <!-- Quick links -->
+      <section id="links"></section>
+
+      <!-- Widgets row -->
+      <section id="widgets">
+        <article id="weather" class="glass widget" hidden>
+          <div class="w-main">
+            <div id="w-icon"></div>
+            <div>
+              <div id="w-temp"></div>
+              <div id="w-desc"></div>
+            </div>
+          </div>
+          <div id="w-meta"></div>
+          <div id="w-city"></div>
+        </article>
+
+        <article id="player" class="glass widget glow-host" hidden>
+          <div class="p-bg"></div>
+          <div class="p-row">
+            <div id="p-art"></div>
+            <div class="p-info">
+              <div id="p-title" dir="auto"></div>
+              <div id="p-artist" dir="auto"></div>
+            </div>
+          </div>
+          <div id="p-lyrics" dir="auto"></div>
+          <div class="p-progress"><div id="p-fill"></div></div>
+          <div class="p-controls">
+            <button data-cmd="prev" title="قبلی"><i class="i-prev"></i></button>
+            <button data-cmd="toggle" title="پخش / توقف" id="p-toggle"><i class="i-play"></i></button>
+            <button data-cmd="next" title="بعدی"><i class="i-next"></i></button>
+          </div>
+        </article>
+
+        <article id="notes" class="glass widget">
+          <div class="widget-title">یادداشت</div>
+          <textarea id="notes-text" dir="auto" placeholder="هر چی تو ذهنته اینجا بنویس…"></textarea>
+        </article>
+      </section>
+
+      <!-- Hafez -->
+      <button id="hafez-btn" class="glass pill" title="فال حافظ">
+        <span class="hafez-icon">✦</span> فال حافظ
+      </button>
+    </main>
+
+    <!-- Hafez modal -->
+    <div id="hafez" class="modal" hidden>
+      <div class="modal-card glass">
+        <div class="modal-head">
+          <div id="hafez-title"></div>
+          <button class="close" data-close>✕</button>
+        </div>
+        <div id="hafez-body"></div>
+        <div class="modal-foot">
+          <button class="pill glass" id="hafez-again">یه فال دیگه</button>
+          <a id="hafez-link" target="_blank" rel="noopener">در گنجور</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <button id="settings-btn" class="glass round" title="تنظیمات"><i class="i-gear"></i></button>
+    <div id="settings" class="modal" hidden>
+      <div class="modal-card glass">
+        <div class="modal-head">
+          <div>تنظیمات تب جدید</div>
+          <button class="close" data-close>✕</button>
+        </div>
+        <div class="settings-grid">
+          <label>اسمت <input id="s-name" type="text" placeholder="مثلاً پویا" /></label>
+          <label>شهر (برای هوا) <input id="s-city" type="text" placeholder="تهران" /></label>
+          <label class="row"><input id="s-fa-digits" type="checkbox" /> اعداد فارسی</label>
+          <label class="row"><input id="s-seconds" type="checkbox" /> نمایش ثانیه</label>
+          <label class="row"><input id="s-player" type="checkbox" /> پلیر و لیریک</label>
+          <label class="row"><input id="s-weather" type="checkbox" /> آب‌وهوا</label>
+          <label class="row"><input id="s-notes" type="checkbox" /> یادداشت</label>
+          <label class="row"><input id="s-hafez" type="checkbox" /> دکمه‌ی فال حافظ</label>
+          <label>والپیپر <input id="s-wall" type="file" accept="image/*" /></label>
+          <label>تار بودن والپیپر <input id="s-blur" type="range" min="0" max="40" /></label>
+          <label>تیرگی والپیپر <input id="s-dim" type="range" min="0" max="80" /></label>
+          <button id="s-wall-clear" class="pill glass">حذف والپیپر</button>
+          <div class="links-editor">
+            <div class="widget-title">لینک‌های سریع</div>
+            <div id="s-links"></div>
+            <div class="row">
+              <input id="s-link-name" type="text" placeholder="اسم" />
+              <input id="s-link-url" type="url" placeholder="https://…" dir="ltr" />
+              <button id="s-link-add" class="pill glass">افزودن</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -63,6 +63,7 @@
     "nplus-clock": false,
     "nplus-clock-jalali": true,
     "nplus-download-island": true,
+    "nplus-newtab": true,
     "nplus-island-position": 1,
   };
 

@@ -74,6 +74,20 @@ Every feature can be toggled from Sine → Nebula Plus settings.
 58. Download-finished island; click it to open the file
 59. Island at the top or bottom
 
+## 🏠 Persian New Tab (`newtab/`)
+61. Meem font, right-to-left, Persian digits (toggle)
+62. Big clock and a greeting by time of day (with your name)
+63. Jalali, Gregorian and Hijri dates
+64. Glass search with Google / DuckDuckGo / Bing / Perplexity / YouTube (`/` focuses it)
+65. Editable quick links
+66. Weather in Persian (Open-Meteo, any city, no API key)
+67. Now playing from desktop apps with live synced lyrics and controls
+68. Album color tints the page
+69. Notes that persist
+70. Hafez fortune (فال حافظ) from Ganjoor
+71. Your own wallpaper with blur and dim
+72. The same slow orbiting glow as the browser
+
 ## 🛠️ Development
 60. Live reload: CSS and scripts update in Zen on save (`nplus-dev-live`)
 

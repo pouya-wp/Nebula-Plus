@@ -877,6 +877,13 @@
   },
   {
     "type": "checkbox",
+    "property": "nplus-newtab",
+    "label": "Persian new tab page (Meem, Hafez, weather, player)",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
     "property": "nplus-download-island",
     "label": "Island when a download finishes",
     "margin": "12px 0",

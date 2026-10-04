@@ -107,6 +107,38 @@
     },
   });
 
+  // ================= Persian new tab =================
+  // Points new tabs at newtab/index.html in this mod (a local page, so it
+  // needs no add-on signing) and keeps the URL bar empty on it.
+  NP.feature({
+    name: "NewTab",
+    init() {
+      const { AboutNewTab } = ChromeUtils.importESModule("resource:///modules/AboutNewTab.sys.mjs");
+      this.AboutNewTab = AboutNewTab;
+      const path = PathUtils.join(PathUtils.profileDir, "chrome", "sine-mods", "Nebula", "newtab", "index.html");
+      this.url = PathUtils.toFileURI(path);
+      NP.prefs.watch("nplus-newtab", (on) => this.apply(on));
+      // Add-ons (e.g. Bonjourr) may claim the new tab after startup; take it back.
+      this.timer = setInterval(() => this.apply(NP.prefs.get("nplus-newtab")), 5000);
+    },
+    apply(on) {
+      const { AboutNewTab } = this;
+      if (on) {
+        if (AboutNewTab.newTabURL !== this.url) {
+          if (!this.previous) this.previous = AboutNewTab.newTabURLOverridden ? AboutNewTab.newTabURL : null;
+          AboutNewTab.newTabURL = this.url;
+        }
+        if (window.gInitialPages && !gInitialPages.includes(this.url)) gInitialPages.push(this.url);
+      } else if (AboutNewTab.newTabURL === this.url) {
+        if (this.previous) AboutNewTab.newTabURL = this.previous;
+        else AboutNewTab.resetNewTabURL();
+      }
+    },
+    destroy() {
+      clearInterval(this.timer);
+    },
+  });
+
   // ================= Download island =================
   NP.feature({
     name: "DownloadIsland",
