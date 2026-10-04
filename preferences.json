@@ -826,7 +826,7 @@
   {
     "type": "checkbox",
     "property": "nplus-time-tint",
-    "label": "Time-of-day tint (dawn, day, sunset, night)",
+    "label": "Time-of-day tint, following real sunrise and sunset",
     "margin": "12px 0",
     "defaultValue": true
   },
@@ -979,6 +979,13 @@
     "label": "Weather city",
     "defaultValue": "Tehran",
     "placeholder": "e.g. Rasht"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-weather-mood",
+    "label": "Tint the theme with the weather (sunny, cloudy, rain, snow, fog)",
+    "margin": "12px 0",
+    "defaultValue": true
   },
   {
     "type": "separator",

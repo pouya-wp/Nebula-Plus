@@ -44,3 +44,22 @@
 #zen-media-controls-toolbar {
   --zen-sidebar-notification-outline: none;
 }
+
+/* ---------------- Tab spacing ----------------
+   The tab background is inset 4px, but its content only had 8px of
+   padding, so the favicon sat ~4px from the visible edge. Give the inside
+   of the pill even breathing room: 11px before the icon, a clear gap to
+   the title, and a little room after the close button. */
+:root[zen-sidebar-expanded="true"] #navigator-toolbox .tabbrowser-tab:not([zen-essential]) {
+  & .tab-content {
+    padding-inline: 15px 11px !important;
+  }
+
+  & .tab-icon-stack {
+    margin-inline-end: 3px !important;
+  }
+
+  & .tab-label-container {
+    padding-block: 1px;
+  }
+}

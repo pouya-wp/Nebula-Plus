@@ -15,17 +15,36 @@
   NP.feature({
     name: "TimeTint",
     init() {
+      // With real sunrise/sunset (from the weather feature) the colors follow
+      // the sun in your city; otherwise fixed hours.
       const update = () => {
-        const h = new Date().getHours();
-        const part =
-          h >= 5 && h < 8 ? "dawn" : h >= 8 && h < 16 ? "day" : h >= 16 && h < 19 ? "sunset" : "night";
+        const now = new Date();
+        let part;
+        const sun = NP.sunTimes;
+        if (sun) {
+          // shift today's times onto today's date (cached values may be from yesterday)
+          const at = (d) => new Date(now.getFullYear(), now.getMonth(), now.getDate(), d.getHours(), d.getMinutes());
+          const rise = at(sun.sunrise).getTime();
+          const set = at(sun.sunset).getTime();
+          const t = now.getTime();
+          const min = 60_000;
+          if (t >= rise - 45 * min && t < rise + 75 * min) part = "dawn";
+          else if (t >= rise + 75 * min && t < set - 90 * min) part = "day";
+          else if (t >= set - 90 * min && t < set + 35 * min) part = "sunset";
+          else part = "night";
+        } else {
+          const h = now.getHours();
+          part = h >= 5 && h < 8 ? "dawn" : h >= 8 && h < 16 ? "day" : h >= 16 && h < 19 ? "sunset" : "night";
+        }
         NP.setRootAttr("nplus-daypart", part);
       };
       update();
-      this.timer = setInterval(update, 5 * 60 * 1000);
+      this.offSun = NP.on("sun", update);
+      this.timer = setInterval(update, 60 * 1000);
     },
     destroy() {
       clearInterval(this.timer);
+      this.offSun?.();
       NP.root.removeAttribute("nplus-daypart");
     },
   });

@@ -14,6 +14,7 @@
   NP.DEFAULTS["nplus-focus-minutes"] = "25";
   NP.DEFAULTS["nplus-weather-fx"] = 1;
   NP.DEFAULTS["nplus-weather-city"] = "Tehran";
+  NP.DEFAULTS["nplus-weather-mood"] = true;
 
   // ================= Tab hover preview =================
   NP.feature({
@@ -300,10 +301,29 @@
         const geo = await (await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`)).json();
         const p = geo.results?.[0];
         if (p) {
-          const w = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.latitude}&longitude=${p.longitude}&current=weather_code`)).json();
+          const w = await (
+            await fetch(
+              `https://api.open-meteo.com/v1/forecast?latitude=${p.latitude}&longitude=${p.longitude}` +
+                `&current=weather_code,cloud_cover,is_day&daily=sunrise,sunset&timezone=auto&forecast_days=1`,
+            )
+          ).json();
           const code = w.current?.weather_code;
           this.real = SNOW.includes(code) ? "snow" : RAIN.includes(code) ? "rain" : "clear";
           NP.setRootAttr("nplus-weather", this.real);
+
+          // mood for the theme tint: sunny | cloudy | rain | snow | fog
+          const cloud = w.current?.cloud_cover ?? 0;
+          const mood =
+            this.real !== "clear" ? this.real : code === 45 || code === 48 ? "fog" : code >= 3 || cloud >= 70 ? "cloudy" : "sunny";
+          NP.setRootAttr("nplus-mood", mood);
+
+          // real sunrise / sunset (local time strings like "2026-10-04T06:41")
+          const rise = w.daily?.sunrise?.[0];
+          const set = w.daily?.sunset?.[0];
+          if (rise && set) {
+            NP.sunTimes = { sunrise: new Date(rise), sunset: new Date(set) };
+            NP.emit("sun", NP.sunTimes);
+          }
         }
       } catch {}
       this.apply();
