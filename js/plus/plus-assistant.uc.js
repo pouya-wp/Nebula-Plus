@@ -86,6 +86,9 @@
   const dataURL = (code) => "data:application/javascript," + encodeURIComponent(code);
 
   // ---------- ready prompts ----------
+  const ZI = (n) => `chrome://browser/skin/zen-icons/${n}.svg`;
+  const ACTION_ICONS = { summary: ZI("reader-mode"), keypoints: ZI("algorithm"), fa: ZI("translations"), en: ZI("translations"), explain: ZI("info"), reply: ZI("mail") };
+  const ACTION_HINTS = { summary: "یه نگاه سریع به کل صفحه", keypoints: "عددها و نتیجه‌ها", fa: "متن انتخابی یا کل صفحه", en: "به انگلیسی روان", explain: "ساده و قدم‌به‌قدم", reply: "یه جواب کوتاه و مؤدب" };
   const ACTIONS = [
     { id: "summary", label: "خلاصه", icon: "✦", needsPage: true, prompt: (p) => `صفحه‌ی زیر را به فارسی روان خلاصه کن: اول یک جمله‌ی اصلی، بعد ۳ تا ۶ نکته‌ی کلیدی به‌صورت فهرست. فقط بر اساس متن.\n\nعنوان: ${p.title}\n\n${p.text}` },
     { id: "keypoints", label: "نکات کلیدی", icon: "◆", needsPage: true, prompt: (p) => `مهم‌ترین نکات، عددها و نتیجه‌گیری‌های این صفحه را به فارسی و به‌صورت فهرست کوتاه بنویس.\n\nعنوان: ${p.title}\n\n${p.text}` },
@@ -150,32 +153,62 @@
       anchor?.after(this.button);
 
       // ---- panel ----
+      const icon = (url) => {
+        const i = NP.html("span", { class: "ai-ico" });
+        i.style.setProperty("--ico", `url("${url}")`);
+        return i;
+      };
       const chip = (a) =>
-        NP.html("button", { class: "ai-chip", "data-id": a.id, onclick: () => this.runAction(a) }, [
-          NP.html("span", { class: "ai-chip-icon", text: a.icon }),
+        NP.html("button", { class: "ai-chip", "data-id": a.id, title: ACTION_HINTS[a.id], onclick: () => this.runAction(a) }, [
+          icon(ACTION_ICONS[a.id]),
           NP.html("span", { text: a.label }),
         ]);
+      const card = (a) =>
+        NP.html("button", { class: "ai-card", "data-id": a.id, onclick: () => this.runAction(a) }, [
+          icon(ACTION_ICONS[a.id]),
+          NP.html("span", { class: "ai-card-label", text: a.label }),
+          NP.html("span", { class: "ai-card-hint", text: ACTION_HINTS[a.id] }),
+        ]);
+      const iconBtn = (cls, title, url, fn) => {
+        const b = NP.html("button", { class: `ai-icon-btn ${cls}`, title, onclick: fn });
+        b.style.setProperty("--ico", `url("${url}")`);
+        return b;
+      };
       this.panel = NP.html("div", { id: "nplus-ai", hidden: "true" }, [
         NP.html("div", { class: "ai-head" }, [
-          NP.html("div", { class: "ai-title" }, [NP.html("span", { class: "ai-star", text: "✦" }), NP.html("span", { text: "دستیار" })]),
-          NP.html("div", { class: "ai-engine" }),
-          NP.html("button", { class: "ai-icon-btn ai-new", title: "New chat", text: "＋", onclick: () => this.newChat() }),
-          NP.html("button", { class: "ai-icon-btn ai-close", title: "Close", text: "✕", onclick: () => this.close() }),
+          NP.html("div", { class: "ai-orb" }),
+          NP.html("div", { class: "ai-title-box" }, [
+            NP.html("div", { class: "ai-title", text: "دستیار" }),
+            NP.html("div", { class: "ai-engine" }),
+          ]),
+          iconBtn("ai-hist-btn", "History", ZI("history"), () => this.toggleHistory()),
+          iconBtn("ai-new", "New chat", ZI("plus"), () => this.newChat()),
+          iconBtn("ai-close", "Close", ZI("close"), () => this.close()),
+        ]),
+        NP.html("div", { class: "ai-history", hidden: "true" }, [
+          NP.html("div", { class: "ai-history-head", text: "گفتگوهای قبلی" }),
+          NP.html("div", { class: "ai-history-list" }),
         ]),
         NP.html("div", { class: "ai-chips" }, ACTIONS.map(chip)),
         NP.html("div", { class: "ai-thread" }, [
           NP.html("div", { class: "ai-empty" }, [
-            NP.html("div", { class: "ai-empty-star", text: "✦" }),
-            NP.html("div", { text: "یکی از دکمه‌های بالا رو بزن، یا هر سؤالی داری بپرس." }),
-            NP.html("div", { class: "ai-empty-sub", text: "متن انتخاب‌شده یا صفحه‌ی فعلی همراه سؤال فرستاده می‌شه." }),
+            NP.html("div", { class: "ai-hero-orb" }),
+            NP.html("div", { class: "ai-hello" }),
+            NP.html("div", { class: "ai-hello-sub", text: "روی صفحه‌ای که بازه کار می‌کنم، یا هر سؤالی داری بپرس." }),
+            NP.html("div", { class: "ai-cards" }, ACTIONS.map(card)),
           ]),
         ]),
         NP.html("div", { class: "ai-compose" }, [
-          NP.html("label", { class: "ai-ctx" }, [NP.html("input", { type: "checkbox", class: "ai-ctx-box" }), NP.html("span", { text: "همراه این صفحه" })]),
           NP.html("div", { class: "ai-input-row" }, [
-            NP.html("textarea", { class: "ai-input", rows: "1", dir: "auto", placeholder: "بپرس…" }),
-            NP.html("button", { class: "ai-send", title: "Send", onclick: () => this.sendTyped() }),
+            NP.html("label", { class: "ai-ctx", title: "Send this page with your message" }, [
+              NP.html("input", { type: "checkbox", class: "ai-ctx-box" }),
+              NP.html("span", { class: "ai-ctx-fav" }),
+              NP.html("span", { class: "ai-ctx-title" }),
+            ]),
+            NP.html("textarea", { class: "ai-input", rows: "1", dir: "auto", placeholder: "هر چی می‌خوای بپرس…" }),
+            NP.html("button", { class: "ai-send", title: "Send (Enter)", onclick: () => this.sendTyped() }),
           ]),
+          NP.html("div", { class: "ai-foot", text: "Enter ارسال · Shift+Enter خط بعد · Esc بستن" }),
         ]),
       ]);
       document.body.append(this.panel);
@@ -202,6 +235,8 @@
       window.messageManager.addMessageListener("nplus:ai:reply", this.onMsg);
 
       this.offKey = NP.hotkey?.("ctrl+alt+a", () => this.toggle());
+      this.onSelect = () => !this.panel.hidden && this.refreshContext();
+      window.addEventListener("TabSelect", this.onSelect);
       NP.assistant = { open: () => this.open(), run: (id) => this.runAction(ACTIONS.find((a) => a.id === id)) };
       NP.prefs.watch("nplus-assistant-engine", () => this.showEngine());
     },
@@ -215,7 +250,21 @@
       this.panel.hidden ? this.open() : this.close();
     },
 
+    refreshContext() {
+      const tab = gBrowser.selectedTab;
+      const web = /^https?$/.test(gBrowser.currentURI.scheme);
+      const ctx = this.panel.querySelector(".ai-ctx");
+      ctx.hidden = !web;
+      this.panel.querySelector(".ai-ctx-title").textContent = tab.label;
+      this.panel.querySelector(".ai-ctx-fav").style.backgroundImage = tab.image ? `url("${tab.image}")` : "none";
+      const name = NP.prefs.get("nplus-name");
+      const h = new Date().getHours();
+      const hi = h < 5 ? "شب بخیر" : h < 12 ? "صبح بخیر" : h < 17 ? "سلام" : "عصر بخیر";
+      this.panel.querySelector(".ai-hello").textContent = `${hi}${name ? "، " + name : ""} — چی کار کنیم؟`;
+    },
+
     open() {
+      this.refreshContext();
       this.panel.hidden = false;
       this.panel.getBoundingClientRect();
       this.panel.setAttribute("open", "true");
@@ -271,6 +320,9 @@
       const tab = this.geminiTab();
       const browser = tab.linkedBrowser;
       const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      // after switching chats, give the navigation a moment to start, then
+      // wait for the page to finish loading
+      if (Date.now() - (this.navigatedAt ?? 0) < 1500) await sleep(1500 - (Date.now() - this.navigatedAt));
       for (let i = 0; i < 80 && (browser.webProgress?.isLoadingDocument || tab.hasAttribute("busy")); i++) await sleep(250);
 
       // Frame scripts survive navigations: load the driver once per browser
@@ -358,23 +410,126 @@
       });
     },
 
-    // ---------- conversation ----------
+    // ---------- conversations & history ----------
+    // Each panel conversation is one Gemini chat. We keep our own copy
+    // (title, messages, Gemini chat URL) in the profile store, so the list
+    // opens instantly and follow-ups continue the same Gemini chat.
+    async chats() {
+      return NP.store.get("aiChats", []);
+    },
+
+    async saveChat() {
+      if (!this.chat) return;
+      const all = (await this.chats()).filter((c) => c.id !== this.chat.id);
+      all.unshift(this.chat);
+      NP.store.set("aiChats", all.slice(0, 100));
+    },
+
+    geminiGoto(url) {
+      if (!this.gTab?.isConnected) return;
+      this.navigatedAt = Date.now();
+      this.gTab.linkedBrowser.loadURI(Services.io.newURI(url || GEMINI), {
+        triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(),
+      });
+    },
+
+    clearThread() {
+      const empty = this.thread.querySelector(".ai-empty");
+      this.thread.replaceChildren(empty ?? NP.html("div"));
+      empty?.removeAttribute("hidden");
+      this.panel.removeAttribute("has-messages");
+    },
+
     newChat() {
-      this.thread.replaceChildren(this.thread.querySelector(".ai-empty") ?? NP.html("div"));
-      this.thread.querySelector(".ai-empty")?.removeAttribute("hidden");
-      if (this.gTab?.isConnected) {
-        this.gTab.linkedBrowser.loadURI(Services.io.newURI(GEMINI), { triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal() });
+      this.chat = null;
+      this.clearThread();
+      this.toggleHistory(false);
+      this.geminiGoto(GEMINI);
+      this.input.focus();
+    },
+
+    async openChat(id) {
+      const chat = (await this.chats()).find((c) => c.id === id);
+      if (!chat) return;
+      this.chat = chat;
+      this.clearThread();
+      for (const m of chat.messages) {
+        const el = this.bubble(m.role === "user" ? "user" : "bot", m.role === "user" ? m.text : "");
+        if (m.role !== "user") {
+          el.querySelector(".ai-text").innerHTML = renderMarkdown(m.text);
+          this.addTools(el, m.text);
+        }
       }
+      this.toggleHistory(false);
+      // continue in the same Gemini chat
+      this.geminiGoto(chat.url);
+    },
+
+    async deleteChat(id) {
+      NP.store.set("aiChats", (await this.chats()).filter((c) => c.id !== id));
+      if (this.chat?.id === id) this.newChat();
+      this.renderHistory();
+    },
+
+    toggleHistory(force) {
+      const box = this.panel.querySelector(".ai-history");
+      const show = force ?? box.hidden;
+      box.hidden = !show;
+      this.panel.toggleAttribute("history", show);
+      if (show) this.renderHistory();
+    },
+
+    async renderHistory() {
+      const list = this.panel.querySelector(".ai-history-list");
+      const chats = await this.chats();
+      if (!chats.length) {
+        list.replaceChildren(NP.html("div", { class: "ai-history-empty", text: "هنوز گفتگویی نیست." }));
+        return;
+      }
+      const rel = new Intl.RelativeTimeFormat("fa", { numeric: "auto" });
+      const ago = (t) => {
+        const m = Math.round((t - Date.now()) / 60000);
+        if (m > -60) return rel.format(m, "minute");
+        const h = Math.round(m / 60);
+        if (h > -24) return rel.format(h, "hour");
+        return rel.format(Math.round(h / 24), "day");
+      };
+      list.replaceChildren(
+        ...chats.map((c) => {
+          const row = NP.html("div", { class: "ai-hist-row" }, [
+            NP.html("div", { class: "ai-hist-text" }, [
+              NP.html("div", { class: "ai-hist-title", dir: "auto", text: c.title }),
+              NP.html("div", { class: "ai-hist-meta", text: `${ago(c.updated)} · ${new Intl.NumberFormat("fa-IR").format(Math.ceil(c.messages.length / 2))} پیام` }),
+            ]),
+            NP.html("button", { class: "ai-hist-del", title: "Delete", text: "✕", onclick: (e) => (e.stopPropagation(), this.deleteChat(c.id)) }),
+          ]);
+          row.toggleAttribute("current", this.chat?.id === c.id);
+          row.addEventListener("click", () => this.openChat(c.id));
+          return row;
+        }),
+      );
     },
 
     bubble(kind, text) {
       this.thread.querySelector(".ai-empty")?.setAttribute("hidden", "true");
+      this.panel.setAttribute("has-messages", "true");
       const el = NP.html("div", { class: `ai-msg ai-${kind}` });
       if (kind === "user") el.append(NP.html("div", { class: "ai-text", dir: "auto", text }));
       else el.append(NP.html("div", { class: "ai-text" }));
       this.thread.append(el);
       this.thread.scrollTop = this.thread.scrollHeight;
       return el;
+    },
+
+    addTools(bot, text) {
+      const copy = NP.html("button", { class: "ai-tool", title: "Copy" }, [NP.html("span", { class: "ai-ico" }), NP.html("span", { text: "کپی" })]);
+      copy.firstChild.style.setProperty("--ico", `url("${ZI("edit-copy")}")`);
+      copy.addEventListener("click", () => {
+        Cc["@mozilla.org/widget/clipboardhelper;1"].getService(Ci.nsIClipboardHelper).copyString(text);
+        copy.lastChild.textContent = "کپی شد ✓";
+        setTimeout(() => (copy.lastChild.textContent = "کپی"), 1500);
+      });
+      bot.append(NP.html("div", { class: "ai-tools" }, [copy]));
     },
 
     async runAction(action) {
@@ -405,6 +560,16 @@
     async ask(prompt, shownAs) {
       if (this.busy) return;
       this.busy = true;
+      this.toggleHistory(false);
+      if (!this.chat) {
+        this.chat = { id: `c${Date.now()}`, title: shownAs.replace(/\s+/g, " ").slice(0, 70), messages: [], url: null, created: Date.now(), updated: Date.now() };
+        // a fresh Gemini chat for a fresh conversation
+        if (this.gTab?.isConnected && /\/app\/[\w-]+/.test(this.gTab.linkedBrowser.currentURI.spec)) this.geminiGoto(GEMINI);
+      }
+      // Lead with a short headline: Gemini names its chats after the first
+      // message, so the Gemini history stays readable too.
+      if (!this.chat.messages.length) prompt = `${shownAs.slice(0, 80)}\n\n${prompt}`;
+      this.chat.messages.push({ role: "user", text: shownAs });
       this.panel.setAttribute("busy", "true");
       this.bubble("user", shownAs);
       const bot = this.bubble("bot", "");
@@ -429,6 +594,13 @@
           text = await this.askOpenAI(prompt);
         }
         show(text || "…");
+        this.addTools(bot, text);
+        this.chat.messages.push({ role: "bot", text: text || "" });
+        this.chat.updated = Date.now();
+        // remember which Gemini chat this is (…/app/<id>)
+        const url = this.gTab?.linkedBrowser?.currentURI?.spec ?? "";
+        if (/\/app\/[\w-]+/.test(url)) this.chat.url = url;
+        this.saveChat();
       } catch (err) {
         out.textContent = `جواب نگرفتم: ${err.message}`;
         bot.setAttribute("error", "true");
@@ -442,6 +614,7 @@
     destroy() {
       this.offKey?.();
       window.messageManager.removeMessageListener("nplus:ai:reply", this.onMsg);
+      window.removeEventListener("TabSelect", this.onSelect);
       this.button?.remove();
       this.panel?.remove();
       // keep the hidden Gemini tab across reloads; it is reused by tag
