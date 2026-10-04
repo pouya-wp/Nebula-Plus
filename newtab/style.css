@@ -787,8 +787,9 @@ i {
   z-index: 50;
   display: grid;
   place-items: center;
-  background: rgb(0 0 0 / 22%);
-  backdrop-filter: blur(6px);
+  /* strong blur + dim so dialogs read clearly over anything */
+  background: light-dark(rgb(240 240 245 / 45%), rgb(0 0 0 / 50%));
+  backdrop-filter: blur(28px) saturate(130%);
   animation: fade 0.3s ease;
 
   &[hidden] {
@@ -808,8 +809,11 @@ i {
   overflow: auto;
   padding: 18px 22px 20px;
   /* dialogs need to be readable over anything: denser glass */
-  background: light-dark(rgb(255 255 255 / 86%), rgb(24 24 30 / 86%));
-  backdrop-filter: blur(40px) saturate(180%);
+  background: light-dark(rgb(255 255 255 / 94%), rgb(26 26 32 / 94%));
+  backdrop-filter: blur(60px) saturate(180%);
+  box-shadow:
+    0 0 0 0.5px light-dark(rgb(0 0 0 / 10%), rgb(255 255 255 / 12%)),
+    0 30px 80px -20px rgb(0 0 0 / 45%);
   animation: pop 0.35s var(--spring);
   scrollbar-width: thin;
 }

@@ -1,0 +1,44 @@
+/* ---------------- macOS window buttons ----------------
+   Nebula's mac-style buttons are grey until hovered, which makes them hard
+   to see. Here they always show the real macOS colors, in every window
+   state, with the same thin darker rim macOS draws. Hover glyphs (× − +)
+   still come from Nebula. */
+
+@media (-moz-pref("nebula-macos-style-buttons")) {
+  :root:root .titlebar-buttonbox .titlebar-button {
+    --nplus-wc: #ff5f57;
+    --nplus-wc-rim: #e0443e;
+
+    background-color: var(--nplus-wc) !important;
+    border: none !important;
+    box-shadow: inset 0 0 0 0.5px var(--nplus-wc-rim) !important;
+    border-radius: 50% !important;
+    corner-shape: round !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transition: filter 0.15s ease !important;
+
+    &:hover {
+      filter: brightness(0.94) !important;
+    }
+
+    &:active {
+      filter: brightness(0.82) !important;
+    }
+
+    &::after,
+    &::before {
+      corner-shape: round !important;
+    }
+  }
+
+  :root:root .titlebar-buttonbox .titlebar-min {
+    --nplus-wc: #febc2e;
+    --nplus-wc-rim: #dea123;
+  }
+
+  :root:root .titlebar-buttonbox :is(.titlebar-max, .titlebar-restore) {
+    --nplus-wc: #28c840;
+    --nplus-wc-rim: #1aab29;
+  }
+}
