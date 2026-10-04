@@ -20,7 +20,7 @@ walk(join(root, "nebula", "plus"));
 walk(join(root, "js", "plus"));
 const sources = files.map((f) => readFileSync(f, "utf8")).join("\n");
 const core = readFileSync(join(root, "js", "plus", "plus-core.uc.js"), "utf8");
-const dark = readFileSync(join(root, "js", "plus", "plus-darkmode.uc.js"), "utf8");
+const dark = ["plus-darkmode", "plus-tabs", "plus-meet"].map((f) => readFileSync(join(root, "js", "plus", `${f}.uc.js`), "utf8")).join("\n");
 
 let bad = 0;
 for (const p of prefs) {

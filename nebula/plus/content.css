@@ -15,3 +15,31 @@
     scrollbar-color: light-dark(rgb(0 0 0 / 28%), rgb(255 255 255 / 25%)) transparent !important;
   }
 }
+
+/* Google Meet: Meem for Persian text, rounded video tiles and panels */
+@-moz-document domain("meet.google.com") {
+  @media (-moz-pref("nplus-meet-style")) {
+    html,
+    body,
+    button,
+    input,
+    textarea {
+      font-family: "Google Sans", "Google Sans Text", "Meem", Roboto, sans-serif !important;
+    }
+
+    video {
+      border-radius: 16px !important;
+    }
+
+    [data-participant-id],
+    [data-requested-participant-id] {
+      border-radius: 18px !important;
+      overflow: hidden !important;
+    }
+
+    [role="dialog"],
+    aside {
+      border-radius: 18px !important;
+    }
+  }
+}

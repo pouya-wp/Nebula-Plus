@@ -909,6 +909,46 @@
   },
   {
     "type": "separator",
+    "label": "🧭 Workflow",
+    "margin": "15px 0 15px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-tab-preview",
+    "label": "Preview tabs on hover",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-mini-player",
+    "label": "Mini player when the sidebar is hidden",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "string",
+    "property": "nplus-focus-minutes",
+    "label": "Focus session length (minutes, Ctrl+Alt+F)",
+    "defaultValue": "25",
+    "placeholder": "25"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-meet-pill",
+    "label": "Floating call pill for Google Meet & other calls (Ctrl+Alt+G opens Meet)",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-meet-style",
+    "label": "Meem font and rounded tiles on Google Meet",
+    "margin": "12px 0",
+    "defaultValue": true
+  },
+  {
+    "type": "separator",
     "label": "🛠️ Developer",
     "margin": "15px 0 15px 0"
   },

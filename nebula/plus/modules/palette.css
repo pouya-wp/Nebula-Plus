@@ -1,0 +1,164 @@
+/* ---------------- Command palette ---------------- */
+
+#nplus-palette {
+  position: fixed;
+  inset: 0;
+  z-index: 2147482500;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 14vh;
+  background: light-dark(rgb(240 240 245 / 25%), rgb(0 0 0 / 30%));
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  -moz-window-dragging: no-drag;
+
+  &[open] {
+    opacity: 1;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.pal-card {
+  width: min(640px, 90vw);
+  max-height: 64vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  background: light-dark(rgb(255 255 255 / 86%), rgb(26 26 32 / 86%));
+  backdrop-filter: blur(40px) saturate(180%);
+  box-shadow:
+    0 0 0 0.5px light-dark(rgb(0 0 0 / 10%), rgb(255 255 255 / 10%)),
+    0 30px 80px -20px rgb(0 0 0 / 45%);
+  overflow: hidden;
+  translate: 0 -8px;
+  scale: 0.98;
+  transition:
+    translate 0.35s var(--nplus-ease-spring),
+    scale 0.35s var(--nplus-ease-spring);
+
+  #nplus-palette[open] & {
+    translate: 0 0;
+    scale: 1;
+  }
+}
+
+.pal-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 0.5px solid light-dark(rgb(0 0 0 / 8%), rgb(255 255 255 / 8%));
+}
+
+.pal-search-icon {
+  width: 18px;
+  height: 18px;
+  background: currentColor;
+  mask: url("chrome://browser/skin/zen-icons/search-glass.svg") center / 18px no-repeat;
+  opacity: 0.5;
+}
+
+.pal-input {
+  flex: 1;
+  appearance: none !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  color: inherit;
+  font: inherit;
+  font-size: 16px;
+  unicode-bidi: plaintext;
+
+  &::placeholder {
+    color: var(--nplus-text-soft);
+  }
+}
+
+.pal-kbd {
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  color: var(--nplus-text-soft);
+  background: light-dark(rgb(0 0 0 / 5%), rgb(255 255 255 / 8%));
+}
+
+.pal-list {
+  overflow-y: auto;
+  padding: 6px;
+  scrollbar-width: thin;
+}
+
+.pal-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 11px;
+  cursor: pointer;
+  animation: nplus-pal-in 0.25s var(--nplus-ease-out) both;
+  animation-delay: calc(var(--i) * 18ms);
+
+  &[selected] {
+    background: color-mix(in srgb, var(--nplus-accent) 16%, transparent);
+  }
+}
+
+@keyframes nplus-pal-in {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+}
+
+.pal-icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: center / contain no-repeat;
+
+  &.mask {
+    background: currentColor;
+    mask: var(--icon) center / 16px no-repeat;
+    opacity: 0.75;
+  }
+}
+
+.pal-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pal-title,
+.pal-sub {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  unicode-bidi: plaintext;
+}
+
+.pal-title {
+  font-size: 13.5px;
+}
+
+.pal-sub {
+  font-size: 11px;
+  color: var(--nplus-text-soft);
+}
+
+.pal-kind {
+  flex-shrink: 0;
+  font-size: 10.5px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  color: var(--nplus-text-soft);
+  background: light-dark(rgb(0 0 0 / 4%), rgb(255 255 255 / 6%));
+}
