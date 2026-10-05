@@ -59,7 +59,7 @@
     clusters() {
       const map = new Map();
       for (const tab of gBrowser.visibleTabs) {
-        if (tab.hasAttribute("zen-empty-tab") || tab.hasAttribute("nplus-assistant") || tab.closing) continue;
+        if (tab.hasAttribute("zen-empty-tab") || tab.hasAttribute("nplus-assistant") || tab.hasAttribute("nplus-worker") || tab.closing) continue;
         const folder = tab.group?.isZenFolder ? tab.group : null;
         const key = folder ?? (tab.hasAttribute("zen-essential") ? "essentials" : "loose");
         if (!map.has(key)) {

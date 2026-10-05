@@ -166,7 +166,7 @@
 
       // Open tabs (all workspaces)
       for (const tab of gBrowser.tabs) {
-        if (tab.hasAttribute("zen-empty-tab") || tab.closing || tab.hasAttribute("nplus-assistant")) continue;
+        if (tab.hasAttribute("zen-empty-tab") || tab.closing || tab.hasAttribute("nplus-assistant") || tab.hasAttribute("nplus-worker")) continue;
         const url = tab.linkedBrowser?.currentURI?.spec ?? "";
         const s = score(`${tab.label} ${url}`, q);
         if (s > 0) {

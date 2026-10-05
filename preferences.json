@@ -1177,5 +1177,45 @@
     "label": "Live reload CSS and scripts on save",
     "margin": "12px 0",
     "defaultValue": true
+  },
+  {
+    "type": "separator",
+    "label": "📚 Class (Rubika)",
+    "margin": "15px 0 15px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-class",
+    "label": "Class board: follow the class group, new messages, reminders",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "string",
+    "property": "nplus-class-group",
+    "label": "Rubika group id (the part after #c= in its link)",
+    "defaultValue": "g0IImWq04afffba49cb884b84168849f",
+    "margin": "12px 0"
+  },
+  {
+    "type": "string",
+    "property": "nplus-class-days",
+    "label": "Class days (0 = Sunday … 6 = Saturday)",
+    "defaultValue": "1,4",
+    "margin": "12px 0"
+  },
+  {
+    "type": "string",
+    "property": "nplus-class-remind-hour",
+    "label": "Remind the evening before at (hour)",
+    "defaultValue": "17",
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-class-restyle",
+    "label": "Restyle the class chat in Rubika Web",
+    "defaultValue": true,
+    "margin": "12px 0"
   }
 ]

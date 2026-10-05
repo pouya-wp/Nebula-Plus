@@ -108,7 +108,7 @@
 
     tabs() {
       return gBrowser.visibleTabs.filter((t) => {
-        if (t.pinned || t.hasAttribute("zen-essential") || t.hasAttribute("zen-empty-tab") || t.closing || t.group || t.hasAttribute("nplus-assistant")) return false;
+        if (t.pinned || t.hasAttribute("zen-essential") || t.hasAttribute("zen-empty-tab") || t.closing || t.group || t.hasAttribute("nplus-assistant") || t.hasAttribute("nplus-worker")) return false;
         // settings, new tab and other internal pages aren't part of any task
         const scheme = t.linkedBrowser?.currentURI?.scheme;
         return scheme === "http" || scheme === "https";
@@ -456,6 +456,7 @@
         (t) =>
           !t.selected &&
           !t.hasAttribute("nplus-assistant") &&
+          !t.hasAttribute("nplus-worker") &&
           !t.pinned &&
           !t.hasAttribute("zen-essential") &&
           !t.hasAttribute("pending") &&

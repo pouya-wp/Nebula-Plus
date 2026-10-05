@@ -1,0 +1,188 @@
+/* Nebula Plus — the class group inside web.rubika.ir, restyled.
+   Loaded as a content sheet by plus-class.uc.js; GROUP_ID is replaced with
+   the group's id, so only that one chat changes. */
+@-moz-document domain("web.rubika.ir") {
+  [id="GROUP_ID"].chat {
+    --np-accent: #8b7bff;
+    --np-accent-2: #5fb4ff;
+    --np-ink: rgb(240 240 248);
+    --np-soft: rgb(240 240 248 / 55%);
+    --np-glass: rgb(255 255 255 / 7%);
+    --np-glass-hi: rgb(255 255 255 / 11%);
+    --np-line: rgb(255 255 255 / 9%);
+
+    font-family: "Meem", IRANSans, system-ui, sans-serif !important;
+    color: var(--np-ink) !important;
+
+    /* ---- backdrop ---- */
+    & .chat-background {
+      background:
+        radial-gradient(70% 55% at 85% 0%, rgb(139 123 255 / 28%), transparent 70%),
+        radial-gradient(60% 50% at 0% 100%, rgb(95 180 255 / 18%), transparent 70%),
+        linear-gradient(180deg, #121220, #0b0b14) !important;
+
+      & .chat-background-item {
+        opacity: 0 !important;
+      }
+    }
+
+    /* ---- top bar ---- */
+    & .sidebar-header.topbar {
+      background: rgb(18 18 30 / 72%) !important;
+      backdrop-filter: blur(24px) saturate(160%) !important;
+      border-bottom: 0.5px solid var(--np-line) !important;
+      box-shadow: 0 10px 30px -20px rgb(0 0 0 / 80%) !important;
+
+      & .chat-info-container,
+      & .chat-info,
+      & .chat-utils {
+        background: transparent !important;
+      }
+
+      & .peer-title,
+      & .chat-info .person * {
+        color: var(--np-ink) !important;
+      }
+
+      & .chat-info .person .peer-title::after {
+        content: "کلاس";
+        display: inline-block;
+        margin-inline-start: 8px;
+        padding: 1px 9px;
+        border-radius: 99px;
+        background: linear-gradient(120deg, var(--np-accent), var(--np-accent-2));
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        vertical-align: middle;
+      }
+
+      & .btn-icon {
+        color: var(--np-soft) !important;
+      }
+
+      & rb-pinned-panel,
+      & rb-pinned-panel * {
+        background: transparent !important;
+        color: var(--np-ink) !important;
+      }
+    }
+
+    /* ---- bubbles ---- */
+    & .bubble .bubble-tail {
+      display: none !important;
+    }
+
+    & .bubble:not(.service) .bubble-content {
+      border-radius: 18px !important;
+      color: var(--np-ink) !important;
+      box-shadow:
+        0 0 0 0.5px var(--np-line),
+        0 12px 28px -18px rgb(0 0 0 / 80%) !important;
+    }
+
+    & .bubble.is-in:not(.service) .bubble-content {
+      background: var(--np-glass) !important;
+      backdrop-filter: blur(12px);
+    }
+
+    & .bubble.is-out:not(.service) .bubble-content {
+      background: linear-gradient(140deg, rgb(139 123 255 / 85%), rgb(95 120 255 / 80%)) !important;
+      color: white !important;
+    }
+
+    & .bubble .message,
+    & .bubble .message * {
+      color: inherit !important;
+      font-family: "Meem", IRANSans, system-ui, sans-serif !important;
+      line-height: 1.75;
+    }
+
+    & .bubble .message a {
+      color: #b9b0ff !important;
+      text-decoration: none !important;
+      border-bottom: 1px dashed rgb(185 176 255 / 50%);
+    }
+
+    & .bubble .time,
+    & .bubble .time * {
+      color: var(--np-soft) !important;
+    }
+
+    & .bubbles-group .peer-title,
+    & .bubbles-group .name {
+      font-weight: 800 !important;
+      filter: saturate(1.3) brightness(1.25);
+    }
+
+    /* photos and videos: rounded to match */
+    & .bubble .media-container,
+    & .bubble .media-container img,
+    & .bubble .media-container video {
+      border-radius: 16px !important;
+    }
+
+    /* system lines (joined, left) and dates: quiet glass pills */
+    & .bubble.service .bubble-content,
+    & .bubble.service .service-msg {
+      background: rgb(255 255 255 / 6%) !important;
+      color: var(--np-soft) !important;
+      border-radius: 99px !important;
+      box-shadow: 0 0 0 0.5px var(--np-line) !important;
+      backdrop-filter: blur(10px);
+    }
+
+    & .bubble.is-date .bubble-content,
+    & .bubble.is-date .service-msg {
+      background: rgb(139 123 255 / 18%) !important;
+      color: var(--np-ink) !important;
+      font-weight: 700;
+    }
+
+    & .reaction,
+    & .reactions-block .reaction {
+      background: rgb(255 255 255 / 9%) !important;
+      color: var(--np-ink) !important;
+    }
+
+    /* ---- input ---- */
+    & .chat-input {
+      background: transparent !important;
+    }
+
+    & .chat-input-wrapper,
+    & .rows-wrapper {
+      background: rgb(22 22 36 / 78%) !important;
+      backdrop-filter: blur(24px) saturate(160%) !important;
+      border-radius: 22px !important;
+      box-shadow:
+        0 0 0 0.5px var(--np-line),
+        0 18px 40px -22px rgb(0 0 0 / 90%) !important;
+      color: var(--np-ink) !important;
+    }
+
+    & .input-message-input,
+    & [contenteditable] {
+      color: var(--np-ink) !important;
+      font-family: "Meem", IRANSans, system-ui, sans-serif !important;
+    }
+
+    & .btn-send-container .btn-icon,
+    & .btn-send {
+      background: linear-gradient(140deg, var(--np-accent), var(--np-accent-2)) !important;
+      color: white !important;
+      border-radius: 50% !important;
+      box-shadow: 0 10px 24px -10px var(--np-accent) !important;
+    }
+
+    & .bubbles-go-down {
+      background: var(--np-glass-hi) !important;
+      color: var(--np-ink) !important;
+      backdrop-filter: blur(12px);
+    }
+
+    & .scrollable-y {
+      scrollbar-color: rgb(255 255 255 / 15%) transparent;
+    }
+  }
+}
