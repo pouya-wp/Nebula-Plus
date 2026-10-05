@@ -27,7 +27,9 @@
   `;
 
   // Content side (ASCII only; words come in through messages).
-  const LENS = `(function(){
+  const LENS = `(function(G){
+    var ME = {}; G.__nplus_lens = ME;
+    function stale() { return G.__nplus_lens !== ME; }
     var cfg = null, seen = new WeakSet(), timer = 0, observer = null;
     var SKIP = /^(SCRIPT|STYLE|TEXTAREA|INPUT|CODE|PRE|KBD|SAMP|NOSCRIPT|SELECT|OPTION|svg)$/i;
     var NUM = '(\\\\d{1,3}(?:[,\\\\u066c]\\\\d{3})+(?:\\\\.\\\\d+)?|\\\\d+(?:\\\\.\\\\d+)?)';
@@ -113,7 +115,7 @@
     }
 
     function scan(root) {
-      if (!cfg || !root) return;
+      if (stale() || !cfg || !root) return;
       var d = content.document;
       var w = d.createTreeWalker(root, 4, { acceptNode: function (n) {
         if (seen.has(n)) return 2;
@@ -201,10 +203,10 @@
       observer.observe(d.body, { childList: true, characterData: true, subtree: true });
     }
 
-    addMessageListener('nplus:lens:cfg', function (m) { cfg = m.data; if (cfg.on) start(); });
+    addMessageListener('nplus:lens2:cfg', function (m) { if (stale()) { cfg = null; if (observer) observer.disconnect(); return; } cfg = m.data; if (cfg.on) start(); });
     addEventListener('DOMContentLoaded', function (e) { if (e.target === content.document && cfg && cfg.on) content.setTimeout(start, 600); }, false);
-    sendAsyncMessage('nplus:lens:hello', {});
-  })();`;
+    sendAsyncMessage('nplus:lens2:hello', {});
+  })(this);`;
 
   NP.feature({
     name: "TomanLens",
@@ -216,10 +218,11 @@
       this.sheet = Services.io.newURI("data:text/css;charset=utf-8," + encodeURIComponent(SHEET));
       if (!sss.sheetRegistered(this.sheet, sss.USER_SHEET)) sss.loadAndRegisterSheet(this.sheet, sss.USER_SHEET);
       this.onHello = (m) => this.sendCfg(m.target.messageManager);
-      window.messageManager.addMessageListener("nplus:lens:hello", this.onHello);
+      window.messageManager.addMessageListener("nplus:lens2:hello", this.onHello);
       // every tab in this window, now and later
       this.script = "data:," + encodeURIComponent(LENS);
       window.messageManager.loadFrameScript(this.script, true);
+      window.messageManager.broadcastAsyncMessage("nplus:lens:cfg", { on: false }); // pre-versioned copies
       await this.refresh();
       this.timer = setInterval(() => this.refresh(), 30 * 60 * 1000);
     },
@@ -234,7 +237,7 @@
 
     sendCfg(mm) {
       try {
-        mm.sendAsyncMessage("nplus:lens:cfg", this.cfg());
+        mm.sendAsyncMessage("nplus:lens2:cfg", this.cfg());
       } catch {}
     },
 
@@ -258,7 +261,7 @@
       }
       // tell every page the latest rate
       try {
-        window.messageManager.broadcastAsyncMessage("nplus:lens:cfg", this.cfg());
+        window.messageManager.broadcastAsyncMessage("nplus:lens2:cfg", this.cfg());
       } catch {}
     },
 
@@ -266,8 +269,8 @@
       clearInterval(this.timer);
       try {
         window.messageManager.removeDelayedFrameScript(this.script);
-        window.messageManager.broadcastAsyncMessage("nplus:lens:cfg", { on: false });
-        window.messageManager.removeMessageListener("nplus:lens:hello", this.onHello);
+        window.messageManager.broadcastAsyncMessage("nplus:lens2:cfg", { on: false });
+        window.messageManager.removeMessageListener("nplus:lens2:hello", this.onHello);
         const sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
         if (this.sheet && sss.sheetRegistered(this.sheet, sss.USER_SHEET)) sss.unregisterSheet(this.sheet, sss.USER_SHEET);
       } catch {}

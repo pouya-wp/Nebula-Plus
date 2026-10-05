@@ -51,7 +51,9 @@
   `;
 
   // Content side (ASCII only; labels arrive in the config message).
-  const BUBBLE = `(function(){
+  const BUBBLE = `(function(G){
+    var ME = {}; G.__nplus_bubble = ME;
+    function stale() { return G.__nplus_bubble !== ME; }
     var cfg = null, el = null, out = null, current = '', timer = 0, reqId = 0;
     function doc() { return content.document; }
     function hide() {
@@ -81,7 +83,7 @@
         out.setAttribute('data-wait', '1');
         out.textContent = cfg.labels.wait;
       }
-      sendAsyncMessage('nplus:bubble:act', { action: action, text: current, id: reqId, selector: action === 'watch' ? selector(anchor) : '', url: content.location.href, title: doc().title });
+      sendAsyncMessage('nplus:bubble2:act', { action: action, text: current, id: reqId, selector: action === 'watch' ? selector(anchor) : '', url: content.location.href, title: doc().title });
       if (action === 'search' || action === 'phone' || action === 'watch') hide();
     }
     function flash(t) { if (out) { out.removeAttribute('data-wait'); out.textContent = t; content.setTimeout(hide, 900); } }
@@ -117,7 +119,7 @@
       content.requestAnimationFrame(function () { if (el) el.setAttribute('data-open', '1'); });
     }
     function check(e) {
-      if (!cfg || !cfg.on) return;
+      if (stale() || !cfg || !cfg.on) return;
       if (el && e && el.contains(e.target)) return;
       content.clearTimeout(timer);
       timer = content.setTimeout(function () {
@@ -137,14 +139,14 @@
     addEventListener('mousedown', function (e) { if (el && !el.contains(e.target)) { current = ''; hide(); } }, true);
     addEventListener('scroll', function () { if (el && !(out && out.textContent)) hide(); }, true);
     addEventListener('keydown', function (e) { if (e.key === 'Escape') hide(); }, true);
-    addMessageListener('nplus:bubble:cfg', function (m) { cfg = m.data; if (!cfg.on) hide(); });
-    addMessageListener('nplus:bubble:answer', function (m) {
+    addMessageListener('nplus:bubble2:cfg', function (m) { if (stale()) { cfg = null; hide(); return; } cfg = m.data; if (!cfg.on) hide(); });
+    addMessageListener('nplus:bubble2:answer', function (m) {
       if (!out || m.data.id !== reqId) return;
       out.textContent = m.data.text;
       if (m.data.done) out.removeAttribute('data-wait');
     });
-    sendAsyncMessage('nplus:bubble:hello', {});
-  })();`;
+    sendAsyncMessage('nplus:bubble2:hello', {});
+  })(this);`;
 
   const strip = (t) => String(t ?? "").replace(/\*\*|__|`/g, "").replace(/^#+\s*/gm, "").trim();
 
@@ -157,11 +159,13 @@
       if (!sss.sheetRegistered(this.sheet, sss.USER_SHEET)) sss.loadAndRegisterSheet(this.sheet, sss.USER_SHEET);
       this.onHello = (m) => this.sendCfg(m.target.messageManager);
       this.onAct = (m) => this.act(m.target, m.data);
-      window.messageManager.addMessageListener("nplus:bubble:hello", this.onHello);
-      window.messageManager.addMessageListener("nplus:bubble:act", this.onAct);
+      window.messageManager.addMessageListener("nplus:bubble2:hello", this.onHello);
+      window.messageManager.addMessageListener("nplus:bubble2:act", this.onAct);
       this.script = "data:," + encodeURIComponent(BUBBLE);
       window.messageManager.loadFrameScript(this.script, true);
-      window.messageManager.broadcastAsyncMessage("nplus:bubble:cfg", this.cfg());
+      window.messageManager.broadcastAsyncMessage("nplus:bubble2:cfg", this.cfg());
+      // copies from before the versioned messages: switch them off
+      window.messageManager.broadcastAsyncMessage("nplus:bubble:cfg", { on: false });
     },
 
     cfg() {
@@ -186,14 +190,14 @@
 
     sendCfg(mm) {
       try {
-        mm.sendAsyncMessage("nplus:bubble:cfg", this.cfg());
+        mm.sendAsyncMessage("nplus:bubble2:cfg", this.cfg());
       } catch {}
     },
 
     async act(browser, d) {
       const reply = (text, done) => {
         try {
-          browser.messageManager.sendAsyncMessage("nplus:bubble:answer", { id: d.id, text, done });
+          browser.messageManager.sendAsyncMessage("nplus:bubble2:answer", { id: d.id, text, done });
         } catch {}
       };
       switch (d.action) {
@@ -229,9 +233,9 @@
     destroy() {
       try {
         window.messageManager.removeDelayedFrameScript(this.script);
-        window.messageManager.broadcastAsyncMessage("nplus:bubble:cfg", { on: false });
-        window.messageManager.removeMessageListener("nplus:bubble:hello", this.onHello);
-        window.messageManager.removeMessageListener("nplus:bubble:act", this.onAct);
+        window.messageManager.broadcastAsyncMessage("nplus:bubble2:cfg", { on: false });
+        window.messageManager.removeMessageListener("nplus:bubble2:hello", this.onHello);
+        window.messageManager.removeMessageListener("nplus:bubble2:act", this.onAct);
         const sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
         if (this.sheet && sss.sheetRegistered(this.sheet, sss.USER_SHEET)) sss.unregisterSheet(this.sheet, sss.USER_SHEET);
       } catch {}
