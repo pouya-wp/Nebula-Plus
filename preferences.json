@@ -1217,5 +1217,47 @@
     "label": "Restyle the class chat in Rubika Web",
     "defaultValue": true,
     "margin": "12px 0"
+  },
+  {
+    "type": "separator",
+    "label": "🎬 Ambilight",
+    "margin": "15px 0 15px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-ambilight",
+    "label": "Ambilight: video colours spill over the browser",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "dropdown",
+    "property": "nplus-ambilight-strength",
+    "label": "Ambilight strength",
+    "value": "number",
+    "defaultValue": 3,
+    "options": [
+      {
+        "label": "Subtle",
+        "value": 1
+      },
+      {
+        "label": "Soft",
+        "value": 2
+      },
+      {
+        "label": "Normal",
+        "value": 3
+      },
+      {
+        "label": "Strong",
+        "value": 4
+      },
+      {
+        "label": "Bold",
+        "value": 5
+      }
+    ],
+    "margin": "12px 0"
   }
 ]

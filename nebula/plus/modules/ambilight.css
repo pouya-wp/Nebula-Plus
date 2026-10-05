@@ -1,0 +1,28 @@
+/* ---------------- Ambilight (plus-ambilight.uc.js) ----------------
+   A low-resolution canvas over the whole window, scaled up (soft by
+   nature), lighting Zen's UI around the page with the video's colours. */
+#nplus-ambi {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2147470000;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+:root[nplus-ambi="on"] #nplus-ambi {
+  opacity: 0.85;
+}
+
+:root[nplus-ambi="paused"] #nplus-ambi {
+  opacity: 0.45;
+}
+
+@media (-moz-pref("nplus-performance")) {
+  #nplus-ambi {
+    display: none;
+  }
+}
