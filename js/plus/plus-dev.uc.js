@@ -107,12 +107,17 @@ ${child}
       delete window.NebulaPlusDev;
     },
 
-    jsFiles() {
-      return PLUS_SCRIPTS.map((f) => PathUtils.join(MOD_DIR, "js", "plus", f));
+    // every plus-*.uc.js (the extra modules too, not just the ones Sine loads)
+    async jsFiles() {
+      try {
+        return (await IOUtils.getChildren(PathUtils.join(MOD_DIR, "js", "plus"))).filter((p) => /plus-[\w-]+\.uc\.js$/.test(p));
+      } catch {
+        return PLUS_SCRIPTS.map((f) => PathUtils.join(MOD_DIR, "js", "plus", f));
+      }
     },
 
     async snapshot() {
-      for (const path of [...this.cssFiles, ...this.jsFiles()]) {
+      for (const path of [...this.cssFiles, ...(await this.jsFiles())]) {
         try {
           this.stamps.set(path, (await IOUtils.stat(path)).lastModified);
         } catch {}
@@ -125,7 +130,7 @@ ${child}
       try {
         let css = false;
         let js = false;
-        for (const path of [...this.cssFiles, ...this.jsFiles()]) {
+        for (const path of [...this.cssFiles, ...(await this.jsFiles())]) {
           let stamp;
           try {
             stamp = (await IOUtils.stat(path)).lastModified;

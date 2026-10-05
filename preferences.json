@@ -1304,5 +1304,12 @@
     "label": "AI remix: restyle any site with Gemini (Ctrl+Alt+R)",
     "defaultValue": true,
     "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-toman-lens",
+    "label": "Toman lens: $ € £ prices in toman (live rate), Jalali dates on hover",
+    "defaultValue": true,
+    "margin": "12px 0"
   }
 ]
