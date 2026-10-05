@@ -552,7 +552,7 @@
   // ================= Extra modules =================
   // Newer modules are loaded from here rather than listed in Sine's
   // mods.json, so adding one needs no reinstall or restart.
-  for (const file of ["plus-orb.uc.js", "plus-splash.uc.js", "plus-palette.uc.js", "plus-tabs.uc.js", "plus-meet.uc.js", "plus-smart.uc.js", "plus-assistant.uc.js", "plus-galaxy.uc.js", "plus-class.uc.js", "plus-ambilight.uc.js", "plus-keyboard.uc.js", "plus-watch.uc.js", "plus-wormhole.uc.js", "plus-remix.uc.js", "plus-lens.uc.js", "plus-bubble.uc.js"]) {
+  for (const file of ["plus-orb.uc.js", "plus-splash.uc.js", "plus-palette.uc.js", "plus-tabs.uc.js", "plus-meet.uc.js", "plus-smart.uc.js", "plus-assistant.uc.js", "plus-galaxy.uc.js", "plus-class.uc.js", "plus-ambilight.uc.js", "plus-keyboard.uc.js", "plus-watch.uc.js", "plus-wormhole.uc.js", "plus-remix.uc.js", "plus-lens.uc.js", "plus-bubble.uc.js", "plus-pdf.uc.js"]) {
     try {
       Services.scriptloader.loadSubScript(`chrome://sine/content/Nebula/js/plus/${file}?t=${Date.now()}`, window);
     } catch (err) {

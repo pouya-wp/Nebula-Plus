@@ -1318,5 +1318,19 @@
     "label": "Selection bubble: translate / explain / search / copy / phone / watch on selected text",
     "defaultValue": true,
     "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-pdf-skin",
+    "label": "PDF reader in the Nebula look (glass toolbar, rounded pages, Meem)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-pdf-dark",
+    "label": "Dark PDF pages (text/background recoloured, images untouched)",
+    "defaultValue": true,
+    "margin": "12px 0"
   }
 ]
