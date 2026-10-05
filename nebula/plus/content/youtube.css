@@ -1,0 +1,122 @@
+/* Nebula Plus — calm, see-through YouTube.
+   Loaded as a user sheet by plus-ambilight.uc.js. The page's backgrounds go
+   transparent so the ambilight behind the page shows around the video, and
+   everything that pulls you away (recommendations, comments, shorts) waits
+   further down, faded until you reach for it. */
+@-moz-document domain("youtube.com") {
+  html[dark],
+  html {
+    --yt-spec-base-background: transparent !important;
+    --yt-spec-raised-background: rgb(255 255 255 / 5%) !important;
+    --yt-spec-menu-background: rgb(24 24 32 / 92%) !important;
+    --yt-spec-general-background-a: transparent !important;
+    --yt-spec-general-background-b: transparent !important;
+    --yt-spec-general-background-c: transparent !important;
+    --yt-spec-brand-background-solid: transparent !important;
+    --yt-spec-brand-background-primary: transparent !important;
+    background: transparent !important;
+  }
+
+  body,
+  ytd-app,
+  ytd-page-manager,
+  ytd-browse,
+  ytd-watch-flexy,
+  ytd-two-column-browse-results-renderer,
+  #content.ytd-app,
+  #columns,
+  #primary,
+  #secondary,
+  #below,
+  #full-bleed-container,
+  #player-full-bleed-container,
+  #player-theater-container,
+  #player-container-outer,
+  #player-container-inner,
+  #player-container,
+  #player,
+  ytd-player,
+  #container.ytd-player,
+  #movie_player,
+  .html5-video-player,
+  .html5-video-container {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  /* our light replaces YouTube's own ambient mode */
+  #cinematics,
+  #cinematics-container,
+  ytd-watch-flexy #cinematics {
+    display: none !important;
+  }
+
+  /* the video floats with a soft edge instead of sitting in a black box */
+  ytd-watch-flexy #movie_player video {
+    border-radius: 14px;
+  }
+
+  ytd-watch-flexy #player-container #movie_player,
+  ytd-watch-flexy #full-bleed-container #movie_player {
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  /* glass top bar */
+  #masthead-container,
+  ytd-masthead,
+  #masthead #background,
+  #frosted-glass {
+    background: rgb(14 14 22 / 45%) !important;
+    backdrop-filter: blur(22px) saturate(160%) !important;
+  }
+
+  ytd-masthead {
+    box-shadow: 0 0.5px 0 rgb(255 255 255 / 7%) !important;
+  }
+
+  /* ---- distractions wait further down ---- */
+  /* CALM-START (dropped when nplus-youtube-calm is off) */
+  @media all {
+    /* beside the player: recommendations start below the video, faded */
+    ytd-watch-flexy:not([theater]) #secondary {
+      padding-top: 62vh !important;
+    }
+
+    ytd-watch-flexy #secondary,
+    ytd-watch-flexy #below ytd-comments,
+    ytd-watch-flexy #below #related {
+      opacity: 0.22;
+      filter: grayscale(0.85);
+      transition:
+        opacity 0.5s ease,
+        filter 0.5s ease;
+    }
+
+    ytd-watch-flexy #secondary:hover,
+    ytd-watch-flexy #below ytd-comments:hover,
+    ytd-watch-flexy #below #related:hover {
+      opacity: 1;
+      filter: none;
+    }
+
+    /* room to breathe under the video before anything else */
+    ytd-watch-flexy #below {
+      padding-top: 2vh;
+    }
+
+    ytd-watch-flexy #below ytd-comments,
+    ytd-watch-flexy[theater] #below #related {
+      margin-top: 30vh !important;
+    }
+
+    /* shorts shelves and the end-of-video wall */
+    ytd-reel-shelf-renderer,
+    ytd-rich-shelf-renderer[is-shorts],
+    ytd-watch-flexy .ytp-endscreen-content,
+    ytd-watch-flexy .ytp-ce-element {
+      display: none !important;
+    }
+  }
+  /* CALM-END */
+}

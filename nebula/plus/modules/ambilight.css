@@ -26,3 +26,32 @@
     display: none;
   }
 }
+
+/* behind a see-through page (YouTube): the light around the video itself */
+#nplus-ambi-inner {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.browserStack:has(> #nplus-ambi-inner:not([hidden])) > browser {
+  position: relative;
+  z-index: 1;
+}
+
+:root[nplus-ambi="on"] #nplus-ambi-inner {
+  opacity: 1;
+}
+
+:root[nplus-ambi="paused"] #nplus-ambi-inner {
+  opacity: 0.55;
+}

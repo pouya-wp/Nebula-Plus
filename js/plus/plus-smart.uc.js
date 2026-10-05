@@ -443,6 +443,30 @@
   // Tabs you haven't looked at for a while are unloaded to free memory and
   // shown dimmed; they reload when you click them. Never: the selected
   // tab, pinned/essential tabs, tabs playing sound or in a call.
+  // ================= Lean memory =================
+  // Firefox's own memory knobs, set once (only ones you haven't changed):
+  // fewer pages kept alive for Back, a capped decoded-image cache, no idle
+  // spare content process, and unloading tabs when memory runs low.
+  NP.DEFAULTS["nplus-lean-memory"] = true;
+  const LEAN_PREFS = [
+    ["browser.sessionhistory.max_total_viewers", "int", 2],
+    ["browser.cache.memory.capacity", "int", 131072],
+    ["image.mem.surfacecache.max_size_kb", "int", 524288],
+    ["dom.ipc.processPrelaunch.enabled", "bool", false],
+    ["browser.tabs.unloadOnLowMemory", "bool", true],
+  ];
+  NP.feature({
+    name: "LeanMemory",
+    init() {
+      if (!NP.prefs.get("nplus-lean-memory")) return;
+      for (const [name, type, value] of LEAN_PREFS) {
+        if (Services.prefs.prefHasUserValue(name)) continue;
+        if (type === "int") Services.prefs.setIntPref(name, value);
+        else Services.prefs.setBoolPref(name, value);
+      }
+    },
+  });
+
   NP.feature({
     name: "TabSleep",
     init() {
