@@ -53,6 +53,7 @@
     "nplus-glass-edge": true,
     "nplus-grain": false,
     "nplus-performance": false,
+    "nplus-lean": true,
     // 🌊 Ambience
     "nplus-time-tint": true,
     "nplus-page-halo": false,

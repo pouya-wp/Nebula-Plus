@@ -760,7 +760,20 @@
 
     loop(now) {
       const on = NP.prefs.get("nplus-visualizer") && NP.media?.current?.playing && !document.hidden;
-      const targets = on ? this.targets() : [];
+      const lean = NP.prefs.get("nplus-lean");
+      // lean: ~30 fps (a faint outline doesn't need more), frozen while the
+      // window isn't in use; targets and colour are re-read every half second
+      if (lean && on && this.raf && (now - (this.lastFrame ?? 0) < 31 || !document.hasFocus())) {
+        this.raf = requestAnimationFrame(this.loop);
+        return;
+      }
+      this.lastFrame = now;
+      if (!lean || !this.cached || now - this.cachedAt > 500) {
+        this.cached = on ? this.targets() : [];
+        this.cachedAt = now;
+        this.color = null;
+      }
+      const targets = on ? this.cached : [];
       if (!targets.length) {
         // fade out, then sleep until music plays again
         let alive = false;
@@ -769,12 +782,14 @@
         this.raf = alive ? requestAnimationFrame(this.loop) : null;
         return;
       }
-      if (!this.lastPoll || now - this.lastPoll > 55) {
+      if (!this.lastPoll || now - this.lastPoll > (lean ? 70 : 55)) {
         this.lastPoll = now;
         this.poll();
       }
       // ease toward the latest values for a fluid line
-      for (let i = 0; i < this.shown.length; i++) this.shown[i] += ((this.bands[i] ?? 0) - this.shown[i]) * 0.25;
+      // (same feel at 30 fps: a stronger step per frame)
+      const ease = lean ? 0.43 : 0.25;
+      for (let i = 0; i < this.shown.length; i++) this.shown[i] += ((this.bands[i] ?? 0) - this.shown[i]) * ease;
 
       // beat: bass jumps clearly above its running average -> a soft pulse
       // that decays; CSS reads --nplus-beat (0..1) for the tab glow etc.
@@ -785,10 +800,15 @@
           this.lastBeat = now;
           this.beat = 1;
         }
-        this.beat = Math.max(0, (this.beat ?? 0) - 0.06);
-        NP.root.style.setProperty("--nplus-beat", this.beat.toFixed(2));
+        this.beat = Math.max(0, (this.beat ?? 0) - (lean ? 0.11 : 0.06));
+        // a root variable restyles the whole window: only write real changes
+        const beat = this.beat.toFixed(2);
+        if (beat !== this.beatShown) {
+          this.beatShown = beat;
+          NP.root.style.setProperty("--nplus-beat", beat);
+        }
       }
-      const color = getComputedStyle(NP.root).getPropertyValue("--nplus-accent").trim() || "rgb(140 160 255)";
+      const color = (this.color ??= getComputedStyle(NP.root).getPropertyValue("--nplus-accent").trim() || "rgb(140 160 255)");
       for (const c of targets) this.draw(c, color);
       this.raf = requestAnimationFrame(this.loop);
     },

@@ -48,3 +48,61 @@
     transition-duration: 0.01s !important;
   }
 }
+
+/* ---------------- Lean rendering (on by default) ----------------
+   Looks the same, paints far less. The ambient lights move slowly, so they
+   are sampled at ~20 fps instead of the screen's rate (each step is ~2° of a
+   blurred mask, too small to see); anything hidden or in a window you are
+   not using stops animating entirely. */
+@keyframes nplus-breathe-ring-lean {
+  0%,
+  100% { --nplus-breath: 0.5; }
+  12.5%,
+  87.5% { --nplus-breath: 0.573; }
+  25%,
+  75% { --nplus-breath: 0.75; }
+  37.5%,
+  62.5% { --nplus-breath: 0.927; }
+  50% { --nplus-breath: 1; }
+}
+
+@media (-moz-pref("nplus-lean")) {
+  :root {
+    --nplus-ring-anim:
+      nplus-orbit var(--nplus-glow-speed) steps(180) infinite,
+      nplus-ring-in 1.4s var(--nplus-ease-out) both,
+      nplus-breathe-ring-lean calc(var(--nplus-glow-speed) * 0.7) steps(14) infinite;
+  }
+
+  /* the island glows and spins only while it is on screen */
+  #nplus-island::after {
+    animation: nplus-orbit 7s steps(140) infinite;
+  }
+
+  .nplus-island-art:not([icon]) {
+    animation: nplus-spin 6s steps(180) infinite;
+  }
+
+  #nplus-island:not([open])::after,
+  #nplus-island:not([open]) .nplus-island-art {
+    animation-play-state: paused !important;
+  }
+
+  /* a window you're not looking at doesn't need moving light */
+  :root:-moz-window-inactive {
+    & .tabbrowser-tab > .tab-stack > .tab-background::after,
+    & .tabbrowser-tab > .tab-stack > .tab-background,
+    & .nplus-card-ring,
+    & #urlbar > .urlbar-background::after,
+    & #nplus-island::after,
+    & .nplus-island-art,
+    & .nplus-eq > span,
+    & #nplus-ai::after,
+    & .ai-orb,
+    & .ai-hero-orb,
+    & #nplus-call,
+    & .nplus-lyrics-stage-bg {
+      animation-play-state: paused !important;
+    }
+  }
+}

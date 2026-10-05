@@ -833,6 +833,13 @@
     "margin": "12px 0"
   },
   {
+    "type": "checkbox",
+    "property": "nplus-lean",
+    "label": "Lean rendering (same look, far less CPU/GPU and memory)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
     "type": "separator",
     "label": "🌊 Ambience",
     "margin": "15px 0 15px 0"

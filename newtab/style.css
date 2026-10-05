@@ -1208,3 +1208,30 @@ i {
     opacity: 0.82;
   }
 }
+
+/* ---------------- lean rendering ----------------
+   The edge lights move slowly: ~20 fps steps look the same and paint a
+   third as often. Nothing animates while the page isn't being looked at. */
+@keyframes breathe-lean {
+  0%,
+  100% { --breath: 0.35; }
+  12.5%,
+  87.5% { --breath: 0.45; }
+  25%,
+  75% { --breath: 0.675; }
+  37.5%,
+  62.5% { --breath: 0.9; }
+  50% { --breath: 1; }
+}
+
+.glow-host::after {
+  animation:
+    orbit 9s steps(180) infinite,
+    breathe-lean 6.3s steps(16) infinite !important;
+}
+
+:root[idle] *,
+:root[idle] *::before,
+:root[idle] *::after {
+  animation-play-state: paused !important;
+}

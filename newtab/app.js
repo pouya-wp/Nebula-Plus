@@ -944,3 +944,10 @@ loadWeather();
 player.poll();
 loadWeek();
 setInterval(() => player.tick(), 250);
+
+// ---------------- lean: rest while nobody is looking ----------------
+const setIdle = () => document.documentElement.toggleAttribute("idle", document.hidden || !document.hasFocus());
+addEventListener("focus", setIdle);
+addEventListener("blur", setIdle);
+document.addEventListener("visibilitychange", setIdle);
+setIdle();
