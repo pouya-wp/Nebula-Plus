@@ -1259,5 +1259,17 @@
       }
     ],
     "margin": "12px 0"
+  },
+  {
+    "type": "separator",
+    "label": "⌨ Keyboard",
+    "margin": "15px 0 15px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-kbfix",
+    "label": "Fix text typed in the wrong layout (Ctrl+Alt+Space, hint in the URL bar)",
+    "defaultValue": true,
+    "margin": "12px 0"
   }
 ]

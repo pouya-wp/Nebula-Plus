@@ -1,0 +1,64 @@
+/* ---------------- Keyboard layout fix (plus-keyboard.uc.js) ---------------- */
+#nplus-kbfix {
+  position: absolute;
+  inset-inline-end: 8px;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  max-width: 55%;
+  padding: 3px 4px 3px 10px;
+  border-radius: 99px;
+  corner-shape: round;
+  background: color-mix(in srgb, var(--nplus-accent) 22%, light-dark(rgb(255 255 255 / 92%), rgb(28 28 36 / 92%)));
+  box-shadow:
+    0 0 0 0.5px color-mix(in srgb, var(--nplus-accent) 55%, transparent),
+    0 8px 22px -10px var(--nplus-accent);
+  backdrop-filter: blur(14px);
+  font-family: var(--nplus-ui-font, "Meem"), "Meem", sans-serif;
+  font-size: 12.5px;
+  cursor: pointer;
+  animation: nplus-kb-in 0.3s var(--nplus-ease-spring) both;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &:hover {
+    filter: brightness(1.12);
+  }
+}
+
+@keyframes nplus-kb-in {
+  from {
+    opacity: 0;
+    scale: 0.9;
+  }
+}
+
+.kb-key {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.kb-text {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: 700;
+  unicode-bidi: plaintext;
+}
+
+.kb-hint {
+  flex-shrink: 0;
+  padding: 2px 7px;
+  border-radius: 99px;
+  corner-shape: round;
+  background: light-dark(rgb(0 0 0 / 7%), rgb(255 255 255 / 9%));
+  font-size: 9.5px;
+  opacity: 0.7;
+  direction: ltr;
+}
