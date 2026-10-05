@@ -244,7 +244,7 @@
         run: (id) => this.runAction(ACTIONS.find((a) => a.id === id)),
         // A one-off question for other features (no bubbles in the panel).
         // Gemini gets a fresh chat; your own conversation is put back after.
-        ask: (prompt, onPartial) => this.askQuiet(prompt, onPartial),
+        ask: (prompt, onPartial, opts) => this.askQuiet(prompt, onPartial, opts),
       };
       NP.prefs.watch("nplus-assistant-engine", () => this.showEngine());
     },
@@ -434,7 +434,16 @@
       NP.store.set("aiChats", all.slice(0, 100));
     },
 
-    async askQuiet(prompt, onPartial = () => {}) {
+    async askQuiet(prompt, onPartial = () => {}, { fast = false } = {}) {
+      // quick jobs (translate a line) go straight to OpenAI when there is a
+      // key: seconds instead of a fresh Gemini chat
+      if (fast && String(NP.prefs.get("nplus-openai-key") ?? "").trim()) {
+        try {
+          return await this.askOpenAI(prompt);
+        } catch (err) {
+          NP.logger?.warn(`fast ask via OpenAI: ${err}; using Gemini`);
+        }
+      }
       // one at a time with the panel's own questions
       while (this.busy) await new Promise((r) => setTimeout(r, 400));
       this.busy = true;

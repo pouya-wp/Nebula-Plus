@@ -1311,5 +1311,12 @@
     "label": "Toman lens: $ € £ prices in toman (live rate), Jalali dates on hover",
     "defaultValue": true,
     "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-bubble",
+    "label": "Selection bubble: translate / explain / search / copy / phone / watch on selected text",
+    "defaultValue": true,
+    "margin": "12px 0"
   }
 ]

@@ -102,7 +102,7 @@
       this.build();
       this.timer = setInterval(() => this.checkDue(), 60 * 1000);
       this.first = setTimeout(() => this.checkDue(), 45 * 1000);
-      NP.watch = { pick: () => this.pick(), open: () => this.open() };
+      NP.watch = { pick: () => this.pick(), open: () => this.open(), add: (r) => this.picked({ data: r }) };
     },
 
     watches() {
