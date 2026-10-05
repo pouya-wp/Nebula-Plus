@@ -54,6 +54,7 @@
     "nplus-grain": false,
     "nplus-performance": false,
     "nplus-lean": true,
+    "nplus-media-full-card": true,
     // 🌊 Ambience
     "nplus-time-tint": true,
     "nplus-page-halo": false,

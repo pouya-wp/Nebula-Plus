@@ -3,6 +3,11 @@
 #zen-media-controls-toolbar {
   --zen-primary-color: var(--nplus-accent) !important;
   margin-inline: calc(var(--zen-element-separation) / 2) !important;
+  /* its parent lays out in a row here, and the cards are width: 100% of the
+     toolbar: without this the whole player shrinks to a 16px sliver */
+  flex: 1 1 100% !important;
+  width: calc(100% - var(--zen-element-separation)) !important;
+  min-width: 0 !important;
 }
 
 /* ---- Card surface ---- */
@@ -438,4 +443,34 @@ canvas.nplus-viz.viz-stage {
 #nplus-mini > :not(canvas, .mn-bar) {
   position: relative;
   z-index: 1;
+}
+
+/* ---- Browser media (YouTube, ...) gets a full card like the desktop one ----
+   Zen keeps its card collapsed to one squeezed row and only unfolds the
+   title/artist on hover. Keep it unfolded, so a video playing in a tab
+   looks the same as music from the desktop player. */
+@media (-moz-pref("nplus-media-full-card")) {
+  /* the toolbar keeps Zen's height (the tab area is fixed-height here);
+     the full card unfolds upward from it, the way Zen's hover does */
+  #zen-media-controls-toolbar:not([hidden]) {
+    margin-bottom: 8px !important;
+  }
+
+  #zen-media-controls-toolbar .zen-media-card {
+    padding: 6px 8px !important;
+
+    & .show-on-hover {
+      max-height: 50px !important;
+      padding: 5px !important;
+      margin-bottom: 0 !important;
+      opacity: 1 !important;
+      transform: none !important;
+      pointer-events: auto !important;
+    }
+
+    /* stacked cards behind the front one stay tucked away */
+    &[stacked-behind] {
+      display: none !important;
+    }
+  }
 }

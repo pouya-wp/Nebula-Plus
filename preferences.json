@@ -564,6 +564,13 @@
   },
   {
     "type": "checkbox",
+    "property": "nplus-media-full-card",
+    "label": "Browser media (YouTube…) as a full card, not Zen's collapsed row",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
     "property": "nplus-visualizer",
     "label": "Live visualizer outline behind the players",
     "margin": "12px 0",
