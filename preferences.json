@@ -1290,5 +1290,12 @@
     "label": "Lean Firefox memory settings",
     "defaultValue": true,
     "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-wormhole",
+    "label": "Wormhole: send links/text to your phone via Rubika Saved Messages (Ctrl+Alt+P, right-click, drag)",
+    "defaultValue": true,
+    "margin": "12px 0"
   }
 ]
