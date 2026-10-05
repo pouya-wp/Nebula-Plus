@@ -1297,5 +1297,12 @@
     "label": "Wormhole: send links/text to your phone via Rubika Saved Messages (Ctrl+Alt+P, right-click, drag)",
     "defaultValue": true,
     "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-remix",
+    "label": "AI remix: restyle any site with Gemini (Ctrl+Alt+R)",
+    "defaultValue": true,
+    "margin": "12px 0"
   }
 ]

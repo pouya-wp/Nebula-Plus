@@ -239,7 +239,13 @@
       this.offKey = NP.hotkey?.("ctrl+alt+a", () => this.toggle());
       this.onSelect = () => !this.panel.hidden && this.refreshContext();
       window.addEventListener("TabSelect", this.onSelect);
-      NP.assistant = { open: () => this.open(), run: (id) => this.runAction(ACTIONS.find((a) => a.id === id)) };
+      NP.assistant = {
+        open: () => this.open(),
+        run: (id) => this.runAction(ACTIONS.find((a) => a.id === id)),
+        // A one-off question for other features (no bubbles in the panel).
+        // Gemini gets a fresh chat; your own conversation is put back after.
+        ask: (prompt, onPartial) => this.askQuiet(prompt, onPartial),
+      };
       NP.prefs.watch("nplus-assistant-engine", () => this.showEngine());
     },
 
@@ -426,6 +432,28 @@
       const all = (await this.chats()).filter((c) => c.id !== this.chat.id);
       all.unshift(this.chat);
       NP.store.set("aiChats", all.slice(0, 100));
+    },
+
+    async askQuiet(prompt, onPartial = () => {}) {
+      // one at a time with the panel's own questions
+      while (this.busy) await new Promise((r) => setTimeout(r, 400));
+      this.busy = true;
+      try {
+        if (NP.prefs.get("nplus-assistant-engine") === 1) {
+          try {
+            this.geminiTab();
+            this.geminiGoto(GEMINI);
+            return await this.askGemini(prompt, onPartial);
+          } catch (err) {
+            NP.logger?.warn(`quiet ask via Gemini: ${err}; using OpenAI`);
+          } finally {
+            this.geminiGoto(this.chat?.url || GEMINI);
+          }
+        }
+        return await this.askOpenAI(prompt);
+      } finally {
+        this.busy = false;
+      }
     },
 
     geminiGoto(url) {
