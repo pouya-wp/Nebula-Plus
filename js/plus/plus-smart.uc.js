@@ -455,6 +455,27 @@
     ["dom.ipc.processPrelaunch.enabled", "bool", false],
     ["browser.tabs.unloadOnLowMemory", "bool", true],
   ];
+  // ================= Lean video =================
+  // This laptop's GPU decodes only H.264 in hardware (no AV1 extension, no
+  // VP9): YouTube's AV1/VP9 then runs on the CPU (~40%). Hiding AV1 and VP9
+  // makes sites send H.264, decoded by the GPU (YouTube tops out at 1080p).
+  NP.DEFAULTS["nplus-lean-video"] = true;
+  const VIDEO_PREFS = ["media.av1.enabled", "media.mediasource.vp9.enabled"];
+  NP.feature({
+    name: "LeanVideo",
+    init() {
+      const apply = () => {
+        const on = NP.prefs.get("nplus-lean-video");
+        for (const p of VIDEO_PREFS) {
+          if (on) Services.prefs.setBoolPref(p, false);
+          else Services.prefs.clearUserPref(p);
+        }
+      };
+      NP.prefs.watch("nplus-lean-video", apply);
+      apply();
+    },
+  });
+
   NP.feature({
     name: "LeanMemory",
     init() {
