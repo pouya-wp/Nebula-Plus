@@ -690,10 +690,17 @@ $(".p-controls").addEventListener("click", async (e) => {
 // Each new lyric line: the old one floats up and blurs away, the new one
 // arrives word by word (blur → sharp, rising), then a light sweeps across.
 function showLyric(el, text) {
-  const old = el.querySelector(".line");
-  if (old) {
+  // Every line still on screen leaves; one that is already leaving goes at
+  // once. (Fast lines, or timers slowed in a background tab, used to leave
+  // older lines behind, stacked on top of each other.)
+  for (const old of el.querySelectorAll(".line")) {
+    if (old.classList.contains("out")) {
+      old.remove();
+      continue;
+    }
     old.classList.add("out");
-    setTimeout(() => old.remove(), 450);
+    old.addEventListener("animationend", (e) => e.target === old && e.animationName === "line-out" && old.remove());
+    setTimeout(() => old.remove(), 600);
   }
   if (!text) return;
   const line = document.createElement("div");
