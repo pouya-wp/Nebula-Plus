@@ -558,10 +558,12 @@
       this.resizeObserver.observe(this.dock);
       this.resizeObserver.observe(toolbar);
       this.resizeObserver.observe(document.getElementById("tabbrowser-tabs"));
+      this.resizeObserver.observe(toolbar);
       this.attrObserver = new MutationObserver(this.layout);
       this.attrObserver.observe(toolbar, { attributes: true, attributeFilter: ["hidden"] });
       this.attrObserver.observe(this.dock, { subtree: true, attributes: true, attributeFilter: ["hidden"] });
       window.addEventListener("resize", this.layout);
+      NP.prefs.watch("nplus-media-full-card", () => this.layout());
       this.layout();
     },
 
@@ -572,22 +574,37 @@
       const visible = [...dock.children].some((c) => !c.hidden);
       dock.toggleAttribute("empty", !visible);
       const parent = dock.parentElement;
-      if (!visible || !parent) {
-        NP.root.style.setProperty("--nplus-dock-h", "0px");
-        return;
-      }
+      if (!parent) return;
       const parentRect = parent.getBoundingClientRect();
-      const tabs = document.getElementById("tabbrowser-tabs").getBoundingClientRect();
-      // Sit above whichever comes first: Zen's media cards, the footer buttons
-      // or the end of the tab list (mods move these around).
-      const tops = [tabs.bottom];
-      const toolbarRect = this.toolbar.getBoundingClientRect();
-      if (!this.toolbar.hidden && toolbarRect.height > 0) tops.push(toolbarRect.top);
       const foot = document.getElementById("zen-sidebar-foot-buttons")?.getBoundingClientRect();
-      if (foot?.height) tops.push(foot.top);
-      const anchorTop = Math.min(...tops);
-      dock.style.bottom = `${Math.max(0, parentRect.bottom - anchorTop) + 6}px`;
-      NP.root.style.setProperty("--nplus-dock-h", `${Math.ceil(dock.getBoundingClientRect().height) + 10}px`);
+      // the floor: just above the footer buttons (mods move these around)
+      const floor = foot?.height ? foot.top : parentRect.bottom;
+      let reserve = 0;
+      let anchorTop = floor;
+
+      // Zen's own player card (browser media) — kept unfolded in full-card
+      // mode, so it is anchored here too and unfolds upward from the floor
+      const zmc = this.toolbar;
+      const full = NP.prefs.get("nplus-media-full-card");
+      NP.setRootAttr("nplus-zmc-docked", full);
+      if (full) {
+        NP.root.style.setProperty("--nplus-zmc-bottom", `${Math.max(0, parentRect.bottom - floor) + 6}px`);
+        const r = zmc.getBoundingClientRect();
+        if (!zmc.hidden && r.height > 0) {
+          anchorTop = r.top;
+          reserve += Math.ceil(r.height) + 10;
+        }
+      } else {
+        const tabs = document.getElementById("tabbrowser-tabs").getBoundingClientRect();
+        const r = zmc.getBoundingClientRect();
+        anchorTop = Math.min(floor, tabs.bottom, !zmc.hidden && r.height > 0 ? r.top : Infinity);
+      }
+
+      if (visible) {
+        dock.style.bottom = `${Math.max(0, parentRect.bottom - anchorTop) + 6}px`;
+        reserve += Math.ceil(dock.getBoundingClientRect().height) + 10;
+      }
+      NP.root.style.setProperty("--nplus-dock-h", `${reserve}px`);
     },
 
     render(m) {

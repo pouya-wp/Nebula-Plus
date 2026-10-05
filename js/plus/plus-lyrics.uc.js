@@ -298,6 +298,8 @@
       NP.emit("lyrics", NP.lyricsState);
       clearTimeout(this.statusTimer);
       this.panel.setAttribute("status", status);
+      // a video in a tab usually isn't a song: no "not found" line for it
+      this.panel.toggleAttribute("quiet", status !== "ok" && NP.media?.current?.source === "browser");
       if (status === "loading") return;
       const text = { missing: "لیریک پیدا نشد · کلیک کن تا انتخاب کنی", error: "سرور لیریک فعلاً در دسترس نیست" }[status];
       this.track.replaceChildren(NP.html("div", { class: "nplus-lyric nplus-lyric-status", text, dir: "auto" }));
@@ -309,6 +311,7 @@
     },
 
     render() {
+      if (this.lines.length) this.panel.removeAttribute("quiet");
       // shared with the lyrics stage
       NP.lyricsState = { key: this.key, lines: this.lines, status: this.lines.length ? "ok" : this.panel.getAttribute("status") };
       NP.emit("lyrics", NP.lyricsState);

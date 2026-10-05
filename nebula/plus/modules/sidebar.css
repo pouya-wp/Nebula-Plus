@@ -40,3 +40,9 @@
 :root:not([zen-sidebar-expanded="true"]) #nplus-clock {
   display: none;
 }
+
+/* a player card unfolds where the clock sits: the clock steps aside */
+:root:has(#zen-media-controls-toolbar:not([hidden]) .zen-media-card:not([zen-removing], [zen-hiding])) #nplus-clock,
+:root:has(#nplus-desktop-card:not([hidden])) #nplus-clock {
+  display: none;
+}
