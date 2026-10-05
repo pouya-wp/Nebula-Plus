@@ -59,6 +59,8 @@
     { t: "Toggle dark mode", k: "دارک تاریک شب dark mode night", icon: ICON("selectable/moon"), run: () => NP.prefs.set("nplus-darkmode", !NP.prefs.get("nplus-darkmode")) },
     { t: "Focus mode", k: "تمرکز فوکوس پومودورو focus pomodoro", icon: ICON("selectable/time"), run: () => NP.focus?.toggle() },
     { t: "Sleep this folder", k: "خواب پوشه آزاد کردن رم unload folder sleep", icon: ICON("selectable/moon"), when: () => gBrowser.selectedTab.group?.isZenFolder, run: () => { const f = gBrowser.selectedTab.group; for (const t of f.tabs) if (!t.selected && !t.hasAttribute("zen-empty-tab") && !t.hasAttribute("pending")) gBrowser.discardBrowser(t); NP.island?.show({ title: `${f.label} خوابید 💤`, duration: 2000 }); } },
+    { t: "Watch a part of this page", k: "چشم مراقب زیر نظر تغییر نمره قیمت watch monitor change", icon: ICON("selectable/eye"), run: () => NP.watch?.pick() },
+    { t: "Watched items", k: "چشم مراقب لیست زیر نظر watches", icon: ICON("selectable/eye"), run: () => NP.watch?.open() },
     { t: "Tab galaxy", k: "کهکشان تب ها نقشه galaxy map overview", icon: ICON("selectable/planet"), run: () => NP.galaxy?.open() },
     { t: "Assistant", k: "دستیار هوش مصنوعی جمنای ai assistant gemini chat", icon: ICON("sparkles"), run: () => NP.assistant?.open() },
     { t: "Summarize this page", k: "خلاصه صفحه summarize", icon: ICON("reader-mode"), run: () => NP.assistant?.run("summary") },
