@@ -202,6 +202,33 @@ app.MapGet("/wallpaper", () =>
     return Results.File(path, type, enableRangeProcessing: false, lastModified: File.GetLastWriteTimeUtc(path));
 });
 
+// Favicons with CORS, so the new tab can read their pixels: GET /favicon?host=github.com
+var favHttp = new HttpClient { Timeout = TimeSpan.FromSeconds(6) };
+favHttp.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 NebulaBridge");
+var favCache = new System.Collections.Concurrent.ConcurrentDictionary<string, (byte[] data, string type)>();
+app.MapGet("/favicon", async (string host) =>
+{
+    host = host.Trim().ToLowerInvariant();
+    if (host.Length == 0 || host.Length > 200 || host.Any(c => !(char.IsLetterOrDigit(c) || c == '.' || c == '-')))
+        return Results.BadRequest();
+    if (favCache.TryGetValue(host, out var hit)) return Results.File(hit.data, hit.type);
+    foreach (var url in new[] { $"https://www.google.com/s2/favicons?domain={host}&sz=128", $"https://icons.duckduckgo.com/ip3/{host}.ico" })
+    {
+        try
+        {
+            using var res = await favHttp.GetAsync(url);
+            if (!res.IsSuccessStatusCode) continue;
+            var data = await res.Content.ReadAsByteArrayAsync();
+            if (data.Length < 100) continue;
+            var type = res.Content.Headers.ContentType?.MediaType ?? "image/png";
+            favCache[host] = (data, type);
+            return Results.File(data, type);
+        }
+        catch { }
+    }
+    return Results.NotFound();
+});
+
 app.MapGet("/debug/requests", () => Results.Text(string.Join('\n', recent)));
 
 app.MapGet("/", () => Results.Text("Nebula Bridge is running."));

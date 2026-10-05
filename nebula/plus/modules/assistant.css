@@ -923,3 +923,53 @@
   font-size: 12.5px;
   color: var(--ai-soft);
 }
+
+/* ---------------- the watercolor orb ---------------- */
+/* painted by plus-orb.uc.js; the CSS gradient stays underneath as a fallback */
+.ai-orb,
+.ai-hero-orb {
+  position: relative;
+  isolation: isolate;
+
+  &:has(> .nplus-orb-canvas) {
+    animation-name: ai-float;
+    background: transparent;
+  }
+
+  /* glass rim: a soft top light and a darker lower edge give it volume */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    corner-shape: round;
+    background: radial-gradient(120% 90% at 30% 18%, rgb(255 255 255 / 30%), transparent 42%);
+    box-shadow:
+      inset 0 0 0 0.5px rgb(255 255 255 / 30%),
+      inset 0 -6px 14px -6px color-mix(in srgb, var(--ai-accent) 60%, black),
+      inset 0 3px 8px -4px rgb(255 255 255 / 55%);
+    pointer-events: none;
+  }
+}
+
+.ai-orb:has(> .nplus-orb-canvas) {
+  animation: none;
+}
+
+.nplus-orb-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  corner-shape: round;
+}
+
+.ai-hero-orb:has(> .nplus-orb-canvas) {
+  width: 92px;
+  height: 92px;
+  box-shadow:
+    0 22px 60px -16px var(--ai-accent),
+    0 0 0 1px color-mix(in srgb, var(--ai-accent) 20%, transparent);
+}

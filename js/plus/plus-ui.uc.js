@@ -139,6 +139,26 @@
       NP.prefs.watch("nplus-newtab", (on) => this.apply(on));
       // Add-ons (e.g. Bonjourr) may claim the new tab after startup; take it back.
       this.timer = setInterval(() => this.apply(NP.prefs.get("nplus-newtab")), 5000);
+      // The first tab of a fresh window is opened before this script runs, so
+      // it gets Firefox's page. Swap it (and the home page) for ours.
+      this.swapInitial();
+      const until = Date.now() + 15000;
+      this.onLoc = {
+        onLocationChange: (browser, progress, req, uri) => {
+          if (Date.now() > until) return gBrowser.removeTabsProgressListener(this.onLoc);
+          if (progress.isTopLevel) this.swapInitial(browser, uri);
+        },
+      };
+      gBrowser.addTabsProgressListener(this.onLoc);
+    },
+    swapInitial(only, uri) {
+      if (!NP.prefs.get("nplus-newtab")) return;
+      const stock = /^about:(newtab|home|welcome)\b/;
+      for (const b of only ? [only] : gBrowser.browsers) {
+        if (!stock.test((uri ?? b.currentURI).spec)) continue;
+        b.loadURI(Services.io.newURI(this.url), { triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal() });
+        if (b === gBrowser.selectedBrowser) setTimeout(() => (gURLBar.value = "", gURLBar.focus()), 300);
+      }
     },
     apply(on) {
       const { AboutNewTab } = this;
@@ -155,6 +175,9 @@
     },
     destroy() {
       clearInterval(this.timer);
+      try {
+        gBrowser.removeTabsProgressListener(this.onLoc);
+      } catch {}
     },
   });
 

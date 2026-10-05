@@ -151,11 +151,271 @@ function renderLinks() {
       } catch {}
       a.innerHTML = `<div class="tile glass"><img alt=""></div><span></span>`;
       a.querySelector("img").src = favicon(host);
+      neonIcon(host).then((shape) => {
+        if (!shape) return;
+        const tile = a.querySelector(".tile");
+        tile.append(Neon.add(shape, i));
+        tile.classList.add("is-neon");
+      });
       a.querySelector("span").textContent = l.name;
       return a;
     }),
   );
 }
+
+// ---------------- neon favicons ----------------
+// Each favicon becomes a single-colour neon sign, built like an After Effects
+// stack: fill colour (the live accent) -> bevel -> light sweep -> deep glow.
+// Here we only turn the icon into a mask: its shape at low strength, plus a
+// bright outline that reads as the glowing tube. Colours live in CSS.
+const neonCache = new Map();
+function neonIcon(host) {
+  if (!host) return Promise.resolve(null);
+  if (!neonCache.has(host)) neonCache.set(host, buildNeon(host).catch(() => null));
+  return neonCache.get(host);
+}
+
+async function buildNeon(host) {
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.src = `${BRIDGE}/favicon?host=${encodeURIComponent(host)}`;
+  await img.decode();
+  const N = 96, pad = 8, inner = N - pad * 2;
+  const c = document.createElement("canvas");
+  c.width = c.height = N;
+  const ctx = c.getContext("2d", { willReadFrequently: true });
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(img, pad, pad, inner, inner);
+  const px = ctx.getImageData(0, 0, N, N);
+  const d = px.data;
+  const at = (x, y) => (y * N + x) * 4;
+
+  // Most icons are a filled shape (YouTube's red box, Spotify's green disc)
+  // with the real symbol inside in a contrasting colour. Find that main
+  // colour; whatever differs from it is "ink" - the part that lights up.
+  const N2 = N * N;
+  let alpha = new Float32Array(N2);
+  for (let i = 0; i < N2; i++) alpha[i] = d[i * 4 + 3] / 255;
+  const split = (alpha) => {
+    const hist = new Map();
+    let solid = 0;
+    for (let i = 0; i < N2; i++) {
+      if (alpha[i] < 0.8) continue;
+      const j = i * 4;
+      solid++;
+      const key = ((d[j] >> 4) << 8) | ((d[j + 1] >> 4) << 4) | (d[j + 2] >> 4);
+      hist.set(key, (hist.get(key) ?? 0) + 1);
+    }
+    let mainKey = -1, mainCount = 0;
+    for (const [k, n] of hist) if (n > mainCount) (mainKey = k), (mainCount = n);
+    const main = [((mainKey >> 8) & 15) * 16 + 8, ((mainKey >> 4) & 15) * 16 + 8, (mainKey & 15) * 16 + 8];
+    const ink = new Float32Array(N2);
+    let inkSum = 0;
+    for (let i = 0; i < N2; i++) {
+      const j = i * 4;
+      const dist = Math.hypot(d[j] - main[0], d[j + 1] - main[1], d[j + 2] - main[2]) / 255;
+      ink[i] = Math.min(1, Math.max(0, (dist - 0.14) / 0.22)) * alpha[i];
+      inkSum += ink[i];
+    }
+    return { ink, twoTone: solid > 0 && mainCount / solid > 0.35, share: solid ? inkSum / solid : 0 };
+  };
+  // A logo on a solid tile (white square behind Telegram/GitHub): drop the
+  // tile colour first, so the logo itself is the shape.
+  const corner = [at(pad + 1, pad + 1), at(N - pad - 2, pad + 1), at(pad + 1, N - pad - 2), at(N - pad - 2, N - pad - 2)];
+  const cdist = (j, k) => Math.hypot(d[j] - d[k], d[j + 1] - d[k + 1], d[j + 2] - d[k + 2]) / 255;
+  if (corner.every((j) => d[j + 3] > 200 && cdist(j, corner[0]) < 0.1)) {
+    const bg = corner[0];
+    for (let i = 0; i < N2; i++) alpha[i] *= Math.min(1, Math.max(0, (cdist(i * 4, bg) - 0.12) / 0.2));
+  }
+  let { ink, twoTone, share } = split(alpha);
+  // The "ink" is itself a big body: that body is the shape, look inside it.
+  if (twoTone && share > 0.35) {
+    alpha = ink;
+    ({ ink, twoTone, share } = split(alpha));
+  }
+  // The main colour covers almost everything (a plain glyph): the glyph is the ink.
+  const inkOnly = !twoTone || share < 0.03;
+  if (inkOnly) ink = alpha;
+
+  // Outlines = how fast a value changes around each pixel (Sobel).
+  const sobel = (f, x, y) => {
+    const a = (dx, dy) => f[(y + dy) * N + x + dx];
+    const gx = a(1, -1) + 2 * a(1, 0) + a(1, 1) - a(-1, -1) - 2 * a(-1, 0) - a(-1, 1);
+    const gy = a(-1, 1) + 2 * a(0, 1) + a(1, 1) - a(-1, -1) - 2 * a(0, -1) - a(1, -1);
+    return Math.min(1, Math.hypot(gx, gy) * 0.9);
+  };
+  const out = ctx.createImageData(N, N);
+  for (let y = 1; y < N - 1; y++) {
+    for (let x = 1; x < N - 1; x++) {
+      const i = y * N + x;
+      // tube around the shape, the symbol fully lit, the body a faint haze
+      const v = inkOnly
+        ? Math.max(sobel(alpha, x, y), alpha[i] * 0.1)
+        : Math.max(sobel(alpha, x, y) * 0.95, ink[i], alpha[i] * 0.07);
+      const o = i * 4;
+      out.data[o] = out.data[o + 1] = out.data[o + 2] = 255;
+      out.data[o + 3] = v * 255;
+    }
+  }
+  ctx.putImageData(out, 0, 0);
+
+  // Bevel: light the shape like a raised surface (light from the top-left),
+  // using the blurred shape as a height map.
+  const h = new Float32Array(N2);
+  for (let i = 0; i < N2; i++) h[i] = out.data[i * 4 + 3] / 255;
+  for (let pass = 0; pass < 2; pass++) {
+    const t = h.slice();
+    for (let y = 1; y < N - 1; y++)
+      for (let x = 1; x < N - 1; x++) {
+        const i = y * N + x;
+        h[i] = (t[i] * 4 + t[i - 1] + t[i + 1] + t[i - N] + t[i + N]) / 8;
+      }
+  }
+  const bevel = ctx.createImageData(N, N);
+  const L = [-0.5, -0.6, 0.62];
+  for (let y = 1; y < N - 1; y++)
+    for (let x = 1; x < N - 1; x++) {
+      const i = y * N + x;
+      const nx = (h[i - 1] - h[i + 1]) * 3;
+      const ny = (h[i - N] - h[i + N]) * 3;
+      const lit = Math.max(0, (nx * L[0] + ny * L[1] + L[2]) / Math.hypot(nx, ny, 1));
+      const spec = Math.pow(lit, 14) * (out.data[i * 4 + 3] / 255);
+      bevel.data[i * 4] = bevel.data[i * 4 + 1] = bevel.data[i * 4 + 2] = 255;
+      bevel.data[i * 4 + 3] = Math.min(255, spec * 320);
+    }
+  const bc = document.createElement("canvas");
+  bc.width = bc.height = N;
+  bc.getContext("2d").putImageData(bevel, 0, 0);
+  return { mask: c, bevel: bc };
+}
+
+// Paints every neon icon: colour -> bevel -> light sweep -> deep glow.
+// Redrawn when the accent changes; the sweep runs now and then.
+const Neon = {
+  items: [],
+  S: 64, // css px of the canvas (icon + room for the glow)
+  add(shape, i) {
+    const cv = document.createElement("canvas");
+    cv.className = "neon";
+    const dpr = Math.max(2, devicePixelRatio);
+    cv.width = cv.height = this.S * dpr;
+    const item = { cv, shape, i, sweep: -1, dpr };
+    this.items.push(item);
+    this.draw(item);
+    this.watch();
+    return cv;
+  },
+  accent() {
+    const probe = (this.probe ??= document.createElement("canvas").getContext("2d", { willReadFrequently: true }));
+    probe.fillStyle = "#7aa2ff";
+    probe.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#7aa2ff";
+    probe.clearRect(0, 0, 1, 1);
+    probe.fillRect(0, 0, 1, 1);
+    const [r, g, b] = [...probe.getImageData(0, 0, 1, 1).data.slice(0, 3)].map((v) => v / 255);
+    // Neon has to glow: keep the hue, force it bright and saturated
+    // (dark album art would otherwise give a black sign).
+    const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+    let h = 0;
+    if (d) h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    h *= 60;
+    const sat = d < 0.06 ? 0.15 : 0.9;
+    const light = 0.6;
+    const k = (n) => (n + h / 30) % 12;
+    const a = sat * Math.min(light, 1 - light);
+    const f = (n) => light - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1));
+    return [f(0), f(8), f(4)].map((v) => Math.round(v * 255));
+  },
+  draw(item) {
+    const { cv, shape, dpr } = item;
+    const W = cv.width;
+    const icon = 40 * dpr;
+    const off = (W - icon) / 2;
+    const [r, g, b] = this.rgb ?? (this.rgb = this.accent());
+    const col = (k, a = 1) => `rgb(${Math.min(255, r * k)} ${Math.min(255, g * k)} ${Math.min(255, b * k)} / ${a})`;
+    // 1. colour
+    const L = (item.layer ??= document.createElement("canvas"));
+    L.width = L.height = W;
+    const lx = L.getContext("2d");
+    lx.imageSmoothingQuality = "high";
+    lx.drawImage(shape.mask, off, off, icon, icon);
+    lx.globalCompositeOperation = "source-in";
+    const grad = lx.createLinearGradient(off, off, off + icon * 0.4, off + icon);
+    grad.addColorStop(0, col(1.5));
+    grad.addColorStop(0.55, col(1));
+    grad.addColorStop(1, col(0.65));
+    lx.fillStyle = grad;
+    lx.fillRect(0, 0, W, W);
+    // 2. bevel
+    lx.globalCompositeOperation = "source-atop";
+    lx.globalAlpha = 0.8;
+    lx.drawImage(shape.bevel, off, off, icon, icon);
+    lx.globalAlpha = 1;
+    // 3. light sweep
+    if (item.sweep >= 0) {
+      const x = off - icon * 0.6 + item.sweep * icon * 2.2;
+      const sg = lx.createLinearGradient(x - icon * 0.25, 0, x + icon * 0.25, icon * 0.35);
+      sg.addColorStop(0, "rgb(255 255 255 / 0)");
+      sg.addColorStop(0.5, "rgb(255 255 255 / 0.9)");
+      sg.addColorStop(1, "rgb(255 255 255 / 0)");
+      lx.fillStyle = sg;
+      lx.fillRect(0, 0, W, W);
+    }
+    lx.globalCompositeOperation = "source-over";
+    // 4. deep glow, a tighter hot glow, then the sign itself
+    const ctx = cv.getContext("2d");
+    ctx.clearRect(0, 0, W, W);
+    // glow passes paint only the shadow: the sign is drawn off-canvas and
+    // its shadow is shifted back into place
+    const glow = (blur, color) => {
+      ctx.shadowColor = color;
+      ctx.shadowBlur = blur * dpr;
+      ctx.shadowOffsetX = W * 2;
+      ctx.drawImage(L, -W * 2, 0);
+    };
+    glow(24, col(1, 0.85));
+    glow(24, col(1, 0.5));
+    glow(9, col(1.2, 0.9));
+    glow(3, col(1.5, 0.9));
+    ctx.shadowColor = "transparent";
+    ctx.shadowOffsetX = 0;
+    ctx.drawImage(L, 0, 0);
+  },
+  redrawAll() {
+    this.rgb = this.accent();
+    for (const it of this.items) this.draw(it);
+  },
+  sweep(item, ms = 1100) {
+    if (item.sweeping) return;
+    item.sweeping = true;
+    const t0 = performance.now();
+    const step = (now) => {
+      const p = Math.min(1, (now - t0) / ms);
+      item.sweep = p < 1 ? 0.5 - 0.5 * Math.cos(p * Math.PI) : -1;
+      this.draw(item);
+      if (p < 1) requestAnimationFrame(step);
+      else item.sweeping = false;
+    };
+    requestAnimationFrame(step);
+  },
+  watch() {
+    if (this.watching) return;
+    this.watching = true;
+    // the accent follows the album art
+    new MutationObserver(() => {
+      if (this.accent().join() !== this.rgb?.join()) this.redrawAll();
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["style"] });
+    // a light sweep crosses the row every few seconds, one sign after another
+    setInterval(() => {
+      if (document.hidden) return;
+      this.items.filter((it) => it.cv.isConnected).forEach((it, k) => setTimeout(() => this.sweep(it), k * 140));
+    }, 7000);
+    document.addEventListener("pointerover", (e) => {
+      const cv = e.target.closest?.(".link")?.querySelector("canvas.neon");
+      const it = cv && this.items.find((x) => x.cv === cv);
+      if (it) this.sweep(it, 700);
+    });
+  },
+};
 
 // ---------------- weather ----------------
 const WMO = {

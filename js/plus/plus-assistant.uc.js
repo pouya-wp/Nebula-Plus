@@ -212,6 +212,8 @@
         ]),
       ]);
       document.body.append(this.panel);
+      // the watercolor orb (plus-orb.uc.js) lives in the header and the welcome screen
+      for (const el of this.panel.querySelectorAll(".ai-orb, .ai-hero-orb")) NP.orb?.attach(el);
       this.thread = this.panel.querySelector(".ai-thread");
       this.input = this.panel.querySelector(".ai-input");
       this.input.addEventListener("keydown", (e) => {
@@ -269,6 +271,7 @@
       this.panel.getBoundingClientRect();
       this.panel.setAttribute("open", "true");
       this.button.setAttribute("open", "true");
+      NP.orb?.wake();
       this.showEngine();
       setTimeout(() => this.input.focus(), 50);
       // warm up Gemini in the background so the first answer is quick
@@ -575,7 +578,12 @@
       const bot = this.bubble("bot", "");
       bot.setAttribute("thinking", "true");
       const out = bot.querySelector(".ai-text");
+      if (NP.orb) NP.orb.busy = true;
+      let shown = 0;
       const show = (t) => {
+        // every new chunk of the answer is a little surge in the orb
+        if (t.length > shown) NP.orb?.pulse(Math.min(0.5, (t.length - shown) / 300));
+        shown = t.length;
         out.innerHTML = renderMarkdown(t);
         this.thread.scrollTop = this.thread.scrollHeight;
       };
@@ -606,6 +614,7 @@
         bot.setAttribute("error", "true");
       } finally {
         bot.removeAttribute("thinking");
+        if (NP.orb) NP.orb.busy = false;
         this.busy = false;
         this.panel.removeAttribute("busy");
       }

@@ -378,6 +378,24 @@ body[playing] #ambient {
     }
   }
 
+  /* ---- neon sign (painted by Neon in app.js) ---- */
+  & .tile {
+    position: relative;
+
+    &.is-neon img {
+      display: none;
+    }
+
+    & canvas.neon {
+      width: 64px;
+      height: 64px;
+      margin: -4px;
+      pointer-events: none;
+      animation: neon-breathe 5s ease-in-out infinite;
+      animation-delay: calc(var(--i) * -0.7s);
+    }
+  }
+
   & span {
     max-width: 100%;
     overflow: hidden;
@@ -1182,5 +1200,11 @@ i {
 
   &:empty {
     display: none;
+  }
+}
+
+@keyframes neon-breathe {
+  50% {
+    opacity: 0.82;
   }
 }
