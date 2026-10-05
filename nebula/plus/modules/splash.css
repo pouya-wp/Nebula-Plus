@@ -1,0 +1,130 @@
+/* ---------------- Opening / closing motion (plus-splash.uc.js) ---------------- */
+
+@property --sp-iris {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: -160px;
+}
+
+#nplus-splash {
+  --ai-accent: color-mix(in oklch, var(--nplus-accent) 55%, #8b7bff);
+  --sp-ease: cubic-bezier(0.65, 0, 0.35, 1);
+
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 18px;
+  /* frosted glass over the real browser, not a separate scene */
+  background: light-dark(rgb(245 245 248 / 55%), rgb(10 10 14 / 62%));
+  backdrop-filter: blur(36px) saturate(140%);
+  -moz-window-dragging: no-drag;
+  /* the iris: a soft hole that opens out of the orb */
+  mask: radial-gradient(circle at 50% calc(50% - 14px), transparent var(--sp-iris), #000 calc(var(--sp-iris) + 160px));
+  transition: --sp-iris 0.72s var(--sp-ease);
+
+  &[phase="out"] {
+    --sp-iris: 120vmax;
+  }
+}
+
+.sp-orb {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  corner-shape: round;
+  isolation: isolate;
+  opacity: 0;
+  scale: 0.82;
+  filter: blur(10px);
+  box-shadow: 0 18px 50px -18px var(--ai-accent);
+  transition:
+    opacity 0.42s ease,
+    scale 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.45s ease;
+
+  /* glass rim */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    corner-shape: round;
+    background: radial-gradient(120% 90% at 30% 18%, rgb(255 255 255 / 28%), transparent 42%);
+    box-shadow:
+      inset 0 0 0 0.5px rgb(255 255 255 / 30%),
+      inset 0 3px 8px -4px rgb(255 255 255 / 50%);
+  }
+
+  #nplus-splash[phase="show"] & {
+    opacity: 1;
+    scale: 1;
+    filter: none;
+  }
+
+  #nplus-splash[phase="out"] & {
+    opacity: 0;
+    scale: 1.5;
+    filter: blur(6px);
+    transition:
+      opacity 0.4s ease,
+      scale 0.72s var(--sp-ease),
+      filter 0.5s ease;
+  }
+}
+
+.sp-word {
+  font-family: var(--nplus-ui-font, "Meem"), "Meem", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.55em;
+  margin-inline-start: 0.55em; /* keep the tracked word optically centred */
+  text-transform: uppercase;
+  color: light-dark(rgb(0 0 0 / 55%), rgb(255 255 255 / 60%));
+  opacity: 0;
+  translate: 0 6px;
+  transition:
+    opacity 0.5s ease 0.12s,
+    translate 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.12s,
+    letter-spacing 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+
+  #nplus-splash[phase="show"] & {
+    opacity: 1;
+    translate: 0 0;
+    letter-spacing: 0.42em;
+  }
+
+  #nplus-splash[phase="out"] & {
+    opacity: 0;
+    letter-spacing: 0.6em;
+    transition:
+      opacity 0.25s ease,
+      letter-spacing 0.6s ease;
+  }
+}
+
+/* the browser settles in as the glass melts */
+:root[nplus-splash] #browser {
+  transition:
+    scale 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.34s ease,
+    filter 0.34s ease;
+}
+
+:root[nplus-splash="in"] #browser {
+  scale: 1.025;
+}
+
+/* closing: settle back and dim */
+:root[nplus-splash="close"] #browser {
+  transition:
+    scale 0.34s cubic-bezier(0.4, 0, 1, 1),
+    opacity 0.34s ease-in,
+    filter 0.34s ease-in;
+  scale: 0.975;
+  opacity: 0;
+  filter: blur(6px);
+}

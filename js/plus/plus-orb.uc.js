@@ -165,6 +165,8 @@
       cv.className = "nplus-orb-canvas";
       el.append(cv);
       this.targets.add(cv);
+      this.paletteKey = null;
+      if (this.gl) this.palette();
       this.wake();
       return cv;
     },
@@ -225,7 +227,7 @@
     // read the accent the panel is using right now
     accent() {
       const probe = (this.probe ??= document.createElementNS("http://www.w3.org/1999/xhtml", "canvas").getContext("2d", { willReadFrequently: true }));
-      const panel = document.getElementById("nplus-ai");
+      const panel = (this.accentFrom?.isConnected && this.accentFrom) || document.getElementById("nplus-ai");
       let color = "#0181fe";
       if (panel) {
         const s = getComputedStyle(panel).getPropertyValue("--ai-accent").trim();

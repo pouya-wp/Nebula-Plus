@@ -150,7 +150,10 @@ function renderLinks() {
         host = new URL(l.url).hostname;
       } catch {}
       a.innerHTML = `<div class="tile glass"><img alt=""></div><span></span>`;
-      a.querySelector("img").src = favicon(host);
+      // the bridge also finds icons of new/private sites; DuckDuckGo if it's off
+      const img = a.querySelector("img");
+      img.onerror = () => ((img.onerror = null), (img.src = favicon(host)));
+      img.src = `${BRIDGE}/favicon?host=${encodeURIComponent(host)}`;
       neonIcon(host).then((shape) => {
         if (!shape) return;
         const tile = a.querySelector(".tile");

@@ -212,15 +212,53 @@ app.MapGet("/favicon", async (string host) =>
     if (host.Length == 0 || host.Length > 200 || host.Any(c => !(char.IsLetterOrDigit(c) || c == '.' || c == '-')))
         return Results.BadRequest();
     if (favCache.TryGetValue(host, out var hit)) return Results.File(hit.data, hit.type);
-    foreach (var url in new[] { $"https://www.google.com/s2/favicons?domain={host}&sz=128", $"https://icons.duckduckgo.com/ip3/{host}.ico" })
+
+    // 1. the site's own icons (the only source for new or private sites),
+    // 2. /favicon.ico, 3. the big icon services
+    var candidates = new List<string>();
+    try
+    {
+        var html = await favHttp.GetStringAsync($"https://{host}/");
+        var found = new List<(int rank, string href)>();
+        foreach (System.Text.RegularExpressions.Match m in System.Text.RegularExpressions.Regex.Matches(html, @"<link\b[^>]*>", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
+        {
+            var tag = m.Value;
+            var rel = System.Text.RegularExpressions.Regex.Match(tag, @"rel\s*=\s*[""']?([^""'>]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Groups[1].Value.ToLowerInvariant();
+            var href = System.Text.RegularExpressions.Regex.Match(tag, @"href\s*=\s*[""']?([^""'\s>]+)", System.Text.RegularExpressions.RegexOptions.IgnoreCase).Groups[1].Value;
+            if (!rel.Contains("icon") || href.Length == 0) continue;
+            var svg = href.Contains(".svg", StringComparison.OrdinalIgnoreCase) || tag.Contains("svg+xml", StringComparison.OrdinalIgnoreCase);
+            // big raster first; svg last (it may need patching to draw)
+            var rank = rel.Contains("apple-touch") ? 0 : svg ? 2 : 1;
+            found.Add((rank, new Uri(new Uri($"https://{host}/"), System.Net.WebUtility.HtmlDecode(href)).ToString()));
+        }
+        candidates.AddRange(found.OrderBy(f => f.rank).Select(f => f.href));
+    }
+    catch { }
+    candidates.Add($"https://{host}/favicon.ico");
+    candidates.Add($"https://www.google.com/s2/favicons?domain={host}&sz=128");
+    candidates.Add($"https://icons.duckduckgo.com/ip3/{host}.ico");
+
+    foreach (var url in candidates)
     {
         try
         {
             using var res = await favHttp.GetAsync(url);
             if (!res.IsSuccessStatusCode) continue;
+            var type = res.Content.Headers.ContentType?.MediaType ?? "";
             var data = await res.Content.ReadAsByteArrayAsync();
             if (data.Length < 100) continue;
-            var type = res.Content.Headers.ContentType?.MediaType ?? "image/png";
+            if (type.Contains("svg") || url.EndsWith(".svg", StringComparison.OrdinalIgnoreCase))
+            {
+                // canvases can't draw an svg without a size: give it one
+                var text = System.Text.Encoding.UTF8.GetString(data);
+                var open = System.Text.RegularExpressions.Regex.Match(text, @"<svg\b[^>]*>");
+                if (!open.Success) continue;
+                if (!System.Text.RegularExpressions.Regex.IsMatch(open.Value, @"\swidth\s*="))
+                    text = text.Remove(open.Index, 4).Insert(open.Index, "<svg width=\"128\" height=\"128\"");
+                data = System.Text.Encoding.UTF8.GetBytes(text);
+                type = "image/svg+xml";
+            }
+            else if (!type.StartsWith("image/")) continue;
             favCache[host] = (data, type);
             return Results.File(data, type);
         }
