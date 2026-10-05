@@ -1230,8 +1230,8 @@ i {
     breathe-lean 6.3s steps(16) infinite !important;
 }
 
-:root[idle] *,
-:root[idle] *::before,
-:root[idle] *::after {
+/* only the endless ambient loops rest; entrances and lyrics always play */
+:root[idle] :is(#w-icon, canvas.neon, #clock-sep),
+:root[idle] .glow-host::after {
   animation-play-state: paused !important;
 }

@@ -946,8 +946,8 @@ loadWeek();
 setInterval(() => player.tick(), 250);
 
 // ---------------- lean: rest while nobody is looking ----------------
-const setIdle = () => document.documentElement.toggleAttribute("idle", document.hidden || !document.hasFocus());
-addEventListener("focus", setIdle);
-addEventListener("blur", setIdle);
+// (only when the tab is really out of sight: on a fresh new tab the focus
+// sits in the URL bar, and that must not count as "away")
+const setIdle = () => document.documentElement.toggleAttribute("idle", document.hidden);
 document.addEventListener("visibilitychange", setIdle);
 setIdle();
