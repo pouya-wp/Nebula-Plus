@@ -8,6 +8,7 @@
   }
 
   .nplus-card-ring,
+  .nplus-light,
   .tabbrowser-tab > .tab-stack > .tab-background::after,
   #urlbar > .urlbar-background::after,
   #nplus-island::after,
@@ -34,6 +35,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .nplus-card-ring,
+  .nplus-light,
   .tabbrowser-tab > .tab-stack > .tab-background::after,
   #urlbar > .urlbar-background::after,
   #nplus-island::after,
@@ -74,10 +76,6 @@
       nplus-breathe-ring-lean calc(var(--nplus-glow-speed) * 0.7) steps(14) infinite;
   }
 
-  /* the island glows and spins only while it is on screen */
-  #nplus-island::after {
-    animation: nplus-orbit 7s steps(140) infinite;
-  }
 
   .nplus-island-art:not([icon]) {
     animation: nplus-spin 6s steps(180) infinite;
@@ -93,6 +91,7 @@
     & .tabbrowser-tab > .tab-stack > .tab-background::after,
     & .tabbrowser-tab > .tab-stack > .tab-background,
     & .nplus-card-ring,
+    & .nplus-light,
     & #urlbar > .urlbar-background::after,
     & #nplus-island::after,
     & .nplus-island-art,
@@ -104,5 +103,16 @@
     & .nplus-lyrics-stage-bg {
       animation-play-state: paused !important;
     }
+  }
+}
+
+/* lean: the theme's hover gradient doesn't flow (it was re-blurred on every
+   frame while you hovered a tab); it still fades in and out */
+@media (-moz-pref("nplus-lean")) {
+  .tabbrowser-tab:hover::before,
+  .tabbrowser-tab::before,
+  .tab-close-button,
+  .tab-reset-button {
+    animation-play-state: paused !important;
   }
 }

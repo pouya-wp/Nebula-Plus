@@ -588,7 +588,7 @@
       const full = NP.prefs.get("nplus-media-full-card");
       NP.setRootAttr("nplus-zmc-docked", full);
       if (full) {
-        NP.root.style.setProperty("--nplus-zmc-bottom", `${Math.max(0, parentRect.bottom - floor) + 6}px`);
+        NP.setRootVar("--nplus-zmc-bottom", `${Math.max(0, parentRect.bottom - floor) + 6}px`);
         const r = zmc.getBoundingClientRect();
         if (!zmc.hidden && r.height > 0) {
           anchorTop = r.top;
@@ -604,7 +604,7 @@
         dock.style.bottom = `${Math.max(0, parentRect.bottom - anchorTop) + 6}px`;
         reserve += Math.ceil(dock.getBoundingClientRect().height) + 10;
       }
-      NP.root.style.setProperty("--nplus-dock-h", `${reserve}px`);
+      NP.setRootVar("--nplus-dock-h", `${reserve}px`);
     },
 
     render(m) {
@@ -813,16 +813,11 @@
       if (NP.prefs.get("nplus-beat-pulse")) {
         const bass = (this.bands[0] + this.bands[1] + this.bands[2] + this.bands[3]) / 4;
         this.bassAvg = (this.bassAvg ?? bass) * 0.92 + bass * 0.08;
+        // the beat is an event: the lights answer it with a short GPU
+        // animation (a root variable would restyle the whole window)
         if (bass > this.bassAvg * 1.25 && bass > 0.35 && now - (this.lastBeat ?? 0) > 260) {
           this.lastBeat = now;
-          this.beat = 1;
-        }
-        this.beat = Math.max(0, (this.beat ?? 0) - (lean ? 0.11 : 0.06));
-        // a root variable restyles the whole window: only write real changes
-        const beat = this.beat.toFixed(2);
-        if (beat !== this.beatShown) {
-          this.beatShown = beat;
-          NP.root.style.setProperty("--nplus-beat", beat);
+          NP.emit("beat", Math.min(1, bass));
         }
       }
       const color = (this.color ??= getComputedStyle(NP.root).getPropertyValue("--nplus-accent").trim() || "rgb(140 160 255)");

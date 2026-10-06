@@ -71,18 +71,22 @@
 
 /* ---- Orbiting glow ring (enabled in glow.css) ---- */
 .nplus-card-ring {
-  /* soft inner light, see glow.css */
+  /* clips the travelling light (glow.css) to the card's shape */
   display: none;
   position: absolute;
   inset: 0;
   z-index: 2;
   border-radius: inherit;
   corner-shape: var(--nplus-corner);
-  box-shadow: var(--nplus-glow-light);
-  mask: var(--nplus-glow-mask);
-  animation: var(--nplus-ring-anim);
+  overflow: clip;
   pointer-events: none;
-  opacity: calc(var(--nplus-ring-in) * var(--nplus-breath) * var(--nplus-glow-max));
+
+  > .nplus-light-card {
+    display: block;
+    width: 200px;
+    height: 46px;
+    offset-path: inset(0 round 18px);
+  }
 }
 
 /* ---- Typography ---- */

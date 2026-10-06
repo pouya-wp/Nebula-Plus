@@ -72,7 +72,7 @@
         color = icon ? await NP.color.fromImage(icon) : null;
       } catch {}
       if (icon !== this.icon) return;
-      if (color) NP.root.style.setProperty("--nplus-page-color", `rgb(${color.join(" ")})`);
+      if (color) NP.setRootVar("--nplus-page-color", `rgb(${color.join(" ")})`);
       else NP.root.style.removeProperty("--nplus-page-color");
     },
     destroy() {

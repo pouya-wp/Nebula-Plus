@@ -318,7 +318,6 @@
     leaveFocus() {
       if (NP.root.hasAttribute("nplus-focus")) NP.emit?.("focus", { on: false });
       NP.root.removeAttribute("nplus-focus");
-      NP.root.style.removeProperty("--nplus-focus-p");
       if (window.gZenCompactModeManager && this.wasCompact === false) gZenCompactModeManager.preference = false;
       this.wasCompact = undefined;
     },
@@ -357,7 +356,7 @@
       this.button.toggleAttribute("running", this.running);
       this.button.style.setProperty("--pm-p", p);
       this.button.querySelector(".pm-time").textContent = this.phase === "idle" ? "" : time;
-      if (this.phase === "focus") NP.root.style.setProperty("--nplus-focus-p", p.toFixed(4));
+      NP.lights?.focus({ phase: this.phase, running: this.running, end: this.end, remaining: this.remaining ?? 0, total: this.total });
 
       const q = (sel) => this.panel.querySelector(sel);
       this.panel.setAttribute("phase", this.phase);

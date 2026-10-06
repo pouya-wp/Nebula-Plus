@@ -87,7 +87,7 @@ ${child}
     async start() {
       await this.reloadCSS(false);
       await this.snapshot();
-      this.timer = setInterval(() => this.check(), 600);
+      this.timer = setInterval(() => this.check(), 1000);
       console.log("[Nebula+] 🔥 Live dev mode on");
     },
 
@@ -130,13 +130,12 @@ ${child}
       try {
         let css = false;
         let js = false;
-        for (const path of [...this.cssFiles, ...(await this.jsFiles())]) {
-          let stamp;
-          try {
-            stamp = (await IOUtils.stat(path)).lastModified;
-          } catch {
-            continue;
-          }
+        const paths = [...this.cssFiles, ...(await this.jsFiles())];
+        // all at once (off the main thread), not one after another
+        const stamps = await Promise.all(paths.map((p) => IOUtils.stat(p).then((s) => s.lastModified, () => null)));
+        for (const [i, path] of paths.entries()) {
+          const stamp = stamps[i];
+          if (stamp == null) continue;
           if (this.stamps.get(path) !== stamp) {
             this.stamps.set(path, stamp);
             if (path.endsWith(".js")) js = true;

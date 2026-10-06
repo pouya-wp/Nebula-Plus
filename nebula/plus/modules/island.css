@@ -63,20 +63,25 @@
     display: none;
   }
 
-  /* soft light drifting along the inside of the pill */
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    corner-shape: round;
-    box-shadow:
-      inset 0 0 14px 0 color-mix(in srgb, var(--nplus-island-color) 70%, transparent),
-      inset 0 0 3px 0 color-mix(in srgb, var(--nplus-island-color) 50%, white);
-    mask: var(--nplus-glow-mask);
-    opacity: 0.55;
-    animation: nplus-orbit 7s linear infinite;
-    pointer-events: none;
+  /* soft light drifting along the inside of the pill (plus-lights.uc.js) */
+  overflow: clip;
+
+  > .nplus-light-island {
+    display: block;
+    width: 150px;
+    height: 40px;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--nplus-island-color) 70%, white),
+      color-mix(in srgb, var(--nplus-island-color) 35%, transparent) 50%,
+      transparent
+    );
+    offset-path: inset(0 round 99px);
+    animation: nplus-travel 7s linear infinite, nplus-island-glow 1s ease both;
+  }
+
+  &:not([open]) > .nplus-light-island {
+    animation-play-state: paused;
   }
 }
 
@@ -145,5 +150,15 @@
       linear-gradient(#000 0 0);
     padding: 2px;
     transition: background 0.4s linear;
+  }
+}
+
+@keyframes nplus-island-glow {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 0.5;
   }
 }

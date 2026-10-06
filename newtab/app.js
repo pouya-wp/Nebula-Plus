@@ -176,10 +176,35 @@ function renderLinks() {
 // Here we only turn the icon into a mask: its shape at low strength, plus a
 // bright outline that reads as the glowing tube. Colours live in CSS.
 const neonCache = new Map();
+// The shape is built once (pixel work) and kept for a week as two small
+// images, so a new tab just loads them instead of rebuilding every time.
 function neonIcon(host) {
   if (!host) return Promise.resolve(null);
-  if (!neonCache.has(host)) neonCache.set(host, buildNeon(host).catch(() => null));
+  if (!neonCache.has(host)) neonCache.set(host, neonCached(host).catch(() => null));
   return neonCache.get(host);
+}
+
+async function neonCached(host) {
+  const key = `nplus-neon3:${host}`;
+  try {
+    const hit = JSON.parse(localStorage.getItem(key) || "null");
+    if (hit && Date.now() - hit.t < 7 * 86400000) {
+      const load = (src) => {
+        const im = new Image();
+        im.src = src;
+        return im.decode().then(() => im);
+      };
+      const [mask, bevel] = await Promise.all([load(hit.mask), load(hit.bevel)]);
+      return { mask, bevel };
+    }
+  } catch {}
+  // first time: wait for a quiet moment so the page opens smoothly
+  await new Promise((r) => (window.requestIdleCallback ? requestIdleCallback(r, { timeout: 2000 }) : setTimeout(r, 600)));
+  const shape = await buildNeon(host);
+  try {
+    localStorage.setItem(key, JSON.stringify({ t: Date.now(), mask: shape.mask.toDataURL(), bevel: shape.bevel.toDataURL() }));
+  } catch {}
+  return shape;
 }
 
 async function buildNeon(host) {
@@ -368,23 +393,32 @@ const Neon = {
       lx.fillRect(0, 0, W, W);
     }
     lx.globalCompositeOperation = "source-over";
-    // 4. deep glow, a tighter hot glow, then the sign itself
+    // 4. deep glow, a tighter hot glow, then the sign itself.
+    // The blurred glow is the expensive part: it's rendered once per colour
+    // and cached; a sweep frame only recomposes the sign on top of it.
     const ctx = cv.getContext("2d");
+    const key = `${r},${g},${b}`;
+    if (item.glowKey !== key || !item.glowLayer) {
+      const G = (item.glowLayer ??= document.createElement("canvas"));
+      G.width = G.height = W;
+      const gx = G.getContext("2d");
+      gx.clearRect(0, 0, W, W);
+      // glow passes paint only the shadow: the sign is drawn off-canvas and
+      // its shadow is shifted back into place
+      const glow = (blur, color) => {
+        gx.shadowColor = color;
+        gx.shadowBlur = blur * dpr;
+        gx.shadowOffsetX = W * 2;
+        gx.drawImage(L, -W * 2, 0);
+      };
+      glow(24, col(1, 0.85));
+      glow(24, col(1, 0.5));
+      glow(9, col(1.2, 0.9));
+      glow(3, col(1.5, 0.9));
+      item.glowKey = key;
+    }
     ctx.clearRect(0, 0, W, W);
-    // glow passes paint only the shadow: the sign is drawn off-canvas and
-    // its shadow is shifted back into place
-    const glow = (blur, color) => {
-      ctx.shadowColor = color;
-      ctx.shadowBlur = blur * dpr;
-      ctx.shadowOffsetX = W * 2;
-      ctx.drawImage(L, -W * 2, 0);
-    };
-    glow(24, col(1, 0.85));
-    glow(24, col(1, 0.5));
-    glow(9, col(1.2, 0.9));
-    glow(3, col(1.5, 0.9));
-    ctx.shadowColor = "transparent";
-    ctx.shadowOffsetX = 0;
+    ctx.drawImage(item.glowLayer, 0, 0);
     ctx.drawImage(L, 0, 0);
   },
   redrawAll() {
@@ -395,10 +429,15 @@ const Neon = {
     if (item.sweeping) return;
     item.sweeping = true;
     const t0 = performance.now();
+    let last = 0;
     const step = (now) => {
       const p = Math.min(1, (now - t0) / ms);
-      item.sweep = p < 1 ? 0.5 - 0.5 * Math.cos(p * Math.PI) : -1;
-      this.draw(item);
+      // ~30 fps is plenty for a slow sweep of light
+      if (now - last >= 30 || p >= 1) {
+        last = now;
+        item.sweep = p < 1 ? 0.5 - 0.5 * Math.cos(p * Math.PI) : -1;
+        this.draw(item);
+      }
       if (p < 1) requestAnimationFrame(step);
       else item.sweeping = false;
     };
@@ -1304,6 +1343,14 @@ function applyVisibility() {
   if (!S.words) $("#words").hidden = true;
   $("#hafez-btn").hidden = !S.hafez;
   if (!S.player) $("#player").hidden = true;
+}
+
+// ---------------- edge lights (GPU) ----------------
+for (const host of document.querySelectorAll(".glow-host")) {
+  const clip = document.createElement("div");
+  clip.className = "nt-light-clip";
+  clip.append(Object.assign(document.createElement("div"), { className: "nt-light" }));
+  host.prepend(clip);
 }
 
 // ---------------- boot ----------------

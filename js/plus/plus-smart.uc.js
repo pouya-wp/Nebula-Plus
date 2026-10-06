@@ -378,7 +378,7 @@
         NP.color._cache.delete(url);
         const c = await NP.color.fromImage(url);
         if (!c) return;
-        NP.root.style.setProperty("--nplus-wall", `rgb(${c.join(" ")})`);
+        NP.setRootVar("--nplus-wall", `rgb(${c.join(" ")})`);
         NP.setRootAttr("nplus-has-wall", true);
       } catch {}
     },

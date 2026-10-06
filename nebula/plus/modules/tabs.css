@@ -294,13 +294,18 @@
 
 /* ---------------- Focus hourglass ----------------
    During focus mode the active tab slowly fills with color, like sand. */
-:root[nplus-focus] .tabbrowser-tab:is([selected], [visuallyselected]) > .tab-stack > .tab-background {
-  background-image: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--nplus-accent) 22%, transparent) calc(var(--nplus-focus-p, 0) * 100%),
-    transparent calc(var(--nplus-focus-p, 0) * 100% + 0.5%)
-  ) !important;
-  transition: background-image 1s linear;
+:root[nplus-focus] .tabbrowser-tab:is([selected], [visuallyselected]) > .tab-stack > .tab-background > .nplus-light-focus {
+  /* filled by one GPU animation for the whole session (plus-lights.uc.js) */
+  display: block;
+  inset: 0;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  background: color-mix(in srgb, var(--nplus-accent) 22%, transparent);
+  offset-path: none;
+  transform-origin: left center;
+  transform: scaleX(0);
+  animation: none;
 }
 
 /* ---------------- Live mic glow ----------------
@@ -331,17 +336,8 @@
 }
 
 /* ---------------- Beat pulse ----------------
-   The active tab's inner light and the ambience swell gently on the beat. */
-@media (-moz-pref("nplus-beat-pulse")) {
-  :root[nplus-viz] .tabbrowser-tab:is([selected], [visuallyselected]) > .tab-stack > .tab-background::after {
-    opacity: calc(var(--nplus-ring-in) * var(--nplus-breath) * var(--nplus-glow-max) + var(--nplus-beat, 0) * 0.35) !important;
-  }
-
-  :root[nplus-viz][nplus-has-ambient] #zen-main-app-wrapper::after {
-    opacity: calc(0.45 + var(--nplus-beat, 0) * 0.12);
-    transition: opacity 0.12s ease-out;
-  }
-}
+   The active tab's light and the ambience swell gently on the beat
+   (driven by plus-lights.uc.js with GPU animations, not CSS variables). */
 
 /* ---------------- Wallpaper accent ----------------
    With no music setting the color, the accent comes from your wallpaper. */

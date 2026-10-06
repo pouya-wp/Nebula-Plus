@@ -169,10 +169,20 @@
 
     root: document.documentElement,
 
+    // root attributes and variables restyle the whole window: write real changes only
     setRootAttr(name, value) {
-      if (value === null || value === undefined || value === false)
-        this.root.removeAttribute(name);
-      else this.root.setAttribute(name, value === true ? "true" : value);
+      if (value === null || value === undefined || value === false) {
+        if (this.root.hasAttribute(name)) this.root.removeAttribute(name);
+      } else {
+        const v = value === true ? "true" : String(value);
+        if (this.root.getAttribute(name) !== v) this.root.setAttribute(name, v);
+      }
+    },
+    setRootVar(name, value) {
+      const v = value == null ? "" : String(value);
+      if (this.root.style.getPropertyValue(name) === v) return;
+      if (v) this.root.style.setProperty(name, v);
+      else this.root.style.removeProperty(name);
     },
 
     formatTime(seconds) {
@@ -548,7 +558,7 @@
   // ================= Extra modules =================
   // Newer modules are loaded from here rather than listed in Sine's
   // mods.json, so adding one needs no reinstall or restart.
-  for (const file of ["plus-gemini.uc.js", "plus-orb.uc.js", "plus-splash.uc.js", "plus-palette.uc.js", "plus-tabs.uc.js", "plus-meet.uc.js", "plus-smart.uc.js", "plus-assistant.uc.js", "plus-galaxy.uc.js", "plus-class.uc.js", "plus-ambilight.uc.js", "plus-keyboard.uc.js", "plus-watch.uc.js", "plus-wormhole.uc.js", "plus-remix.uc.js", "plus-lens.uc.js", "plus-notes.uc.js", "plus-words.uc.js", "plus-bubble.uc.js", "plus-pdf.uc.js", "plus-reader.uc.js", "plus-xray.uc.js", "plus-askbar.uc.js", "plus-devmode.uc.js", "plus-usage.uc.js", "plus-timemachine.uc.js", "plus-today.uc.js", "plus-inbox.uc.js", "plus-memo.uc.js", "plus-snap.uc.js", "plus-proxy.uc.js", "plus-todo.uc.js", "plus-shield.uc.js", "plus-autolean.uc.js", "plus-wrapped.uc.js", "plus-voice.uc.js", "plus-prices.uc.js", "plus-translate.uc.js", "plus-genie.uc.js", "plus-clip.uc.js", "plus-modes.uc.js"]) {
+  for (const file of ["plus-gemini.uc.js", "plus-orb.uc.js", "plus-lights.uc.js", "plus-splash.uc.js", "plus-palette.uc.js", "plus-tabs.uc.js", "plus-meet.uc.js", "plus-smart.uc.js", "plus-assistant.uc.js", "plus-galaxy.uc.js", "plus-class.uc.js", "plus-ambilight.uc.js", "plus-keyboard.uc.js", "plus-watch.uc.js", "plus-wormhole.uc.js", "plus-remix.uc.js", "plus-lens.uc.js", "plus-notes.uc.js", "plus-words.uc.js", "plus-bubble.uc.js", "plus-pdf.uc.js", "plus-reader.uc.js", "plus-xray.uc.js", "plus-askbar.uc.js", "plus-devmode.uc.js", "plus-usage.uc.js", "plus-timemachine.uc.js", "plus-today.uc.js", "plus-inbox.uc.js", "plus-memo.uc.js", "plus-snap.uc.js", "plus-proxy.uc.js", "plus-todo.uc.js", "plus-shield.uc.js", "plus-autolean.uc.js", "plus-wrapped.uc.js", "plus-voice.uc.js", "plus-prices.uc.js", "plus-translate.uc.js", "plus-genie.uc.js", "plus-clip.uc.js", "plus-modes.uc.js"]) {
     try {
       Services.scriptloader.loadSubScript(`chrome://sine/content/Nebula/js/plus/${file}?t=${Date.now()}`, window);
     } catch (err) {
