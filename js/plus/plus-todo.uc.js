@@ -209,7 +209,11 @@
           NP.html("div", { class: "td-count" }),
         ]),
         NP.html("div", { class: "td-add" }, [
-          NP.html("input", { class: "np-search td-input", type: "text", dir: "auto", placeholder: "یه کار بنویس… مثلاً: خرید نون فردا ساعت ۱۸ !! #خونه" }),
+          NP.html("label", { class: "td-field" }, [
+            NP.html("span", { class: "td-plus", text: "+" }),
+            NP.html("input", { class: "td-input", type: "text", dir: "auto", placeholder: "کار جدید…  مثلاً «خرید نون فردا ساعت ۱۸ !! #خونه»" }),
+            NP.html("kbd", { class: "td-enter", text: "Enter ↵" }),
+          ]),
           NP.html("div", { class: "td-preview" }),
         ]),
         NP.html("div", { class: "np-tabs" }, [
