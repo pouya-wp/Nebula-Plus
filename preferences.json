@@ -1321,6 +1321,13 @@
   },
   {
     "type": "checkbox",
+    "property": "nplus-notes",
+    "label": "Sticky notes & lasting highlights on pages (Ctrl+Alt+H / N, notebook Ctrl+Alt+B)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
     "property": "nplus-pdf-skin",
     "label": "PDF reader in the Nebula look (glass toolbar, rounded pages, Meem)",
     "defaultValue": true,
