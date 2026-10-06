@@ -861,7 +861,6 @@ body[playing] #ambient {
 
 /* to-do card */
 #todo {
-  width: 260px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -1561,11 +1560,14 @@ body[aurora][playing] #aurora {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  width: 260px;
 
   > .widget {
     flex: 1;
     min-height: 0;
-    width: 260px;
+    width: auto;
+    box-sizing: border-box;
+    align-self: stretch;
   }
 
   > #words:not([hidden]) ~ #todo {
@@ -1580,7 +1582,6 @@ body[aurora][playing] #aurora {
 
 /* ---------------- word review ---------------- */
 #words {
-  width: 240px;
   min-height: 0;
   flex: none !important;
   display: flex;
