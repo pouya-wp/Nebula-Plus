@@ -215,20 +215,63 @@
           }
           if (!dl.succeeded || this.seen.has(dl)) return;
           this.seen.add(dl);
-          if (!NP.prefs.get("nplus-download-island")) return;
-          const name = PathUtils.filename(dl.target.path);
-          NP.island?.show({
-            id: "download-done",
-            title: name,
-            subtitle: "دانلود تموم شد · کلیک کن تا باز بشه",
-            icon: `moz-icon://${encodeURIComponent(name)}?size=32`,
-            onClick: () => dl.launch().catch(() => {}),
-            duration: 5000,
-          });
+          this.finished(dl);
         },
       };
+      this.Downloads = Downloads;
       this.list = await Downloads.getList(Downloads.ALL);
       await this.list.addView(this.view);
+    },
+
+    // Sort finished files into folders by kind (only ones that landed in the
+    // default Downloads folder; a place you picked yourself is left alone).
+    async finished(dl) {
+      let path = dl.target.path;
+      let folder = "";
+      if (NP.prefs.get("nplus-download-sort")) {
+        try {
+          const base = await this.Downloads.getPreferredDownloadsDirectory();
+          const ext = (path.match(/\.([a-z0-9]{1,5})$/i)?.[1] ?? "").toLowerCase();
+          const KINDS = [
+            ["تصویر", /^(jpe?g|png|gif|webp|avif|heic|bmp|svg|ico|tiff?)$/],
+            ["ویدیو", /^(mp4|mkv|webm|mov|avi|m4v|flv|wmv)$/],
+            ["موسیقی", /^(mp3|m4a|flac|wav|ogg|opus|aac|wma)$/],
+            ["سند", /^(pdf|docx?|xlsx?|pptx?|txt|md|csv|epub|odt|rtf)$/],
+            ["فشرده", /^(zip|rar|7z|tar|gz|bz2|xz)$/],
+            ["برنامه", /^(exe|msi|apk|appx|msix|bat|dmg|iso)$/],
+          ];
+          folder = KINDS.find(([, re]) => re.test(ext))?.[0] ?? "";
+          if (folder && PathUtils.parent(path) === base && !/\.part$/i.test(path)) {
+            const dir = PathUtils.join(base, folder);
+            await IOUtils.makeDirectory(dir, { ignoreExisting: true });
+            let target = PathUtils.join(dir, PathUtils.filename(path));
+            for (let n = 2; await IOUtils.exists(target); n++) target = PathUtils.join(dir, PathUtils.filename(path).replace(/(\.[^.]*)?$/, ` (${n})$1`));
+            await IOUtils.move(path, target);
+            path = target;
+          } else folder = "";
+        } catch (err) {
+          NP.logger?.warn(`download sort: ${err}`);
+          folder = "";
+        }
+      }
+      if (!NP.prefs.get("nplus-download-island")) return;
+      const name = PathUtils.filename(path);
+      const file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsIFile);
+      file.initWithPath(path);
+      NP.island?.show({
+        id: "download-done",
+        title: name,
+        subtitle: folder ? `دانلود تموم شد · رفت توی پوشه‌ی «${folder}»` : "دانلود تموم شد · کلیک کن تا باز بشه",
+        icon: `moz-icon://${encodeURIComponent(name)}?size=32`,
+        onClick: () => {
+          try {
+            folder ? file.reveal() : file.launch();
+          } catch {
+            dl.launch().catch(() => {});
+          }
+        },
+        duration: 6000,
+      });
     },
     destroy() {
       this.list?.removeView(this.view);

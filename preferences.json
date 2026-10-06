@@ -1384,6 +1384,55 @@
   },
   {
     "type": "checkbox",
+    "property": "nplus-inbox",
+    "label": "Messenger inbox above the sidebar footer (unread from open Telegram/Rubika/Eitaa/… tabs)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-memo",
+    "label": "Media memory: resume videos where you left them",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-snap",
+    "label": "Smart screenshot: read text / explain a part of the page (Ctrl+Alt+S)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-download-sort",
+    "label": "Sort finished downloads into folders by type (تصویر، ویدیو، سند…)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-smart-proxy",
+    "label": "Smart proxy routing: Iranian sites direct, the rest through your proxy",
+    "defaultValue": false,
+    "margin": "12px 0"
+  },
+  {
+    "type": "string",
+    "property": "nplus-proxy-addr",
+    "label": "Proxy address (empty = read from Windows, e.g. 127.0.0.1:10809)",
+    "defaultValue": "",
+    "margin": "12px 0"
+  },
+  {
+    "type": "string",
+    "property": "nplus-proxy-direct",
+    "label": "More sites to open directly (comma separated)",
+    "defaultValue": "",
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
     "property": "nplus-pdf-skin",
     "label": "PDF reader in the Nebula look (glass toolbar, rounded pages, Meem)",
     "defaultValue": true,
