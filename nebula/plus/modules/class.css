@@ -457,3 +457,58 @@
   font-size: 10px;
   color: var(--cl-soft);
 }
+
+/* homework extracted from the messages */
+.cl-hw {
+  margin: 0 12px 8px;
+  padding: 10px 10px 6px;
+  border-radius: 16px;
+  background: light-dark(rgb(255 255 255 / 60%), rgb(255 255 255 / 4%));
+  box-shadow: 0 0 0 0.5px light-dark(rgb(0 0 0 / 7%), rgb(255 255 255 / 8%));
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.cl-hw-title {
+  margin: 0 4px 6px;
+  font-size: 11.5px;
+  font-weight: 800;
+  opacity: 0.7;
+}
+
+.cl-hw-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 4px;
+  border-radius: 10px;
+
+  .cl-check {
+    flex: none;
+  }
+
+  &[soon] .cl-hw-due {
+    background: color-mix(in srgb, #ff8a5c 26%, transparent);
+    color: light-dark(#b2401a, #ffb28f);
+  }
+}
+
+.cl-hw-task {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.6;
+  unicode-bidi: plaintext;
+}
+
+.cl-hw-due {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 8%));
+  font-size: 10.5px;
+  white-space: nowrap;
+}

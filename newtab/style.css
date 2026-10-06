@@ -1235,3 +1235,247 @@ i {
 :root[idle] .glow-host::after {
   animation-play-state: paused !important;
 }
+
+/* ---------------- music aurora ---------------- */
+#aurora {
+  position: fixed;
+  inset: auto 0 0 0;
+  width: 100%;
+  height: 58vh;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.6s var(--ease);
+  mask-image: linear-gradient(to top, black 40%, transparent);
+}
+
+body[aurora][playing] #aurora {
+  opacity: 0.9;
+}
+
+/* ---------------- today (digest): a row of chips under the links ---------------- */
+#today {
+  display: flex;
+  justify-content: center;
+  max-width: min(980px, 92vw);
+  margin-top: -4px;
+  animation: rise 0.7s var(--ease) both;
+  animation-delay: 0.25s;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+#today-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.td-row {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 420px;
+  padding: 7px 14px 7px 12px;
+  border: none;
+  border-radius: 99px;
+  background: var(--glass, light-dark(rgb(255 255 255 / 55%), rgb(255 255 255 / 6%)));
+  backdrop-filter: blur(24px) saturate(160%);
+  box-shadow:
+    inset 0 0 0 0.5px light-dark(rgb(0 0 0 / 8%), rgb(255 255 255 / 12%)),
+    0 8px 22px -14px rgb(0 0 0 / 45%);
+  text-align: start;
+  cursor: pointer;
+  transition:
+    background-color 0.2s var(--ease),
+    scale 0.25s var(--ease);
+
+  &:hover {
+    background: color-mix(in srgb, var(--accent) 18%, light-dark(rgb(255 255 255 / 60%), rgb(255 255 255 / 6%)));
+    scale: 1.03;
+  }
+
+  &[hot] {
+    background: color-mix(in srgb, var(--accent) 24%, light-dark(rgb(255 255 255 / 60%), rgb(255 255 255 / 6%)));
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent),
+      0 10px 26px -12px var(--accent);
+  }
+}
+
+.td-ico {
+  flex: none;
+  font-size: 14px;
+}
+
+.td-body {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  min-width: 0;
+}
+
+.td-text {
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  unicode-bidi: plaintext;
+}
+
+.td-sub {
+  font-size: 11px;
+  color: var(--text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  unicode-bidi: plaintext;
+
+  &:empty {
+    display: none;
+  }
+}
+
+/* words + notes share one column */
+.widget-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  > .widget {
+    flex: 1;
+    min-height: 0;
+  }
+
+  > #words:not([hidden]) ~ #notes {
+    flex: 1 1 0;
+    min-height: 96px;
+    display: flex;
+    flex-direction: column;
+
+    #notes-text {
+      flex: 1;
+      min-height: 36px;
+      height: auto;
+    }
+  }
+}
+
+/* ---------------- word review ---------------- */
+#words {
+  width: 240px;
+  min-height: 0;
+  flex: none !important;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px 12px;
+
+  &[hidden] {
+    display: none;
+  }
+
+  .wk-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+
+    .widget-title {
+      margin: 0;
+    }
+  }
+}
+
+#words-left {
+  font-size: 11px;
+  color: var(--text-soft);
+}
+
+#words-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 8px 6px;
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.25s var(--ease);
+
+  &:hover {
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+  }
+
+  .wc-back {
+    display: none;
+  }
+
+  &[flipped] {
+    .wc-back {
+      display: block;
+      animation: rise 0.4s var(--ease) both;
+    }
+
+    .wc-hint {
+      display: none;
+    }
+  }
+}
+
+.wc-word {
+  font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.wc-ipa {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-soft);
+
+  &:empty {
+    display: none;
+  }
+}
+
+.wc-hint,
+.wc-done {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-soft);
+}
+
+.wc-fa {
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--accent) 70%, var(--text));
+}
+
+.wc-ctx {
+  display: none;
+}
+
+#words-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+
+  &:empty {
+    display: none;
+  }
+
+  .pill {
+    padding: 5px 13px;
+    font-size: 11.5px;
+  }
+
+  .wc-ok {
+    background: color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+}

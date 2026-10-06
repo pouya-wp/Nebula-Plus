@@ -70,7 +70,7 @@
       if (text.length < 3 || text.length > 4000) return;
       var hits = [];
       var m;
-      if (cfg.rates) {
+      if (cfg && cfg.rates) {
         PRICE.lastIndex = 0;
         while ((m = PRICE.exec(text))) {
           var sym = m[1] || m[6], num = m[2] || m[4], mm = m[3] || m[5];
@@ -144,7 +144,7 @@
     // element whose whole text is one price gets the badge at its end.
     var seenEl = new WeakSet();
     function splitPrices(root, onlyRoot) {
-      if (!cfg.rates || !root || root.nodeType !== 1) return;
+      if (stale() || !cfg || !cfg.rates || !root || root.nodeType !== 1) return;
       var els = onlyRoot ? [root] : [root].concat(Array.prototype.slice.call(root.querySelectorAll('*'), 0, 4000)), count = 0;
       for (var i = 0; i < els.length && count < 300; i++) {
         var el = els[i];

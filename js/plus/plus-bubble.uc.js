@@ -83,7 +83,8 @@
         out.setAttribute('data-wait', '1');
         out.textContent = cfg.labels.wait;
       }
-      sendAsyncMessage('nplus:bubble3:act', { action: action, text: current, id: reqId, selector: action === 'watch' ? selector(anchor) : '', url: content.location.href, title: doc().title });
+      var ctx = ''; try { var cn = anchor && anchor.nodeType === 3 ? anchor.parentNode : anchor; while (cn && cn.parentNode && (cn.textContent || '').length < 40) cn = cn.parentNode; ctx = String(cn && cn.textContent || '').replace(/\\s+/g, ' ').slice(0, 1200); } catch (e) {}
+      sendAsyncMessage('nplus:bubble4:act', { action: action, text: current, ctx: ctx, id: reqId, selector: action === 'watch' ? selector(anchor) : '', url: content.location.href, title: doc().title });
       if (action !== 'translate' && action !== 'explain') hide();
     }
     function flash(t) { if (out) { out.removeAttribute('data-wait'); out.textContent = t; content.setTimeout(hide, 900); } }
@@ -139,13 +140,13 @@
     addEventListener('mousedown', function (e) { if (el && !el.contains(e.target)) { current = ''; hide(); } }, true);
     addEventListener('scroll', function () { if (el && !(out && out.textContent)) hide(); }, true);
     addEventListener('keydown', function (e) { if (e.key === 'Escape') hide(); }, true);
-    addMessageListener('nplus:bubble3:cfg', function (m) { if (stale()) { cfg = null; hide(); return; } cfg = m.data; if (!cfg.on) hide(); });
-    addMessageListener('nplus:bubble3:answer', function (m) {
+    addMessageListener('nplus:bubble4:cfg', function (m) { if (stale()) { cfg = null; hide(); return; } cfg = m.data; if (!cfg.on) hide(); });
+    addMessageListener('nplus:bubble4:answer', function (m) {
       if (!out || m.data.id !== reqId) return;
       out.textContent = m.data.text;
       if (m.data.done) out.removeAttribute('data-wait');
     });
-    sendAsyncMessage('nplus:bubble3:hello', {});
+    sendAsyncMessage('nplus:bubble4:hello', {});
   })(this);`;
 
   const strip = (t) => String(t ?? "").replace(/\*\*|__|`/g, "").replace(/^#+\s*/gm, "").trim();
@@ -159,14 +160,15 @@
       if (!sss.sheetRegistered(this.sheet, sss.USER_SHEET)) sss.loadAndRegisterSheet(this.sheet, sss.USER_SHEET);
       this.onHello = (m) => this.sendCfg(m.target.messageManager);
       this.onAct = (m) => this.act(m.target, m.data);
-      window.messageManager.addMessageListener("nplus:bubble3:hello", this.onHello);
-      window.messageManager.addMessageListener("nplus:bubble3:act", this.onAct);
+      window.messageManager.addMessageListener("nplus:bubble4:hello", this.onHello);
+      window.messageManager.addMessageListener("nplus:bubble4:act", this.onAct);
       this.script = "data:," + encodeURIComponent(BUBBLE);
       window.messageManager.loadFrameScript(this.script, true);
-      window.messageManager.broadcastAsyncMessage("nplus:bubble3:cfg", this.cfg());
+      window.messageManager.broadcastAsyncMessage("nplus:bubble4:cfg", this.cfg());
       // copies from before the versioned messages: switch them off
       window.messageManager.broadcastAsyncMessage("nplus:bubble:cfg", { on: false });
       window.messageManager.broadcastAsyncMessage("nplus:bubble2:cfg", { on: false });
+      window.messageManager.broadcastAsyncMessage("nplus:bubble3:cfg", { on: false });
     },
 
     cfg() {
@@ -179,6 +181,7 @@
         watch: ["M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z", "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"],
         highlight: ["M9 11l-6 6v3h9l3-3", "M22 12l-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"],
         note: ["M15.5 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.5L15.5 3z", "M15 3v6h6"],
+        word: ["M4 19.5A2.5 2.5 0 0 1 6.5 17H20", "M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z", "M12 7v6", "M9 10h6"],
       };
       const buttons = [
         { id: "translate", icon: I.translate, label: "ترجمه" },
@@ -187,6 +190,7 @@
         { id: "search", icon: I.search, label: "جستجو" },
         { id: "copy", icon: I.copy, label: "کپی" },
       ];
+      if (NP.words) buttons.push({ id: "word", icon: I.word, label: "لغت" });
       if (NP.wormhole) buttons.push({ id: "phone", icon: I.phone, label: "گوشی" });
       if (NP.watch) buttons.push({ id: "watch", icon: I.watch, label: "زیر نظر" });
       return { on: true, buttons, labels: { wait: "یه لحظه…", copied: "کپی شد ✓" } };
@@ -194,14 +198,14 @@
 
     sendCfg(mm) {
       try {
-        mm.sendAsyncMessage("nplus:bubble3:cfg", this.cfg());
+        mm.sendAsyncMessage("nplus:bubble4:cfg", this.cfg());
       } catch {}
     },
 
     async act(browser, d) {
       const reply = (text, done) => {
         try {
-          browser.messageManager.sendAsyncMessage("nplus:bubble3:answer", { id: d.id, text, done });
+          browser.messageManager.sendAsyncMessage("nplus:bubble4:answer", { id: d.id, text, done });
         } catch {}
       };
       switch (d.action) {
@@ -210,6 +214,9 @@
           gBrowser.selectedTab = gBrowser.addTab(url, { triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(), relatedToCurrent: true });
           return;
         }
+        case "word":
+          NP.words?.add(d.text, d.ctx, d.url);
+          return;
         case "highlight":
           NP.notes?.create("hl", "y", browser);
           return;
@@ -243,9 +250,9 @@
     destroy() {
       try {
         window.messageManager.removeDelayedFrameScript(this.script);
-        window.messageManager.broadcastAsyncMessage("nplus:bubble3:cfg", { on: false });
-        window.messageManager.removeMessageListener("nplus:bubble3:hello", this.onHello);
-        window.messageManager.removeMessageListener("nplus:bubble3:act", this.onAct);
+        window.messageManager.broadcastAsyncMessage("nplus:bubble4:cfg", { on: false });
+        window.messageManager.removeMessageListener("nplus:bubble4:hello", this.onHello);
+        window.messageManager.removeMessageListener("nplus:bubble4:act", this.onAct);
         const sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
         if (this.sheet && sss.sheetRegistered(this.sheet, sss.USER_SHEET)) sss.unregisterSheet(this.sheet, sss.USER_SHEET);
       } catch {}

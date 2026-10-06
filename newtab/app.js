@@ -16,6 +16,9 @@ const DEFAULTS = {
   player: true,
   weather: true,
   notes: true,
+  today: true,
+  words: true,
+  aurora: true,
   hafez: true,
   engine: "google",
   wallBlur: 0,
@@ -775,6 +778,203 @@ async function loadWeek() {
   }
 }
 
+// ---------------- browser link (Nebula Plus) ----------------
+// Things only the browser knows (class, homework, words, screen time) come
+// through a small event channel the browser listens on.
+const link = {
+  n: 0,
+  waits: new Map(),
+  ask(type, extra = {}) {
+    return new Promise((res) => {
+      const id = ++this.n;
+      this.waits.set(id, res);
+      window.dispatchEvent(new CustomEvent("nplus-nt-req", { detail: JSON.stringify({ id, type, ...extra }) }));
+      setTimeout(() => this.waits.has(id) && (this.waits.delete(id), res(null)), 3000);
+    });
+  },
+};
+window.addEventListener("nplus-nt-res", (e) => {
+  let d;
+  try {
+    d = JSON.parse(e.detail);
+  } catch {
+    return;
+  }
+  const r = link.waits.get(d.id);
+  if (r) (link.waits.delete(d.id), r(d));
+});
+
+// ---------------- today (digest) ----------------
+const today = {
+  async load() {
+    const box = $("#today");
+    if (!S.today) return (box.hidden = true);
+    const res = await link.ask("digest");
+    const items = res?.digest?.items ?? [];
+    box.hidden = !items.length;
+    $("#today-list").replaceChildren(
+      ...items.map((it) => {
+        const row = document.createElement("button");
+        row.className = "td-row";
+        row.toggleAttribute("hot", !!it.hot);
+        const ico = Object.assign(document.createElement("span"), { className: "td-ico", textContent: it.icon });
+        const body = Object.assign(document.createElement("span"), { className: "td-body" });
+        body.append(
+          Object.assign(document.createElement("span"), { className: "td-text", textContent: it.text }),
+          Object.assign(document.createElement("span"), { className: "td-sub", textContent: it.sub || "" }),
+        );
+        row.append(ico, body);
+        row.addEventListener("click", () => link.ask("open", { what: it.open }));
+        return row;
+      }),
+    );
+  },
+};
+
+// ---------------- word review ----------------
+const words = {
+  flipped: false,
+  current: null,
+  async load(res) {
+    const box = $("#words");
+    if (!S.words) return (box.hidden = true);
+    res ??= await link.ask("word");
+    const w = res?.word;
+    if (!w || !w.total) return (box.hidden = true);
+    box.hidden = false;
+    this.current = w.card;
+    this.flipped = false;
+    this.render(w);
+  },
+  render(w) {
+    $("#words-left").textContent = w.left ? `${num(w.left)} مونده` : "";
+    const card = $("#words-card");
+    const c = this.current;
+    const el = (cls, text, dir) => Object.assign(document.createElement("div"), { className: cls, textContent: text ?? "", ...(dir ? { dir } : {}) });
+    if (!c) {
+      card.replaceChildren(el("wc-done", "امروز همه رو مرور کردی ✓", "rtl"));
+      card.onclick = null;
+      $("#words-actions").replaceChildren();
+      return;
+    }
+    const back = el("wc-back");
+    back.append(el("wc-fa", c.fa || "—", "rtl"), el("wc-ctx", c.ctx || c.ex || ""));
+    card.replaceChildren(el("wc-word", c.w), el("wc-ipa", c.ipa || ""), back, el("wc-hint", "کلیک کن تا معنیش رو ببینی", "rtl"));
+    card.toggleAttribute("flipped", this.flipped);
+    card.onclick = () => ((this.flipped = !this.flipped), card.toggleAttribute("flipped", this.flipped), this.actions());
+    this.actions();
+  },
+  actions() {
+    const a = $("#words-actions");
+    if (!this.flipped) return a.replaceChildren();
+    const mk = (text, ok) => {
+      const b = document.createElement("button");
+      b.className = `pill glass${ok ? " wc-ok" : ""}`;
+      b.textContent = text;
+      b.onclick = async () => this.load(await link.ask("grade", { key: this.current.key, ok }));
+      return b;
+    };
+    a.replaceChildren(mk("یادم نبود", false), mk("بلد بودم ✓", true));
+  },
+};
+
+// ---------------- music aurora ----------------
+// Soft curtains of light at the bottom that sway with the music: drawn on a
+// tiny canvas (upscaled = naturally soft, no blur filters), bass from Nebula
+// Bridge. Runs only while music plays and the page is in view.
+const aurora = {
+  cv: $("#aurora"),
+  bass: 0,
+  high: 0,
+  t: 0,
+  running: false,
+  lastPoll: 0,
+  hue: 220,
+  wake() {
+    document.body.toggleAttribute("aurora", !!S.aurora);
+    const on = S.aurora && document.body.hasAttribute("playing") && !document.hidden;
+    if (on && !this.running) {
+      this.running = true;
+      this.last = performance.now();
+      this.readHue();
+      requestAnimationFrame((t) => this.frame(t));
+    }
+  },
+  // the accent's hue (the curtains are the accent plus two neighbours)
+  readHue() {
+    const g = this.cv.getContext("2d");
+    g.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#7aa2ff";
+    const m = String(g.fillStyle).match(/^#(..)(..)(..)$/);
+    if (!m) return;
+    const [r, gg, b] = m.slice(1).map((h) => parseInt(h, 16) / 255);
+    const max = Math.max(r, gg, b);
+    const min = Math.min(r, gg, b);
+    if (max === min) return;
+    const d = max - min;
+    let h = max === r ? (gg - b) / d + (gg < b ? 6 : 0) : max === gg ? (b - r) / d + 2 : (r - gg) / d + 4;
+    this.hue = Math.round(h * 60);
+  },
+  async poll() {
+    try {
+      const b = await (await fetch(`${BRIDGE}/bands`, { cache: "no-store" })).json();
+      if (Array.isArray(b) && b.length) {
+        const avg = (from, to) => b.slice(from, to).reduce((x, y) => x + y, 0) / Math.max(1, Math.min(to, b.length) - from);
+        this.bassT = avg(0, 4);
+        this.highT = avg(12, 28);
+      }
+    } catch {}
+  },
+  frame(now) {
+    if (!S.aurora || !document.body.hasAttribute("playing") || document.hidden) {
+      this.running = false;
+      return;
+    }
+    requestAnimationFrame((t) => this.frame(t));
+    if (now - this.last < 33) return; // ~30 fps is plenty for slow light
+    const dt = Math.min(0.1, (now - this.last) / 1000);
+    this.last = now;
+    if (now - this.lastPoll > 100) {
+      this.lastPoll = now;
+      this.poll();
+      if (Math.random() < 0.02) this.readHue();
+    }
+    this.bass += ((this.bassT ?? 0) - this.bass) * 0.18;
+    this.high += ((this.highT ?? 0) - this.high) * 0.1;
+    this.t += dt * (0.25 + this.bass * 0.9);
+    this.draw();
+  },
+  draw() {
+    const { cv } = this;
+    const g = cv.getContext("2d");
+    const W = cv.width;
+    const H = cv.height;
+    g.clearRect(0, 0, W, H);
+    g.globalCompositeOperation = "lighter";
+    const curtains = [
+      { dh: 0, amp: 0.9, speed: 1, y: 0.95, w: 0.55 },
+      { dh: 40, amp: 0.7, speed: 1.4, y: 0.98, w: 0.4 },
+      { dh: -50, amp: 0.6, speed: 0.8, y: 1, w: 0.35 },
+    ];
+    for (const [i, c] of curtains.entries()) {
+      const col = `hsl(${this.hue + c.dh} 85% 62%)`;
+      for (let x = 0; x <= W; x += 2) {
+        const p = x / W;
+        const wave = Math.sin(p * 6.2 + this.t * c.speed + i * 1.7) * 0.5 + Math.sin(p * 13 - this.t * 0.7 * c.speed + i) * 0.25;
+        const top = H * (c.y - (0.35 + this.bass * 0.5) * c.amp * (0.65 + 0.35 * wave));
+        const grad = g.createLinearGradient(0, top, 0, H);
+        grad.addColorStop(0, "transparent");
+        grad.addColorStop(0.3, col);
+        grad.addColorStop(1, "transparent");
+        g.globalAlpha = Math.min(0.55, (0.12 + this.bass * 0.35 + this.high * 0.15) * c.w * (0.7 + 0.3 * Math.sin(p * 9 + this.t + i)));
+        g.fillStyle = grad;
+        g.fillRect(x, top, 2, H - top);
+      }
+    }
+    g.globalAlpha = 1;
+    g.globalCompositeOperation = "source-over";
+  },
+};
+
 // ---------------- notes ----------------
 const notes = $("#notes-text");
 notes.value = localStorage.getItem("nplus-notes") || "";
@@ -874,6 +1074,9 @@ function fillSettings() {
   $("#s-player").checked = S.player;
   $("#s-weather").checked = S.weather;
   $("#s-notes").checked = S.notes;
+  $("#s-today").checked = S.today;
+  $("#s-words").checked = S.words;
+  $("#s-aurora").checked = S.aurora;
   $("#s-hafez").checked = S.hafez;
   $("#s-blur").value = S.wallBlur;
   $("#s-dim").value = S.wallDim;
@@ -911,6 +1114,9 @@ bind("#s-seconds", "seconds", (el) => el.checked, tickClock);
 bind("#s-player", "player", (el) => el.checked);
 bind("#s-weather", "weather", (el) => el.checked, loadWeather);
 bind("#s-notes", "notes", (el) => el.checked);
+bind("#s-today", "today", (el) => el.checked, () => today.load());
+bind("#s-words", "words", (el) => el.checked, () => words.load());
+bind("#s-aurora", "aurora", (el) => el.checked, () => aurora.wake());
 bind("#s-hafez", "hafez", (el) => el.checked);
 $("#s-blur").addEventListener("input", (e) => (S = store.set({ wallBlur: +e.target.value }), renderWall()));
 $("#s-dim").addEventListener("input", (e) => (S = store.set({ wallDim: +e.target.value }), renderWall()));
@@ -936,6 +1142,8 @@ $("#s-link-add").addEventListener("click", () => {
 
 function applyVisibility() {
   $("#notes").hidden = !S.notes;
+  if (!S.today) $("#today").hidden = true;
+  if (!S.words) $("#words").hidden = true;
   $("#hafez-btn").hidden = !S.hafez;
   if (!S.player) $("#player").hidden = true;
 }
@@ -950,6 +1158,14 @@ renderWall();
 loadWeather();
 player.poll();
 loadWeek();
+today.load();
+words.load();
+aurora.wake();
+new MutationObserver(() => aurora.wake()).observe(document.body, { attributes: true, attributeFilter: ["playing"] });
+document.addEventListener("visibilitychange", () => {
+  aurora.wake();
+  if (!document.hidden) (today.load(), words.load());
+});
 setInterval(() => player.tick(), 250);
 
 // ---------------- lean: rest while nobody is looking ----------------

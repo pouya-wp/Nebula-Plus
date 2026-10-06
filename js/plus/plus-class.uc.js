@@ -75,6 +75,7 @@
     name: "ClassBoard",
     async init() {
       if (!NP.prefs.get("nplus-class")) return;
+      NP.classBoard = { open: () => this.open() };
       await NP.store.load();
       this.build();
       this.restyle();
@@ -116,6 +117,7 @@
           NP.html("div", { class: "cl-remind-text" }),
           NP.html("button", { class: "cl-ack", text: "چک کردم ✓", onclick: () => this.ack() }),
         ]),
+        NP.html("div", { class: "cl-hw" }),
         NP.html("div", { class: "cl-list" }),
         NP.html("div", { class: "cl-foot" }, [
           NP.html("button", { class: "cl-open", onclick: () => this.openGroup() }, [
@@ -196,6 +198,8 @@
       if (r.active) q(".cl-remind-text").textContent = `فردا (${DAY_FA[r.classDay]}) کلاس داری — تکلیف‌ها رو یه چک بکن.`;
       this.button.toggleAttribute("remind", r.active);
 
+      this.renderHomework(q(".cl-hw"));
+
       // messages, newest first, grouped by date
       const list = q(".cl-list");
       const items = [...feed.items].reverse();
@@ -225,6 +229,81 @@
           ? `آخرین بررسی: ${new Date(feed.fetched).toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" })}`
           : "";
       this.panel.toggleAttribute("busy", !!this.busy);
+    },
+
+    // ---------- homework ----------
+    // New text messages go to the assistant once: anything that is homework
+    // comes back as a task with a deadline (a date, or the next class).
+    renderHomework(box) {
+      const hw = (store.get("classHomework", []) ?? []).filter((h) => !h.done && (!h.due || new Date(h.due) > Date.now() - 86400000));
+      box.hidden = !hw.length;
+      if (!hw.length) return box.replaceChildren();
+      hw.sort((a, b) => (a.due ? new Date(a.due) : Infinity) - (b.due ? new Date(b.due) : Infinity));
+      box.replaceChildren(
+        NP.html("div", { class: "cl-hw-title", text: `📝 تکلیف‌های باز · ${fa(hw.length)}` }),
+        ...hw.map((h) => {
+          const days = h.due ? Math.round((new Date(new Date(h.due).toDateString()) - new Date(new Date().toDateString())) / 86400000) : null;
+          const when = days === null ? "" : days < 0 ? "گذشته" : days === 0 ? "امروز" : days === 1 ? "فردا" : `${DAY_FA[new Date(h.due).getDay()]} · ${fa(days)} روز`;
+          const row = NP.html("div", { class: "cl-hw-row" }, [
+            NP.html("button", { class: "cl-check", title: "انجام شد", onclick: () => this.hwDone(h.id) }),
+            NP.html("div", { class: "cl-hw-task", dir: "auto", text: h.task }),
+            when ? NP.html("div", { class: "cl-hw-due", text: when }) : null,
+          ].filter(Boolean));
+          row.toggleAttribute("soon", days !== null && days <= 1);
+          return row;
+        }),
+      );
+    },
+
+    hwDone(id) {
+      const hw = store.get("classHomework", []);
+      const h = hw.find((x) => x.id === id);
+      if (h) h.done = true;
+      store.set("classHomework", hw);
+      this.render();
+    },
+
+    async extractHomework(items) {
+      const texts = items.filter((i) => i.text && i.text.trim().length > 8 && !i.out);
+      if (!texts.length || !NP.assistant?.ask) return;
+      const today = new Date();
+      const jal = today.toLocaleDateString("fa-IR-u-ca-persian", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+      const nx = this.nextClass();
+      const prompt = `You read messages from a university class group (Persian). Today is ${today.toISOString().slice(0, 10)} (${jal}). Class days: ${days().map((d) => DAY_FA[d]).join(", ")}; next class: ${nx ? nx.date.toISOString().slice(0, 10) : "unknown"}.
+For each message that assigns homework / an exercise / a project / something to prepare or submit, output one task. Ignore everything else.
+Reply with JSON only: [{"i": message index, "task": "short Persian task (max 12 words)", "due": "YYYY-MM-DD or null (use the next class date when it says for next session)"}]
+
+${texts.map((t, i) => `[${i}] (${t.date} ${t.time}) ${t.text.slice(0, 600)}`).join("\n")}`;
+      try {
+        const raw = await NP.assistant.ask(prompt, () => {}, { fast: true });
+        const list = JSON.parse(String(raw).match(/\[[\s\S]*\]/)?.[0] ?? "[]");
+        if (!list.length) return;
+        const hw = store.get("classHomework", []);
+        for (const t of list) {
+          const src = texts[t.i];
+          if (!src || !t.task || hw.some((h) => h.key === src.key && h.task === t.task)) continue;
+          hw.push({ id: `h${Date.now().toString(36)}${hw.length}`, key: src.key, task: t.task, due: /^\d{4}-\d\d-\d\d$/.test(t.due) ? `${t.due}T12:00:00` : null, added: Date.now() });
+        }
+        store.set("classHomework", hw.slice(-80));
+        NP.store.data.classHomework = hw.slice(-80);
+        this.render();
+        NP.island?.show({ id: "class-hw", title: `${fa(list.length)} تکلیف تازه ثبت شد`, subtitle: list.map((t) => t.task).join(" · ").slice(0, 90), icon: "📝", duration: 7000, onClick: () => this.open() });
+      } catch (err) {
+        NP.logger?.warn(`homework: ${err}`);
+      }
+    },
+
+    // the evening before a deadline (same hour as the class reminder)
+    homeworkReminder(now) {
+      const hour = Number(NP.prefs.get("nplus-class-remind-hour")) || 17;
+      if (now.getHours() < hour) return;
+      const tomorrow = new Date(now);
+      tomorrow.setDate(now.getDate() + 1);
+      const key = tomorrow.toDateString();
+      const due = store.get("classHomework", []).filter((h) => !h.done && h.due && new Date(h.due).toDateString() === key);
+      if (!due.length || store.get("classHwAck") === key) return;
+      store.set("classHwAck", key);
+      NP.island?.show({ id: "class-hw-due", title: `مهلت فردا: ${fa(due.length)} تکلیف`, subtitle: due.map((h) => h.task).join(" · ").slice(0, 90), icon: "⏰", duration: 15000, onClick: () => this.open() });
     },
 
     row(it, isDone, isNew) {
@@ -279,6 +358,7 @@
     },
 
     tick() {
+      this.homeworkReminder(new Date());
       const r = this.reminderState();
       if (r.active && this.reminded !== r.key) {
         this.reminded = r.key;
@@ -373,9 +453,11 @@
       if (firstRun) {
         // don't announce the whole history the first time
         store.set("classSeen", merged.map((i) => i.key));
+        this.extractHomework(merged.slice(-15));
         return;
       }
       const fresh = items.filter((i) => !seen.has(i.key) && !old.items.some((o) => o.key === i.key) && !i.out);
+      if (fresh.length) this.extractHomework(fresh);
       if (fresh.length) {
         const last = fresh[fresh.length - 1];
         const what = last.text || { voice: "🎤 پیام صوتی", photo: "🖼 عکس", video: "🎬 ویدیو", file: "📎 فایل" }[last.kind] || "";

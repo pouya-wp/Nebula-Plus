@@ -1356,6 +1356,34 @@
   },
   {
     "type": "checkbox",
+    "property": "nplus-words",
+    "label": "Word catcher: «لغت» in the bubble, review on the new tab (Ctrl+Alt+V)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-usage",
+    "label": "Usage meter: time per site, gentle daily budgets (Ctrl+Alt+U)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "string",
+    "property": "nplus-usage-limits",
+    "label": "Daily budgets in minutes (site:minutes, comma separated)",
+    "margin": "12px 0",
+    "defaultValue": "youtube.com:90, instagram.com:30, x.com:30"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-timemachine",
+    "label": "Tab time machine: what was open when, bring it back (Ctrl+Alt+Y)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
     "property": "nplus-pdf-skin",
     "label": "PDF reader in the Nebula look (glass toolbar, rounded pages, Meem)",
     "defaultValue": true,
