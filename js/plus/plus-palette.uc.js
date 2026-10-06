@@ -68,6 +68,7 @@
     { t: "Tab time machine", k: "ماشین زمان تب های قبلی دیروز تاریخچه time machine session restore", icon: ICON("selectable/time"), run: () => NP.timeMachine?.open() },
     { t: "Smart screenshot (read text / explain)", k: "اسکرین شات هوشمند متن عکس بخون ocr screenshot read text explain", icon: ICON("screenshot"), run: () => NP.snap?.start() },
     { t: "Smart proxy routing on / off", k: "پروکسی فیلترشکن مسیریابی ایرانی مستقیم proxy vpn routing", icon: ICON("selectable/globe"), run: () => NP.prefs.set("nplus-smart-proxy", !NP.prefs.get("nplus-smart-proxy")) },
+    { t: "To-do list", k: "کارها تودو لیست کار یادآوری todo tasks reminders", icon: ICON("edit"), run: () => NP.todo?.open() },
     { t: "Watched items", k: "چشم مراقب لیست زیر نظر watches", icon: ICON("selectable/eye"), run: () => NP.watch?.open() },
     { t: "Remix this site (AI)", k: "ریمیکس ظاهر سایت تم هوش مصنوعی remix restyle theme ai", icon: ICON("sparkles"), run: () => NP.remix?.open() },
     { t: "Remix: back to the original site", k: "ریمیکس برگردون اصلی remix undo original", icon: ICON("sparkles"), run: () => NP.remix?.off() },

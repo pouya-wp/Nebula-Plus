@@ -28,6 +28,10 @@
           <span id="date-hijri"></span>
         </div>
         <h1 id="greeting"></h1>
+        <figure id="quote" title="یه جمله‌ی دیگه">
+          <blockquote id="quote-text"></blockquote>
+          <figcaption id="quote-by"></figcaption>
+        </figure>
       </section>
 
       <!-- Search -->
@@ -105,9 +109,13 @@
             <div id="words-actions"></div>
           </article>
 
-          <article id="notes" class="glass widget">
-            <div class="widget-title">یادداشت</div>
-            <textarea id="notes-text" dir="auto" placeholder="هر چی تو ذهنته اینجا بنویس…"></textarea>
+          <article id="todo" class="glass widget">
+            <div class="wk-head">
+              <div class="widget-title">کارها</div>
+              <button id="todo-open" title="همه‌ی کارها (Ctrl+Alt+T)"></button>
+            </div>
+            <input id="todo-add" type="text" dir="auto" placeholder="+ کار جدید… (فردا ساعت ۱۸ !! #خونه)" />
+            <div id="todo-list"></div>
           </article>
         </div>
       </section>
@@ -148,7 +156,8 @@
           <label class="row"><input id="s-seconds" type="checkbox" /> نمایش ثانیه</label>
           <label class="row"><input id="s-player" type="checkbox" /> پلیر و لیریک</label>
           <label class="row"><input id="s-weather" type="checkbox" /> آب‌وهوا</label>
-          <label class="row"><input id="s-notes" type="checkbox" /> یادداشت</label>
+          <label class="row"><input id="s-notes" type="checkbox" /> جمله‌ی انگیزشی</label>
+          <label class="row"><input id="s-todo" type="checkbox" /> کارها (to-do)</label>
           <label class="row"><input id="s-today" type="checkbox" /> «امروز» (کلاس، تکلیف، لغت‌ها…)</label>
           <label class="row"><input id="s-words" type="checkbox" /> مرور لغت</label>
           <label class="row"><input id="s-aurora" type="checkbox" /> شفق موسیقی</label>

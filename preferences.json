@@ -1398,6 +1398,13 @@
   },
   {
     "type": "checkbox",
+    "property": "nplus-todo",
+    "label": "To-do list: natural Persian quick-add, reminders, steps (Ctrl+Alt+T, card on the new tab)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
     "property": "nplus-snap",
     "label": "Smart screenshot: read text / explain a part of the page (Ctrl+Alt+S)",
     "defaultValue": true,

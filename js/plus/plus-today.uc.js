@@ -52,6 +52,14 @@
         case "grade":
           NP.words?.grade(req.key, !!req.ok);
           return this.reply(browser, req.id, { word: this.word() });
+        case "todos":
+          return this.reply(browser, req.id, { todos: this.todos() });
+        case "todo-add":
+          NP.todo?.add(String(req.text || ""));
+          return this.reply(browser, req.id, { todos: this.todos() });
+        case "todo-toggle":
+          NP.todo?.toggle(req.todo);
+          return this.reply(browser, req.id, { todos: this.todos() });
         case "open": {
           const map = {
             class: () => NP.classBoard?.open(),
@@ -60,11 +68,27 @@
             usage: () => NP.usage?.open(),
             notes: () => NP.notes?.open(),
             tm: () => NP.timeMachine?.open(),
+            todo: () => NP.todo?.open(),
           };
           map[req.what]?.();
           return this.reply(browser, req.id, {});
         }
       }
+    },
+
+    todos() {
+      if (!NP.todo) return null;
+      const all = NP.todo.view();
+      const open = all.filter((t) => !t.done);
+      const today = new Date().toDateString();
+      const doneToday = all.filter((t) => t.done && t.doneAt && new Date(t.doneAt).toDateString() === today).length;
+      const dueNow = open.filter((t) => ["today", "overdue"].includes(NP.todo.state(t))).length;
+      return {
+        open: open.length,
+        doneToday,
+        dueNow,
+        items: open.slice(0, 6).map((t) => ({ id: t.id, title: t.title, when: NP.todo.whenText(t), state: NP.todo.state(t), pri: t.pri ?? 0, steps: (t.steps ?? []).length, stepsDone: (t.steps ?? []).filter((x) => x.done).length, repeat: !!t.repeat })),
+      };
     },
 
     word() {
@@ -105,6 +129,10 @@
         } catch {}
         items.push({ icon: "👁", text: `تغییر کرد: ${w.title || host}`, sub: String(w.last || "").slice(0, 80), open: "watch" });
       }
+
+      // overdue tasks
+      const overdue = NP.todo ? NP.todo.list().filter((t) => NP.todo.state(t) === "overdue").length : 0;
+      if (overdue) items.push({ icon: "⏰", text: `${fa(overdue)} کار عقب افتاده`, open: "todo", hot: true });
 
       // words due
       const ws = NP.words?.stats();

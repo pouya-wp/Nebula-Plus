@@ -17,6 +17,7 @@ const DEFAULTS = {
   weather: true,
   notes: true,
   today: true,
+  todo: true,
   words: true,
   aurora: true,
   hafez: true,
@@ -987,10 +988,121 @@ const aurora = {
   },
 };
 
-// ---------------- notes ----------------
-const notes = $("#notes-text");
-notes.value = localStorage.getItem("nplus-notes") || "";
-notes.addEventListener("input", () => localStorage.setItem("nplus-notes", notes.value));
+// ---------------- quote (instead of the notes card) ----------------
+// A line to start with: Jobs, Einstein, Rumi, Saadi… in Persian, the source
+// underneath. A new one every time; click for another. Your own old note
+// joins the rotation as one of them.
+const QUOTES = [
+  ["تنها راه انجام یه کار بزرگ، اینه که عاشق کاری باشی که می‌کنی.", "استیو جابز"],
+  ["گرسنه بمون، دیوانه بمون.", "استیو جابز"],
+  ["وقتت محدوده؛ اونو با زندگی کردنِ زندگیِ یکی دیگه هدر نده.", "استیو جابز"],
+  ["نوآوری، رهبر رو از پیرو جدا می‌کنه.", "استیو جابز"],
+  ["نقطه‌ها رو فقط وقتی به عقب نگاه کنی می‌تونی به هم وصل کنی؛ پس اعتماد کن که یه روز وصل می‌شن.", "استیو جابز"],
+  ["طراحی فقط اینکه چه شکلیه نیست؛ طراحی یعنی چطور کار می‌کنه.", "استیو جابز"],
+  ["سادگی، نهایتِ پیچیدگیه.", "لئوناردو داوینچی"],
+  ["تخیل از دانش مهم‌تره.", "آلبرت اینشتین"],
+  ["زندگی مثل دوچرخه‌سواریه؛ برای حفظ تعادل باید حرکت کنی.", "آلبرت اینشتین"],
+  ["شکست نخوردم؛ فقط ده‌هزار راه پیدا کردم که کار نمی‌کنن.", "توماس ادیسون"],
+  ["موفقیت نهایی نیست، شکست هم کشنده نیست؛ چیزی که مهمه جرئتِ ادامه دادنه.", "وینستون چرچیل"],
+  ["همیشه به نظر غیرممکن می‌رسه، تا وقتی که انجام بشه.", "نلسون ماندلا"],
+  ["هر چه در این عالم است، در توست؛ هر چه می‌خواهی از خود بخواه.", "مولانا"],
+  ["زخم جاییه که نور ازش وارد تو می‌شه.", "مولانا"],
+  ["از محبت، تلخ‌ها شیرین شود.", "مولانا"],
+  ["توانا بود هر که دانا بود.", "فردوسی"],
+  ["نابرده رنج گنج میسر نمی‌شود.", "سعدی"],
+  ["رهرو آن نیست که گه تند و گهی خسته رود؛ رهرو آن است که آهسته و پیوسته رود.", "سعدی"],
+  ["ما حاصلِ عادت‌هامونیم؛ پس برتری یه عمل نیست، یه عادته.", "ارسطو"],
+  ["سفر هزار فرسنگی با یک قدم شروع می‌شه.", "لائوتزو"],
+  ["مهم نیست چقدر آروم پیش می‌ری، تا وقتی که نایستی.", "کنفوسیوس"],
+  ["آب باش، دوست من.", "بروس لی"],
+  ["از کسی که ده‌هزار ضربه رو یه بار تمرین کرده نمی‌ترسم؛ از کسی می‌ترسم که یه ضربه رو ده‌هزار بار تمرین کرده.", "بروس لی"],
+  ["وقتی چیزی به اندازه‌ی کافی مهمه، انجامش بده؛ حتی اگه شانس به نفعت نباشه.", "ایلان ماسک"],
+  ["راهِ شروع کردن، اینه که حرف زدن رو تموم کنی و دست به کار بشی.", "والت دیزنی"],
+  ["هر کاری که می‌تونی تصورش کنی، واقعیه.", "پابلو پیکاسو"],
+  ["آدم‌ها اغلب می‌گن انگیزه دوام نداره؛ حمام کردن هم دوام نداره، برای همین هر روز توصیه می‌شه.", "زیگ زیگلار"],
+  ["تمرینات رو دوست نداشتم، ولی گفتم: الان رنج بکش و بقیه‌ی عمرت مثل یه قهرمان زندگی کن.", "محمدعلی کلای"],
+  ["من بارها و بارها در زندگیم شکست خوردم؛ و دقیقاً برای همینه که موفق شدم.", "مایکل جردن"],
+  ["کار سخت وقتی استعداد سخت کار نکنه، استعداد رو شکست می‌ده.", "تیم ناتکه"],
+  ["کاری که امروز می‌کنی می‌تونه همه‌ی فرداهات رو بهتر کنه.", "رالف ماریستون"],
+  ["به جای اینکه بپرسی دنیا به چی نیاز داره، بپرس چی تو رو زنده می‌کنه؛ و برو انجامش بده.", "هاوارد تورمن"],
+  ["بهترین زمان برای کاشتن درخت بیست سال پیش بود؛ دومین زمانِ خوب، همین الانه.", "ضرب‌المثل چینی"],
+  ["کمال‌گرایی دشمنِ کارِ تموم‌شده‌ست.", "ولتر"],
+  ["انضباط یعنی انتخاب بین چیزی که الان می‌خوای و چیزی که بیشتر از همه می‌خوای.", "—"],
+  ["کوچیک شروع کن، ولی شروع کن.", "—"],
+];
+
+const quote = {
+  i: -1,
+  pool() {
+    const own = (localStorage.getItem("nplus-notes") || "").trim();
+    return own && own.length < 140 ? [...QUOTES, [own, "خودت"]] : QUOTES;
+  },
+  next() {
+    const pool = this.pool();
+    let i;
+    do i = Math.floor(Math.random() * pool.length);
+    while (pool.length > 1 && i === this.i);
+    this.i = i;
+    const [text, by] = pool[i];
+    const box = $("#quote");
+    box.classList.remove("in");
+    void box.offsetWidth;
+    $("#quote-text").textContent = text;
+    $("#quote-by").textContent = by === "—" ? "" : by;
+    box.classList.add("in");
+  },
+};
+$("#quote").addEventListener("click", () => quote.next());
+
+// ---------------- to-do (lives in the browser; this is its card) ----------------
+const todo = {
+  render(t) {
+    const box = $("#todo");
+    if (!S.todo || !t) return (box.hidden = true);
+    box.hidden = false;
+    const total = t.dueNow + t.doneToday;
+    $("#todo-open").textContent = total ? `${num(t.doneToday)} از ${num(total)} امروز ↗` : t.open ? `${num(t.open)} کار ↗` : "↗";
+    const list = $("#todo-list");
+    if (!t.items.length) {
+      list.replaceChildren(Object.assign(document.createElement("div"), { className: "tdo-empty", textContent: "کار بازی نداری ✨" }));
+      return;
+    }
+    list.replaceChildren(
+      ...t.items.slice(0, 4).map((it) => {
+        const row = document.createElement("div");
+        row.className = "tdo-row";
+        row.dataset.state = it.state;
+        row.dataset.pri = it.pri;
+        const check = document.createElement("button");
+        check.className = "tdo-check";
+        check.title = "انجام شد";
+        check.onclick = async () => {
+          row.classList.add("done");
+          setTimeout(async () => todo.render((await link.ask("todo-toggle", { todo: it.id }))?.todos), 380);
+        };
+        const body = document.createElement("div");
+        body.className = "tdo-body";
+        body.append(Object.assign(document.createElement("div"), { className: "tdo-title", textContent: it.title, dir: "auto" }));
+        const meta = [it.when, it.repeat ? "🔁" : "", it.steps ? `${num(it.stepsDone)}/${num(it.steps)}` : ""].filter(Boolean).join(" · ");
+        if (meta) body.append(Object.assign(document.createElement("div"), { className: "tdo-when", textContent: (it.state === "overdue" ? "⚠ " : "") + meta }));
+        row.append(check, body);
+        return row;
+      }),
+      ...(t.open > 4 ? [Object.assign(document.createElement("button"), { className: "tdo-more", textContent: `+ ${num(t.open - 4)} کار دیگه`, onclick: () => link.ask("open", { what: "todo" }) })] : []),
+    );
+  },
+  async load() {
+    if (!S.todo) return ($("#todo").hidden = true);
+    todo.render((await link.ask("todos"))?.todos);
+  },
+};
+$("#todo-add").addEventListener("keydown", async (e) => {
+  if (e.key !== "Enter" || !e.target.value.trim()) return;
+  const text = e.target.value;
+  e.target.value = "";
+  todo.render((await link.ask("todo-add", { text }))?.todos);
+});
+$("#todo-open").addEventListener("click", () => link.ask("open", { what: "todo" }));
 
 // ---------------- Hafez ----------------
 async function fal() {
@@ -1087,6 +1199,7 @@ function fillSettings() {
   $("#s-weather").checked = S.weather;
   $("#s-notes").checked = S.notes;
   $("#s-today").checked = S.today;
+  $("#s-todo").checked = S.todo;
   $("#s-words").checked = S.words;
   $("#s-aurora").checked = S.aurora;
   $("#s-hafez").checked = S.hafez;
@@ -1127,6 +1240,7 @@ bind("#s-player", "player", (el) => el.checked);
 bind("#s-weather", "weather", (el) => el.checked, loadWeather);
 bind("#s-notes", "notes", (el) => el.checked);
 bind("#s-today", "today", (el) => el.checked, () => today.load());
+bind("#s-todo", "todo", (el) => el.checked, () => todo.load());
 bind("#s-words", "words", (el) => el.checked, () => words.load());
 bind("#s-aurora", "aurora", (el) => el.checked, () => aurora.wake());
 bind("#s-hafez", "hafez", (el) => el.checked);
@@ -1153,7 +1267,8 @@ $("#s-link-add").addEventListener("click", () => {
 });
 
 function applyVisibility() {
-  $("#notes").hidden = !S.notes;
+  $("#quote").hidden = !S.notes;
+  if (!S.todo) $("#todo").hidden = true;
   if (!S.today) $("#today").hidden = true;
   if (!S.words) $("#words").hidden = true;
   $("#hafez-btn").hidden = !S.hafez;
@@ -1172,12 +1287,14 @@ player.poll();
 loadWeek();
 today.load();
 words.load();
+todo.load();
+quote.next();
 aurora.wake();
 new MutationObserver(() => aurora.wake()).observe(document.body, { attributes: true, attributeFilter: ["playing"] });
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden && player.sleeping) (player.sleeping = false), player.poll();
   aurora.wake();
-  if (!document.hidden) (today.load(), words.load());
+  if (!document.hidden) (today.load(), words.load(), todo.load());
 });
 setInterval(() => player.tick(), 250);
 
