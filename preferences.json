@@ -1268,7 +1268,7 @@
   {
     "type": "checkbox",
     "property": "nplus-kbfix",
-    "label": "Fix text typed in the wrong layout (Ctrl+Alt+Space, hint in the URL bar)",
+    "label": "Fix text typed in the wrong layout (Ctrl+Alt+K, hint in the URL bar)",
     "defaultValue": true,
     "margin": "12px 0"
   },
@@ -1323,6 +1323,34 @@
     "type": "checkbox",
     "property": "nplus-notes",
     "label": "Sticky notes & lasting highlights on pages (Ctrl+Alt+H / N, notebook Ctrl+Alt+B)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-reader",
+    "label": "Reader view in the Nebula look, with a 3-line AI summary",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-xray",
+    "label": "Link X-ray: rest on a link to see where it really goes (Shift = instantly)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-askbar",
+    "label": "Ask from the URL bar: type ? and a question, press Enter",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-devmode",
+    "label": "Developer pill on localhost: errors, hard reload, console, open on phone",
     "defaultValue": true,
     "margin": "12px 0"
   },

@@ -1,5 +1,5 @@
 // Nebula Plus — wrong keyboard layout fixer (Persian ⇄ English).
-// Typed "sghl" meaning «سلام», or «حخخلمث» meaning "google"? Ctrl+Alt+Space
+// Typed "sghl" meaning «سلام», or «حخخلمث» meaning "google"? Ctrl+Alt+K
 // converts the selection, or else the last run you typed in the wrong
 // layout — in the URL bar and in any text field on any site. While you type
 // in the URL bar, a small chip offers the fix by itself when it looks wrong.
@@ -139,13 +139,13 @@
       if (!NP.prefs.get("nplus-kbfix")) return;
       this.loaded = new WeakSet();
       this.maps = { toFa: Object.fromEntries(toFa), toEn: Object.fromEntries(toEn) };
-      this.offKey = NP.hotkey?.("ctrl+alt+space", () => this.fix());
+      this.offKey = NP.hotkey?.("ctrl+alt+k", () => this.fix());
 
       // the URL bar hint
       this.chip = NP.html("div", { id: "nplus-kbfix", hidden: "true" }, [
         NP.html("span", { class: "kb-key", text: "⌨" }),
         NP.html("span", { class: "kb-text" }),
-        NP.html("span", { class: "kb-hint", text: "Ctrl+Alt+Space" }),
+        NP.html("span", { class: "kb-hint", text: "Ctrl+Alt+K" }),
       ]);
       this.chip.addEventListener("mousedown", (e) => {
         e.preventDefault();

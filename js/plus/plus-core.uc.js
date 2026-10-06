@@ -435,16 +435,11 @@
       this.map = new Map();
       this.onKey = (e) => {
         if (e.repeat) return;
-        const combo = [
-          e.ctrlKey && "ctrl",
-          e.altKey && "alt",
-          e.shiftKey && "shift",
-          e.metaKey && "meta",
-          e.key.toLowerCase() === " " ? "space" : e.key.toLowerCase(),
-        ]
-          .filter(Boolean)
-          .join("+");
-        const entry = this.map.get(combo);
+        const mods = [e.ctrlKey && "ctrl", e.altKey && "alt", e.shiftKey && "shift", e.metaKey && "meta"].filter(Boolean);
+        const key = e.key.toLowerCase() === " " ? "space" : e.key.toLowerCase();
+        // with the Persian layout on, "k" arrives as "ن": fall back to the physical key
+        const phys = /^Key[A-Z]$/.test(e.code) ? e.code.slice(3).toLowerCase() : /^Digit\d$/.test(e.code) ? e.code.slice(5) : null;
+        const entry = this.map.get([...mods, key].join("+")) ?? (phys && this.map.get([...mods, phys].join("+")));
         if (entry && (!entry.enabled || entry.enabled())) {
           e.preventDefault();
           e.stopPropagation();
@@ -552,7 +547,7 @@
   // ================= Extra modules =================
   // Newer modules are loaded from here rather than listed in Sine's
   // mods.json, so adding one needs no reinstall or restart.
-  for (const file of ["plus-orb.uc.js", "plus-splash.uc.js", "plus-palette.uc.js", "plus-tabs.uc.js", "plus-meet.uc.js", "plus-smart.uc.js", "plus-assistant.uc.js", "plus-galaxy.uc.js", "plus-class.uc.js", "plus-ambilight.uc.js", "plus-keyboard.uc.js", "plus-watch.uc.js", "plus-wormhole.uc.js", "plus-remix.uc.js", "plus-lens.uc.js", "plus-notes.uc.js", "plus-bubble.uc.js", "plus-pdf.uc.js"]) {
+  for (const file of ["plus-orb.uc.js", "plus-splash.uc.js", "plus-palette.uc.js", "plus-tabs.uc.js", "plus-meet.uc.js", "plus-smart.uc.js", "plus-assistant.uc.js", "plus-galaxy.uc.js", "plus-class.uc.js", "plus-ambilight.uc.js", "plus-keyboard.uc.js", "plus-watch.uc.js", "plus-wormhole.uc.js", "plus-remix.uc.js", "plus-lens.uc.js", "plus-notes.uc.js", "plus-bubble.uc.js", "plus-pdf.uc.js", "plus-reader.uc.js", "plus-xray.uc.js", "plus-askbar.uc.js", "plus-devmode.uc.js"]) {
     try {
       Services.scriptloader.loadSubScript(`chrome://sine/content/Nebula/js/plus/${file}?t=${Date.now()}`, window);
     } catch (err) {

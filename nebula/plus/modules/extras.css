@@ -1,0 +1,302 @@
+/* ---------------- Ask from the URL bar (plus-askbar.uc.js) ---------------- */
+#nplus-askchip {
+  position: absolute;
+  inset-inline-end: 8px;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 11px;
+  border-radius: 99px;
+  corner-shape: round;
+  background: color-mix(in srgb, var(--nplus-accent) 22%, light-dark(rgb(255 255 255 / 92%), rgb(28 28 36 / 92%)));
+  box-shadow:
+    0 0 0 0.5px color-mix(in srgb, var(--nplus-accent) 55%, transparent),
+    0 8px 22px -10px var(--nplus-accent);
+  font-family: var(--nplus-ui-font, "Meem"), "Meem", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  pointer-events: none;
+  animation: nplus-kb-in 0.3s var(--nplus-ease-spring) both;
+
+  &[hidden] {
+    display: none;
+  }
+
+  .ab-spark {
+    color: var(--nplus-accent);
+  }
+}
+
+#nplus-askcard {
+  --ab-accent: color-mix(in oklch, var(--nplus-accent) 55%, #8b7bff);
+  position: fixed;
+  left: var(--ab-left, 30%);
+  top: var(--ab-top, 80px);
+  width: var(--ab-width, 560px);
+  max-width: calc(100vw - 24px);
+  z-index: 2147482500;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px 12px;
+  border-radius: 22px;
+  color: light-dark(rgb(22 22 28), rgb(240 240 246));
+  background:
+    radial-gradient(120% 60% at 0% -20%, color-mix(in srgb, var(--ab-accent) 22%, transparent), transparent 60%),
+    light-dark(rgb(248 248 251 / 92%), rgb(18 18 24 / 94%));
+  backdrop-filter: blur(50px) saturate(190%);
+  box-shadow:
+    inset 0 1px 0 light-dark(rgb(255 255 255 / 90%), rgb(255 255 255 / 7%)),
+    0 0 0 0.5px light-dark(rgb(0 0 0 / 9%), rgb(255 255 255 / 11%)),
+    0 40px 90px -36px rgb(0 0 0 / 65%);
+  font-family: var(--nplus-ui-font, "Meem"), "Meem", system-ui, sans-serif;
+  opacity: 0;
+  translate: 0 -6px;
+  transition:
+    opacity 0.18s ease,
+    translate 0.3s var(--nplus-ease-spring);
+  -moz-window-dragging: no-drag;
+
+  &[open] {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+
+  .ab-q {
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0.6;
+    unicode-bidi: plaintext;
+    text-align: start;
+  }
+
+  .ab-a {
+    max-height: 46vh;
+    overflow-y: auto;
+    font-size: 14.5px;
+    line-height: 1.95;
+    white-space: pre-wrap;
+    unicode-bidi: plaintext;
+    text-align: start;
+    scrollbar-width: thin;
+    user-select: text;
+
+    &:empty::before {
+      content: "…";
+    }
+  }
+
+  &[busy] .ab-a {
+    background: linear-gradient(90deg, currentColor 30%, var(--ab-accent) 50%, currentColor 70%) 0 0 / 300% 100%;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: nplus-ab-shine 1.6s linear infinite;
+  }
+
+  .ab-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    direction: rtl;
+  }
+
+  .ab-sp {
+    flex: 1;
+  }
+
+  .ab-btn {
+    appearance: none;
+    padding: 5px 12px;
+    border: none;
+    border-radius: 99px;
+    corner-shape: round;
+    background: light-dark(rgb(0 0 0 / 5%), rgb(255 255 255 / 7%));
+    color: inherit;
+    font: inherit;
+    font-size: 11.5px;
+    cursor: pointer;
+
+    &:hover {
+      background: color-mix(in srgb, var(--ab-accent) 28%, transparent);
+    }
+  }
+}
+
+@keyframes nplus-ab-shine {
+  to {
+    background-position: -300% 0;
+  }
+}
+
+/* ---------------- Developer mode pill (plus-devmode.uc.js) ---------------- */
+#tabbrowser-tabbox {
+  position: relative;
+}
+
+#nplus-devpill {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 5px 4px 12px;
+  border-radius: 99px;
+  corner-shape: round;
+  color: rgb(240 240 246);
+  background: rgb(18 18 24 / 88%);
+  backdrop-filter: blur(20px) saturate(170%);
+  box-shadow:
+    0 0 0 0.5px rgb(255 255 255 / 12%),
+    0 14px 34px -14px rgb(0 0 0 / 70%);
+  font-family: var(--nplus-ui-font, "Meem"), "Meem", system-ui, sans-serif;
+  font-size: 11.5px;
+  direction: ltr;
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+
+  &:hover,
+  &[bad] {
+    opacity: 1;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+
+  &[pulse] {
+    animation: nplus-dev-pulse 0.6s ease;
+  }
+
+  .dv-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #5be3a0;
+    box-shadow: 0 0 8px #5be3a0;
+  }
+
+  &[bad] .dv-dot {
+    background: #ff6b6f;
+    box-shadow: 0 0 8px #ff6b6f;
+  }
+
+  .dv-port {
+    font-weight: 800;
+    font-family: Consolas, "Cascadia Mono", monospace !important;
+    padding-inline-end: 4px;
+  }
+
+  .dv-sep {
+    width: 1px;
+    height: 14px;
+    background: rgb(255 255 255 / 14%);
+  }
+}
+
+@keyframes nplus-dev-pulse {
+  40% {
+    scale: 1.06;
+    box-shadow:
+      0 0 0 0.5px rgb(255 107 111 / 60%),
+      0 0 24px -4px #ff6b6f;
+  }
+}
+
+#nplus-devpill .dv-err,
+#nplus-devpill .dv-btn,
+#nplus-devlist .dv-btn {
+  appearance: none;
+  min-width: 26px;
+  height: 24px;
+  padding: 0 9px;
+  border: none;
+  border-radius: 99px;
+  corner-shape: round;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover {
+    background: rgb(255 255 255 / 10%);
+  }
+}
+
+#nplus-devpill .dv-err {
+  direction: rtl;
+}
+
+#nplus-devpill[bad] .dv-err {
+  background: rgb(229 72 77 / 22%);
+  color: #ffb0b2;
+  font-weight: 700;
+}
+
+#nplus-devlist {
+  position: absolute;
+  bottom: 56px;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 20;
+  width: min(560px, 90%);
+  max-height: 46vh;
+  overflow-y: auto;
+  padding: 8px;
+  border-radius: 18px;
+  color: rgb(240 240 246);
+  background: rgb(18 18 24 / 94%);
+  backdrop-filter: blur(30px);
+  box-shadow:
+    0 0 0 0.5px rgb(255 255 255 / 12%),
+    0 24px 60px -24px rgb(0 0 0 / 70%);
+  scrollbar-width: thin;
+
+  &[hidden] {
+    display: none;
+  }
+
+  .dv-row {
+    margin-bottom: 5px;
+    padding: 8px 11px;
+    border-radius: 12px;
+    background: rgb(229 72 77 / 10%);
+    font: 12px/1.5 Consolas, "Cascadia Mono", monospace !important;
+    direction: ltr;
+    user-select: text;
+
+    &.dv-ok {
+      background: rgb(91 227 160 / 10%);
+      font-family: var(--nplus-ui-font, "Meem"), "Meem", sans-serif;
+      direction: rtl;
+    }
+  }
+
+  .dv-msg {
+    color: #ffb0b2;
+    word-break: break-word;
+  }
+
+  .dv-where {
+    margin-top: 2px;
+    opacity: 0.55;
+    font-size: 11px;
+  }
+
+  .dv-foot {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+    font-family: var(--nplus-ui-font, "Meem"), "Meem", sans-serif;
+    font-size: 11.5px;
+  }
+}
