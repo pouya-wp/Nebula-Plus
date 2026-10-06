@@ -677,3 +677,189 @@
     }
   }
 }
+
+/* ---------------- Price tracker (plus-prices.uc.js) ---------------- */
+#nplus-prices-panel {
+  .wt-row {
+    align-items: center;
+  }
+
+  .pr-img {
+    flex: none;
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: white;
+  }
+
+  .pr-spark {
+    flex: none;
+    width: 90px;
+    height: 28px;
+
+    polyline {
+      fill: none;
+      stroke: var(--wt-accent);
+      stroke-width: 1.6;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+    }
+  }
+
+  .wt-row[cheaper] .pr-spark polyline {
+    stroke: #5be3a0;
+  }
+}
+
+/* ---------------- Gemini commands / history (plus-genie.uc.js) ---------------- */
+#nplus-genie-panel {
+  .gn-say {
+    margin: 0 6px 8px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.8;
+  }
+
+  .gn-busy {
+    animation: nplus-gn-pulse 1.4s ease-in-out infinite alternate;
+  }
+
+  .gn-ico {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    border-radius: 4px;
+  }
+
+  .gn-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 0 16px 14px;
+
+    &:empty {
+      display: none;
+    }
+  }
+}
+
+@keyframes nplus-gn-pulse {
+  to {
+    opacity: 0.45;
+  }
+}
+
+/* ---------------- Clipboard + shortcuts (plus-clip.uc.js) ---------------- */
+#nplus-clip-panel {
+  .cl-text {
+    font-size: 13px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+    unicode-bidi: plaintext;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+  }
+
+  .wt-row[pinned] {
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--wt-accent) 45%, transparent);
+  }
+
+  .cl-new {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 16px;
+    background: var(--wt-surface);
+    box-shadow: 0 0 0 0.5px var(--wt-line);
+
+    .wt-btn {
+      align-self: flex-end;
+    }
+  }
+
+  .td-edit {
+    width: 100%;
+    padding: 8px 11px;
+    border: none !important;
+    border-radius: 10px;
+    outline: none !important;
+    appearance: none !important;
+    background: light-dark(rgb(0 0 0 / 5%), rgb(255 255 255 / 7%)) !important;
+    box-shadow: none !important;
+    color: inherit;
+    font: inherit;
+    font-size: 13px;
+    resize: vertical;
+
+    &:focus {
+      box-shadow: 0 0 0 1.5px var(--wt-accent) !important;
+    }
+  }
+
+  .cl-val {
+    min-height: 60px;
+  }
+
+  .cl-builtin {
+    margin: 8px 6px 0;
+  }
+}
+
+/* ---------------- Modes (plus-modes.uc.js) ---------------- */
+#nplus-modes-panel {
+  .md-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 0 16px 14px;
+  }
+
+  .md-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 10px 12px;
+    border-radius: 18px;
+    background: var(--wt-surface);
+    box-shadow: 0 0 0 0.5px var(--wt-line);
+    text-align: center;
+
+    &[active] {
+      box-shadow:
+        0 0 0 1.5px var(--wt-accent),
+        0 14px 30px -18px var(--wt-accent);
+    }
+  }
+
+  .md-icon {
+    font-size: 30px;
+  }
+
+  .md-name {
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  .md-sub {
+    font-size: 10.5px;
+    color: var(--wt-soft);
+  }
+
+  .md-go {
+    margin-top: 4px;
+    width: 100%;
+  }
+
+  .md-save {
+    width: 100%;
+    font-size: 10.5px;
+  }
+}

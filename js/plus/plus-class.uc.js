@@ -76,7 +76,22 @@
     async init() {
       if (!NP.prefs.get("nplus-class")) return;
       NP.classBoard = { open: () => this.open() };
+      // ticking it in the to-do list ticks it here too
+      this.offHw = NP.on?.("homework-done", (e) => {
+        const hw = store.get("classHomework", []);
+        const h = hw.find((x) => x.id === e.id);
+        if (h && h.done !== e.done) {
+          h.done = e.done;
+          store.set("classHomework", hw);
+          this.render?.();
+        }
+      });
       await NP.store.load();
+      // homework found before the to-do list existed joins it once
+      setTimeout(() => {
+        for (const h of store.get("classHomework", []).filter((x) => !x.done))
+          NP.todo?.addItem({ title: h.task, due: h.due ? new Date(h.due.slice(0, 10) + "T00:00:00").getTime() : null, pri: 1, tags: ["کلاس"], hw: h.id });
+      }, 3000);
       this.build();
       this.restyle();
       this.timer = setInterval(() => this.tick(), 60 * 1000);
@@ -260,6 +275,8 @@
       const h = hw.find((x) => x.id === id);
       if (h) h.done = true;
       store.set("classHomework", hw);
+      const t = NP.todo?.list().find((x) => x.hw === id && !x.done);
+      if (t) NP.todo.toggle(t.id);
       this.render();
     },
 
@@ -275,14 +292,16 @@ Reply with JSON only: [{"i": message index, "task": "short Persian task (max 12 
 
 ${texts.map((t, i) => `[${i}] (${t.date} ${t.time}) ${t.text.slice(0, 600)}`).join("\n")}`;
       try {
-        const raw = await NP.assistant.ask(prompt, () => {}, { fast: true });
-        const list = JSON.parse(String(raw).match(/\[[\s\S]*\]/)?.[0] ?? "[]");
+        const list = await (NP.gemini ? NP.gemini.json(prompt) : NP.assistant.ask(prompt, () => {}).then((raw) => JSON.parse(String(raw).match(/\[[\s\S]*\]/)?.[0] ?? "[]")));
         if (!list.length) return;
         const hw = store.get("classHomework", []);
         for (const t of list) {
           const src = texts[t.i];
           if (!src || !t.task || hw.some((h) => h.key === src.key && h.task === t.task)) continue;
-          hw.push({ id: `h${Date.now().toString(36)}${hw.length}`, key: src.key, task: t.task, due: /^\d{4}-\d\d-\d\d$/.test(t.due) ? `${t.due}T12:00:00` : null, added: Date.now() });
+          const h = { id: `h${Date.now().toString(36)}${hw.length}`, key: src.key, task: t.task, due: /^\d{4}-\d\d-\d\d$/.test(t.due) ? `${t.due}T12:00:00` : null, added: Date.now() };
+          hw.push(h);
+          // and into the to-do list, with its deadline
+          NP.todo?.addItem({ title: h.task, due: h.due ? new Date(`${t.due}T00:00:00`).getTime() : null, pri: 1, tags: ["کلاس"], hw: h.id });
         }
         store.set("classHomework", hw.slice(-80));
         NP.store.data.classHomework = hw.slice(-80);
@@ -480,6 +499,7 @@ ${texts.map((t, i) => `[${i}] (${t.date} ${t.time}) ${t.text.slice(0, 600)}`).jo
         if (this.sheet && sss.sheetRegistered(this.sheet, sss.USER_SHEET)) sss.unregisterSheet(this.sheet, sss.USER_SHEET);
       } catch {}
       window.removeEventListener("mousedown", this.onDocDown, true);
+      this.offHw?.();
       this.button?.remove();
       this.panel?.remove();
     },

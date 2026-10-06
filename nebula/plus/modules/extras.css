@@ -532,3 +532,202 @@
     opacity: 0.6;
   }
 }
+
+/* ---------------- Weekly wrapped (plus-wrapped.uc.js) ---------------- */
+#nplus-wrapped {
+  --a: #8b7bff;
+  --b: #ff7ab6;
+  position: fixed;
+  inset: 0;
+  z-index: 2147482700;
+  display: grid;
+  place-items: center;
+  color: white;
+  background:
+    radial-gradient(70% 60% at 25% 20%, color-mix(in srgb, var(--a) 70%, transparent), transparent 70%),
+    radial-gradient(60% 60% at 80% 85%, color-mix(in srgb, var(--b) 60%, transparent), transparent 70%),
+    rgb(12 10 22 / 96%);
+  font-family: var(--nplus-ui-font, "Meem"), "Meem", system-ui, sans-serif;
+  direction: rtl;
+  cursor: pointer;
+  user-select: none;
+  opacity: 0;
+  transition:
+    opacity 0.35s ease,
+    --a 0.8s ease,
+    --b 0.8s ease;
+  -moz-window-dragging: no-drag;
+
+  &[open] {
+    opacity: 1;
+  }
+
+  &[data-tone="1"] { --a: #5be3a0; --b: #6ec8ff; }
+  &[data-tone="2"] { --a: #ff8a5c; --b: #ff5c9a; }
+  &[data-tone="3"] { --a: #ffd84d; --b: #ff7a59; }
+  &[data-tone="4"] { --a: #6ec8ff; --b: #8b7bff; }
+  &[data-tone="5"] { --a: #5be3a0; --b: #c6f36b; }
+  &[data-tone="6"] { --a: #b98bff; --b: #6ee7ff; }
+  &[data-tone="7"] { --a: #ff7ab6; --b: #8b7bff; }
+
+  .wr-bars {
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    translate: -50% 0;
+    display: flex;
+    gap: 5px;
+    width: min(420px, 80vw);
+
+    span {
+      flex: 1;
+      height: 3px;
+      border-radius: 99px;
+      background: rgb(255 255 255 / 22%);
+      transition: background-color 0.3s ease;
+
+      &[on] {
+        background: white;
+      }
+    }
+  }
+
+  .wr-card {
+    max-width: min(640px, 86vw);
+    text-align: center;
+
+    &.in > * {
+      animation: nplus-wr-in 0.6s var(--nplus-ease-spring) both;
+    }
+
+    &.in > :nth-child(2) {
+      animation-delay: 0.08s;
+    }
+
+    &.in > :nth-child(3) {
+      animation-delay: 0.16s;
+    }
+  }
+
+  .wr-kicker {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    opacity: 0.75;
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .wr-big {
+    margin: 10px 0 8px;
+    font-size: clamp(34px, 6vw, 64px);
+    font-weight: 900;
+    line-height: 1.15;
+    text-shadow: 0 10px 40px rgb(0 0 0 / 30%);
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  .wr-sub {
+    font-size: clamp(15px, 1.6vw, 19px);
+    font-weight: 600;
+    line-height: 1.8;
+    opacity: 0.9;
+
+    &[long] {
+      font-size: clamp(17px, 2vw, 23px);
+      line-height: 2;
+      opacity: 1;
+    }
+  }
+
+  .wr-hint {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    translate: -50% 0;
+    font-size: 11px;
+    opacity: 0.5;
+  }
+}
+
+@property --a {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #8b7bff;
+}
+
+@property --b {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #ff7ab6;
+}
+
+@keyframes nplus-wr-in {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+    scale: 0.97;
+  }
+}
+
+/* ---------------- Voice typing (plus-voice.uc.js) ---------------- */
+#nplus-voice {
+  --lvl: 0;
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 2147482700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 99px;
+  color: white;
+  background: rgb(18 18 26 / 92%);
+  backdrop-filter: blur(20px) saturate(170%);
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 12%),
+    0 0 calc(10px + var(--lvl) * 40px) calc(var(--lvl) * 6px) color-mix(in srgb, #ff5c6c 70%, transparent),
+    0 18px 40px -16px rgb(0 0 0 / 70%);
+  font: 700 13px var(--nplus-ui-font, "Meem"), "Meem", system-ui, sans-serif;
+  direction: rtl;
+  animation: nplus-kb-in 0.3s var(--nplus-ease-spring) both;
+  -moz-window-dragging: no-drag;
+
+  .vc-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ff5c6c;
+    scale: calc(1 + var(--lvl) * 0.8);
+    transition: scale 0.08s linear;
+  }
+
+  &[busy] .vc-dot {
+    background: #8b7bff;
+    animation: nplus-vc-busy 0.9s ease-in-out infinite alternate;
+  }
+
+  .vc-time {
+    font-family: Consolas, monospace;
+    opacity: 0.6;
+  }
+
+  .vc-hint {
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.5;
+  }
+}
+
+@keyframes nplus-vc-busy {
+  to {
+    opacity: 0.3;
+  }
+}

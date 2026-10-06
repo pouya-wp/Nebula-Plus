@@ -827,7 +827,26 @@ const today = {
           Object.assign(document.createElement("span"), { className: "td-sub", textContent: it.sub || "" }),
         );
         row.append(ico, body);
-        row.addEventListener("click", () => link.ask("open", { what: it.open }));
+        if (it.type === "market") {
+          row.classList.add("td-market");
+          row.dataset.dir = it.dir > 0 ? "up" : it.dir < 0 ? "down" : "flat";
+          if (it.spark?.length > 2) {
+            const v = it.spark;
+            const lo = Math.min(...v);
+            const hi = Math.max(...v);
+            const pts = v.map((x, i) => `${((i / (v.length - 1)) * 40).toFixed(1)},${(14 - ((x - lo) / (hi - lo || 1)) * 12 - 1).toFixed(1)}`).join(" ");
+            const NS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(NS, "svg");
+            svg.setAttribute("viewBox", "0 0 40 14");
+            svg.setAttribute("class", "td-spark");
+            const pl = document.createElementNS(NS, "polyline");
+            pl.setAttribute("points", pts);
+            svg.append(pl);
+            row.append(svg);
+          }
+        }
+        if (it.open) row.addEventListener("click", () => link.ask("open", { what: it.open }));
+        else row.classList.add("td-static");
         return row;
       }),
     );
@@ -919,7 +938,7 @@ const aurora = {
   },
   async poll() {
     try {
-      const b = await (await fetch(`${BRIDGE}/bands`, { cache: "no-store" })).json();
+      const { b } = await (await fetch(`${BRIDGE}/bands`, { cache: "no-store" })).json();
       if (Array.isArray(b) && b.length) {
         const avg = (from, to) => b.slice(from, to).reduce((x, y) => x + y, 0) / Math.max(1, Math.min(to, b.length) - from);
         this.bassT = avg(0, 4);
@@ -1033,9 +1052,16 @@ const QUOTES = [
 
 const quote = {
   i: -1,
+  hl: null,
   pool() {
     const own = (localStorage.getItem("nplus-notes") || "").trim();
-    return own && own.length < 140 ? [...QUOTES, [own, "خودت"]] : QUOTES;
+    const pool = own && own.length < 140 ? [...QUOTES, [own, "خودت"]] : [...QUOTES];
+    // one of your own highlights now and then, with the page it came from
+    if (this.hl) for (let k = 0; k < 4; k++) pool.push([this.hl.text, `از هایلایت‌هات · ${this.hl.title || ""}`, this.hl.url]);
+    return pool;
+  },
+  async loadHighlight() {
+    this.hl = (await link.ask("highlight"))?.highlight ?? null;
   },
   next() {
     const pool = this.pool();
@@ -1043,7 +1069,8 @@ const quote = {
     do i = Math.floor(Math.random() * pool.length);
     while (pool.length > 1 && i === this.i);
     this.i = i;
-    const [text, by] = pool[i];
+    const [text, by, url] = pool[i];
+    this.url = url ?? null;
     const box = $("#quote");
     box.classList.remove("in");
     void box.offsetWidth;
@@ -1052,7 +1079,11 @@ const quote = {
     box.classList.add("in");
   },
 };
-$("#quote").addEventListener("click", () => quote.next());
+$("#quote").addEventListener("click", (e) => {
+  // the source line of a highlight opens its page
+  if (quote.url && e.target.id === "quote-by") return link.ask("open-url", { url: quote.url });
+  quote.next();
+});
 
 // ---------------- to-do (lives in the browser; this is its card) ----------------
 const todo = {
@@ -1289,6 +1320,7 @@ today.load();
 words.load();
 todo.load();
 quote.next();
+quote.loadHighlight().then(() => quote.hl && Math.random() < 0.3 && quote.next());
 aurora.wake();
 new MutationObserver(() => aurora.wake()).observe(document.body, { attributes: true, attributeFilter: ["playing"] });
 document.addEventListener("visibilitychange", () => {

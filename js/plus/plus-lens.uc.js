@@ -180,7 +180,7 @@
       var d = content.document;
       if (!cfg || !d || !d.body || !/^https?:/.test(content.location.href)) return;
       scan(d.body);
-      if (observer) observer.disconnect();
+      try { if (observer) observer.disconnect(); } catch (e) {} observer = null;
       // Busy pages (YouTube, a streaming AI answer) change all the time:
       // collect changed spots in a capped set, ignore long streaming text,
       // and look at them only when the page is idle.
@@ -223,7 +223,7 @@
       observer.observe(d.body, { childList: true, characterData: true, subtree: true });
     }
 
-    addMessageListener('nplus:lens3:cfg', function (m) { if (stale()) { cfg = null; if (observer) observer.disconnect(); return; } cfg = m.data; if (cfg.on) start(); });
+    addMessageListener('nplus:lens3:cfg', function (m) { if (stale()) { cfg = null; try { if (observer) observer.disconnect(); } catch (e) {} observer = null; return; } cfg = m.data; if (cfg.on) start(); });
     addEventListener('DOMContentLoaded', function (e) { if (e.target === content.document && cfg && cfg.on) content.setTimeout(start, 600); }, false);
     sendAsyncMessage('nplus:lens3:hello', {});
   })(this);`;

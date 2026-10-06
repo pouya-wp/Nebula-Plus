@@ -69,6 +69,14 @@
     { t: "Smart screenshot (read text / explain)", k: "اسکرین شات هوشمند متن عکس بخون ocr screenshot read text explain", icon: ICON("screenshot"), run: () => NP.snap?.start() },
     { t: "Smart proxy routing on / off", k: "پروکسی فیلترشکن مسیریابی ایرانی مستقیم proxy vpn routing", icon: ICON("selectable/globe"), run: () => NP.prefs.set("nplus-smart-proxy", !NP.prefs.get("nplus-smart-proxy")) },
     { t: "To-do list", k: "کارها تودو لیست کار یادآوری todo tasks reminders", icon: ICON("edit"), run: () => NP.todo?.open() },
+    { t: "Translate this page to Persian", k: "ترجمه کل صفحه فارسی جمنای translate page persian gemini", icon: ICON("translations"), run: () => NP.translatePage?.() },
+    { t: "Track this price (Digikala)", k: "قیمت ردیاب دیجی کالا ارزون track price digikala", icon: ICON("selectable/tag"), run: () => NP.prices?.track(), when: () => NP.prices?.canTrack() },
+    { t: "Price tracker", k: "ردیاب قیمت ها دیجی کالا prices tracker", icon: ICON("selectable/tag"), run: () => NP.prices?.open() },
+    { t: "Clipboard history & shortcuts", k: "کلیپ بورد کپی ها تاریخچه میانبر clipboard history snippets", icon: ICON("edit"), run: () => NP.clip?.open() },
+    { t: "Modes: study / work / leisure", k: "حالت درس کار تفریح مود modes study work", icon: ICON("selectable/planet"), run: () => NP.modes?.open() },
+    { t: "Your week (wrapped)", k: "هفته من گزارش هفتگی رپد wrapped week recap", icon: ICON("sparkles"), run: () => NP.wrapped?.open() },
+    { t: "Voice typing", k: "تایپ صوتی میکروفون voice typing dictation", icon: ICON("sparkles"), run: () => NP.voice?.start() },
+    { t: "Check phone links now (wormhole)", k: "کرم چاله برگشت گوشی لینک wormhole pull phone", icon: ICON("share"), run: () => NP.wormhole?.pull() },
     { t: "Watched items", k: "چشم مراقب لیست زیر نظر watches", icon: ICON("selectable/eye"), run: () => NP.watch?.open() },
     { t: "Remix this site (AI)", k: "ریمیکس ظاهر سایت تم هوش مصنوعی remix restyle theme ai", icon: ICON("sparkles"), run: () => NP.remix?.open() },
     { t: "Remix: back to the original site", k: "ریمیکس برگردون اصلی remix undo original", icon: ICON("sparkles"), run: () => NP.remix?.off() },
@@ -231,6 +239,13 @@
         if (looksLikeUrl(raw)) {
           const url = /^[a-z]+:/i.test(raw) ? raw : `https://${raw}`;
           shown.unshift({ kind: "Open", title: url, icon: ICON("open"), mask: true, run: () => openUrl(url) });
+        }
+        // a sentence: let Gemini do it, or find a page by what it was about
+        if (NP.genie && /\S+\s+\S+/.test(raw) && !looksLikeUrl(raw)) {
+          shown.push(
+            { kind: "Gemini", title: `انجام بده: ${raw}`, sub: "تب‌ها رو با زبون خودت مدیریت کن", icon: ICON("sparkles"), mask: true, run: () => NP.genie.command(raw) },
+            { kind: "Gemini", title: `پیدا کن توی تاریخچه: ${raw}`, sub: "جستجو با معنی، نه فقط کلمه", icon: ICON("search-glass"), mask: true, run: () => NP.genie.searchHistory(raw) },
+          );
         }
         shown.push({
           kind: "Search",

@@ -35,6 +35,58 @@
       window.messageManager.addMessageListener("nplus:nt1:req", this.onReq);
       this.script = "data:," + encodeURIComponent(LINK);
       window.messageManager.loadFrameScript(this.script, true);
+      // market prices and the calendar refresh quietly in the background
+      this.refreshMarket();
+      this.refreshCalendar();
+      this.mTimer = setInterval(() => this.refreshMarket(), 30 * 60000);
+      this.cTimer = setInterval(() => this.refreshCalendar(), 3 * 3600000);
+    },
+
+    // ---------- market (Nobitex): dollar (USDT), gold 18k per gram, bitcoin ----------
+    async refreshMarket() {
+      if (Services.wm.getMostRecentWindow("navigator:browser") !== window && NP.store.data.market) return;
+      try {
+        const r = await (await fetch("https://apiv2.nobitex.ir/market/stats?srcCurrency=usdt,paxg,btc&dstCurrency=rls", { signal: AbortSignal.timeout(8000) })).json();
+        const st = r.stats ?? {};
+        const toman = (k) => Number(st[k]?.latest) / 10;
+        const usd = toman("usdt-rls");
+        if (!usd) return;
+        const gold18 = (toman("paxg-rls") / 31.1035) * 0.75;
+        const m = NP.store.data.market ?? { hist: [] };
+        m.at = Date.now();
+        m.usd = { v: usd, ch: Number(st["usdt-rls"]?.dayChange) || 0 };
+        m.gold = gold18 ? { v: gold18, ch: Number(st["paxg-rls"]?.dayChange) || 0 } : null;
+        m.btc = st["btc-rls"] ? { v: toman("btc-rls") / usd, ch: Number(st["btc-rls"]?.dayChange) || 0 } : null;
+        m.hist = [...(m.hist ?? []).filter((h) => h[0] > Date.now() - 7 * 86400000), [Date.now(), usd]];
+        NP.store.data.market = m;
+        NP.store.set("market", m);
+      } catch {}
+    },
+
+    // ---------- calendar: holidays and occasions (holidayapi.ir), cached per day ----------
+    jalali(t) {
+      const parts = new Intl.DateTimeFormat("en-u-ca-persian", { year: "numeric", month: "numeric", day: "numeric" }).formatToParts(new Date(t));
+      const get = (k) => Number(parts.find((p) => p.type === k)?.value);
+      return { y: get("year"), m: get("month"), d: get("day") };
+    },
+
+    async refreshCalendar() {
+      const cal = (NP.store.data.calendar ??= {});
+      const keep = new Set();
+      for (let i = 0; i < 21; i++) {
+        const j = this.jalali(Date.now() + i * 86400000);
+        const key = `${j.y}/${String(j.m).padStart(2, "0")}/${String(j.d).padStart(2, "0")}`;
+        keep.add(key);
+        if (cal[key]) continue;
+        try {
+          const r = await (await fetch(`https://holidayapi.ir/jalali/${key}`, { signal: AbortSignal.timeout(6000) })).json();
+          cal[key] = { off: !!r.is_holiday, ev: (r.events ?? []).map((e) => ({ t: e.description, off: !!e.is_holiday })).slice(0, 4) };
+        } catch {
+          break;
+        }
+      }
+      for (const k of Object.keys(cal)) if (!keep.has(k) && k < [...keep][0]) delete cal[k];
+      NP.store.set("calendar", cal);
     },
 
     reply(browser, id, data) {
@@ -52,6 +104,15 @@
         case "grade":
           NP.words?.grade(req.key, !!req.ok);
           return this.reply(browser, req.id, { word: this.word() });
+        case "highlight": {
+          // one of your highlights (with a note, or long enough to mean something)
+          const hl = (NP.store.data.notes ?? []).filter((n) => n.kind === "hl" && (n.note || (n.exact ?? "").length > 40) && (n.exact ?? "").length < 260);
+          const h = hl[Math.floor(Math.random() * hl.length)];
+          return this.reply(browser, req.id, { highlight: h ? { text: h.exact, note: h.note, title: h.title, url: h.url } : null });
+        }
+        case "open-url":
+          if (/^https?:\/\//.test(req.url ?? "")) openTrustedLinkIn(req.url, "tab");
+          return this.reply(browser, req.id, {});
         case "todos":
           return this.reply(browser, req.id, { todos: this.todos() });
         case "todo-add":
@@ -147,6 +208,40 @@
         items.push({ icon: "⏳", text: `دیروز ${h(total)} پای وب بودی`, sub: `بیشترش ${top} (${h(secs)})`, open: "usage" });
       }
 
+      // exams: tasks named «امتحان…» or tagged #امتحان
+      for (const t of (NP.todo?.list() ?? []).filter((t) => !t.done && t.due && (/امتحان|میان‌ترم|میانترم|کوییز|exam|quiz/i.test(t.title) || (t.tags ?? []).some((g) => /امتحان|exam/i.test(g))))) {
+        const days = Math.round((new Date(new Date(t.due).toDateString()) - new Date(new Date().toDateString())) / 86400000);
+        if (days < 0 || days > 30) continue;
+        items.push({ icon: "🎓", text: days === 0 ? `امروز: ${t.title}` : `${fa(days)} روز تا ${t.title}`, open: "todo", hot: days <= 2 });
+      }
+
+      // today's occasion / the next holiday
+      const cal = d.calendar ?? {};
+      const jk = (t) => {
+        const j = this.jalali(t);
+        return `${j.y}/${String(j.m).padStart(2, "0")}/${String(j.d).padStart(2, "0")}`;
+      };
+      const todayCal = cal[jk(Date.now())];
+      if (todayCal?.ev?.length) items.push({ icon: todayCal.off ? "🎉" : "📅", text: todayCal.ev[0].t, sub: todayCal.off ? "تعطیله" : "" });
+      for (let i = 1; i < 21; i++) {
+        const c = cal[jk(Date.now() + i * 86400000)];
+        // an official holiday (plain Fridays don't count)
+        const ev = c?.ev?.find((e) => e.off && !/^جمعه$/.test(e.t.trim()));
+        if (c?.off && ev) {
+          items.push({ icon: "🏖", text: `${i === 1 ? "فردا" : `${fa(i)} روز دیگه`} تعطیله`, sub: ev.t });
+          break;
+        }
+      }
+
+      // market
+      const m = d.market;
+      if (m?.usd) {
+        const n = (v) => Math.round(v).toLocaleString("fa-IR");
+        const pct = (c) => `${c > 0 ? "▲" : c < 0 ? "▼" : ""}${Math.abs(c).toLocaleString("fa-IR", { maximumFractionDigits: 2 })}٪`;
+        items.push({ type: "market", icon: "💵", text: `دلار ${n(m.usd.v)}`, sub: pct(m.usd.ch), dir: Math.sign(m.usd.ch), spark: (m.hist ?? []).slice(-48).map((h) => h[1]) });
+        if (m.gold) items.push({ type: "market", icon: "🪙", text: `طلای ۱۸ ${n(m.gold.v / 1000)} هزار`, sub: pct(m.gold.ch), dir: Math.sign(m.gold.ch) });
+      }
+
       return { items };
     },
 
@@ -160,6 +255,8 @@
     },
 
     destroy() {
+      clearInterval(this.mTimer);
+      clearInterval(this.cTimer);
       try {
         window.messageManager.removeDelayedFrameScript(this.script);
         window.messageManager.removeMessageListener("nplus:nt1:req", this.onReq);

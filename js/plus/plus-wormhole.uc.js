@@ -9,6 +9,25 @@
   if (!NP) return;
 
   NP.DEFAULTS["nplus-wormhole"] = true;
+  NP.DEFAULTS["nplus-wormhole-pull"] = true;
+
+  // Return trip: the last messages in Saved Messages, with their links.
+  const PULL = `(function(){
+    var d = content.document, out = [];
+    var bubbles = d.querySelectorAll('.chat .bubble:not(.service)');
+    Array.prototype.slice.call(bubbles, -25).forEach(function (b) {
+      var m = b.querySelector('.message'); if (!m) return;
+      var c = m.cloneNode(true);
+      c.querySelectorAll('.time, .reactions, .reactions-block').forEach(function (x) { x.remove(); });
+      var text = c.innerText.trim();
+      var links = [];
+      m.querySelectorAll('a[href]').forEach(function (a) { if (/^https?:/.test(a.href) && links.indexOf(a.href) < 0) links.push(a.href); });
+      (text.match(/https?:[^\\s<>"]+/g) || []).forEach(function (u) { if (links.indexOf(u) < 0) links.push(u); });
+      var tm = ((b.querySelector('.time') || {}).innerText || '').trim();
+      out.push({ id: b.getAttribute('data-mid') || '', text: text.slice(0, 500), links: links.slice(0, 5), time: tm });
+    });
+    sendAsyncMessage('nplus:wh:pulled', { ready: bubbles.length > 0, items: out });
+  })();`;
 
   const store = {
     get: (k, f) => (NP.store.data && k in NP.store.data ? NP.store.data[k] : f),
@@ -95,7 +114,10 @@
         },
       };
       gBrowser.addTabsProgressListener(this.progress);
-      NP.wormhole = { send: (t) => this.send(t), sendCurrent: () => this.sendCurrent(), dryRun: () => this.dryRun() };
+      NP.wormhole = { send: (t) => this.send(t), sendCurrent: () => this.sendCurrent(), dryRun: () => this.dryRun(), pull: () => this.pull(true) };
+      this.idle = Cc["@mozilla.org/widget/useridleservice;1"].getService(Ci.nsIUserIdleService);
+      this.pullTimer = setInterval(() => this.pull(), 10 * 60 * 1000);
+      this.firstPull = setTimeout(() => this.pull(), 90 * 1000);
     },
 
     // ---------- entry points ----------
@@ -305,7 +327,9 @@
         });
         // went out if the last message we sent starts like what we sent
         const norm = (s) => String(s ?? "").replace(/\s+/g, "").slice(0, 40);
-        return !!result?.ok && norm(result.last).startsWith(norm(text).slice(0, 20));
+        const ok = !!result?.ok && norm(result.last).startsWith(norm(text).slice(0, 20));
+        if (ok) store.set("whSent", [...store.get("whSent", []), norm(text)].slice(-60));
+        return ok;
       } catch (err) {
         NP.logger?.warn(`wormhole: ${err}`);
         return false;
@@ -317,6 +341,49 @@
       }
     },
 
+    // ---------- phone → browser ----------
+    // Links you put in Saved Messages from your phone open here. Checked
+    // every 10 minutes while you're at the computer (Rubika opens hidden
+    // for a few seconds, then closes).
+    async pull(manual) {
+      if (!manual && (!NP.prefs.get("nplus-wormhole-pull") || this.busy || this.pulling)) return;
+      if (!manual && (this.idle.idleTime > 5 * 60000 || Services.wm.getMostRecentWindow("navigator:browser") !== window)) return;
+      if (!store.get("rubikaSaved")) return;
+      this.pulling = true;
+      let opened;
+      try {
+        opened = await this.openSaved();
+        if (!opened.ok) return;
+        const res = await ask(opened.browser, PULL, "nplus:wh:pulled", 8, 1500, (d) => d.ready && d.items.length);
+        if (!res?.ready) return;
+        const norm = (s) => String(s ?? "").replace(/\s+/g, "").slice(0, 40);
+        const sent = new Set(store.get("whSent", []));
+        const seen = new Set(store.get("whSeen", []));
+        const key = (it) => it.id || norm(`${it.time}${it.text}`);
+        const first = !store.get("whPulledOnce");
+        const fresh = res.items.filter((it) => !seen.has(key(it)) && it.links.length && !sent.has(norm(it.text)));
+        store.set("whSeen", [...seen, ...res.items.map(key)].slice(-200));
+        store.set("whPulledOnce", true);
+        if (first) return; // the history isn't news
+        for (const it of fresh) {
+          for (const url of it.links) gBrowser.addTab(url, { triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal(), inBackground: true });
+        }
+        if (fresh.length) {
+          const n = fresh.reduce((a, it) => a + it.links.length, 0);
+          let host = "";
+          try {
+            host = new URL(fresh[0].links[0]).hostname.replace(/^www\./, "");
+          } catch {}
+          NP.island?.show({ id: "wormhole-in", title: `🌀 از گوشی رسید: ${n > 1 ? `${n} لینک` : host}`, subtitle: fresh[0].text.replace(/\s+/g, " ").slice(0, 90), duration: 7000 });
+        }
+      } catch (err) {
+        NP.logger?.warn(`wormhole pull: ${err}`);
+      } finally {
+        this.pulling = false;
+        if (opened?.tab && !opened.tab.closing) gBrowser.removeTab(opened.tab, { animate: false });
+      }
+    },
+
     // Everything except pressing send: is Saved Messages reachable?
     async dryRun() {
       const opened = await this.openSaved();
@@ -325,6 +392,8 @@
     },
 
     destroy() {
+      clearInterval(this.pullTimer);
+      clearTimeout(this.firstPull);
       this.offKey?.();
       gBrowser.removeTabsProgressListener(this.progress);
       window.removeEventListener("dragenter", this.onDragEnter, true);

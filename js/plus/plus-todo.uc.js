@@ -52,6 +52,19 @@
       let add = (want - now.getDay() + 7) % 7 || 7;
       day = dayStart(now) + add * DAY;
     });
+    // «۲۰ آبان» — the next time that Jalali date comes round
+    take(/\s(\d{1,2})\s?(فروردین|اردیبهشت|خرداد|تیر|مرداد|شهریور|مهر|آبان|آذر|دی|بهمن|اسفند)(?=\s)/, (_, dd, mon) => {
+      const want = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"].indexOf(mon) + 1;
+      const fmt = new Intl.DateTimeFormat("en-u-ca-persian", { month: "numeric", day: "numeric" });
+      for (let i = 0; i < 370; i++) {
+        const t = dayStart(now) + i * DAY;
+        const parts = fmt.formatToParts(new Date(t));
+        if (Number(parts.find((x) => x.type === "month").value) === want && Number(parts.find((x) => x.type === "day").value) === Number(dd)) {
+          day = t;
+          break;
+        }
+      }
+    });
     take(/\s(\d+)\s?روز\s?دیگه(?=\s)|\sin\s(\d+)\sdays?(?=\s)/i, (_, a, b) => (day = dayStart(now) + Number(a ?? b) * DAY));
     if (out.weekday >= 0 && day === null) {
       const add = (out.weekday - now.getDay() + 7) % 7;
@@ -106,6 +119,7 @@
       NP.todo = {
         list: () => this.list(),
         add: (text) => this.add(text),
+        addItem: (item) => this.addItem(item),
         toggle: (id) => this.toggle(id),
         remove: (id) => this.remove(id),
         update: (id, patch) => this.update(id, patch),
@@ -140,12 +154,22 @@
       return t;
     },
 
+    // from other features (class homework): already-understood fields
+    addItem({ title, due = null, time = false, pri = 0, tags = [], hw = null }) {
+      if (!title) return null;
+      if (hw && this.list().some((x) => x.hw === hw)) return null;
+      const t = { id: `t${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`, title, due, time, pri, tags, hw, repeat: null, done: false, created: Date.now(), steps: [] };
+      this.save([...this.list(), t]);
+      return t;
+    },
+
     toggle(id) {
       const list = this.list();
       const t = list.find((x) => x.id === id);
       if (!t) return;
       t.done = !t.done;
       t.doneAt = t.done ? Date.now() : null;
+      if (t.hw) NP.emit?.("homework-done", { id: t.hw, done: t.done });
       // a repeating task: ticking it schedules the next one
       if (t.done && t.repeat && t.due) {
         const step = t.repeat === "day" ? DAY : 7 * DAY;

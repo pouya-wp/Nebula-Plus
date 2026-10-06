@@ -189,12 +189,12 @@
     }
     // dynamic pages: keep trying for a while as content arrives
     function watch() {
-      if (obs) obs.disconnect(); obs = null;
+      try { if (obs) obs.disconnect(); } catch (e) {} obs = null;
       if (!items.some(function (it) { return it.kind !== 'page'; })) return;
       until = Date.now() + 30000;
       obs = new content.MutationObserver(function () {
         content.clearTimeout(obsT);
-        obsT = content.setTimeout(function () { if (apply() === 0 || Date.now() > until) { if (obs) obs.disconnect(); obs = null; } }, 700);
+        obsT = content.setTimeout(function () { if (apply() === 0 || Date.now() > until) { try { if (obs) obs.disconnect(); } catch (e) {} obs = null; } }, 700);
       });
       obs.observe(d().body, { childList: true, subtree: true });
     }

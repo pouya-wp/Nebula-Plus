@@ -29,6 +29,7 @@
         NP.html("div", { class: "pv-meta" }, [
           NP.html("div", { class: "pv-title", dir: "auto" }),
           NP.html("div", { class: "pv-url" }),
+          NP.html("div", { class: "pv-ai", dir: "auto" }),
         ]),
       ]);
       document.body.append(this.el);
@@ -79,6 +80,10 @@
       this.el.querySelector(".pv-title").textContent = tab.label;
       const uri = tab.linkedBrowser?.currentURI;
       this.el.querySelector(".pv-url").textContent = uri ? uri.displaySpec.replace(/^https?:\/\//, "") : "";
+
+      const ai = this.el.querySelector(".pv-ai");
+      ai.textContent = "";
+      NP.genie?.summary(tab).then((s) => tab === this.tab && (ai.textContent = s || ""));
 
       const canvas = this.el.querySelector(".pv-shot");
       const bitmap = await this.snapshot(tab);
@@ -178,6 +183,7 @@
           NP.html("div", { class: "pm-done" }),
         ]),
         NP.html("div", { class: "pm-big" }, [NP.html("div", { class: "pm-big-ring" }), NP.html("div", { class: "pm-big-time" })]),
+        NP.html("div", { class: "pm-task" }),
         NP.html("div", { class: "pm-presets" }, [preset(15), preset(25), preset(50), NP.html("span", { class: "pm-unit", text: "دقیقه" })]),
         NP.html("div", { class: "pm-actions" }, [
           NP.html("button", { class: "pm-main", onclick: () => this.main() }),
@@ -237,6 +243,27 @@
       if (this.phase === "idle") this.render();
     },
 
+    // what this session is for: one of today's tasks (optional)
+    renderTask() {
+      const box = this.panel.querySelector(".pm-task");
+      const cur = this.task && NP.todo?.list().find((t) => t.id === this.task && !t.done);
+      if (!cur) this.task = null;
+      if (this.phase !== "idle") {
+        box.replaceChildren(...(cur ? [NP.html("div", { class: "pm-task-now", dir: "auto", text: `🎯 ${cur.title}` })] : []));
+        return;
+      }
+      const open = (NP.todo?.view() ?? []).filter((t) => !t.done).slice(0, 5);
+      if (!open.length) return box.replaceChildren();
+      box.replaceChildren(
+        NP.html("div", { class: "pm-task-q", text: "روی چی کار می‌کنی؟" }),
+        ...open.map((t) => {
+          const b = NP.html("button", { class: "pm-task-chip", dir: "auto", text: t.title, onclick: () => ((this.task = this.task === t.id ? null : t.id), this.renderTask()) });
+          b.toggleAttribute("selected", this.task === t.id);
+          return b;
+        }),
+      );
+    },
+
     main() {
       if (this.phase === "idle") return this.startPhase("focus", this.minutes);
       this.running ? this.pause() : this.resume();
@@ -257,11 +284,14 @@
           this.wasCompact = !!gZenCompactModeManager.preference;
           gZenCompactModeManager.preference = true;
         }
-        NP.island?.show({ title: "تمرکز شروع شد", subtitle: `${this.fa(minutes)} دقیقه`, duration: 2000 });
+        const task = this.task && NP.todo?.list().find((t) => t.id === this.task);
+        NP.island?.show({ title: task ? `🎯 ${task.title}` : "تمرکز شروع شد", subtitle: `${this.fa(minutes)} دقیقه تمرکز`, duration: 2500 });
+        NP.emit?.("focus", { on: true, end: this.end, task: task?.title ?? "" });
       } else {
         this.leaveFocus();
         NP.root.setAttribute("nplus-break", "true");
       }
+      this.renderTask();
       this.render();
     },
 
@@ -286,6 +316,7 @@
     },
 
     leaveFocus() {
+      if (NP.root.hasAttribute("nplus-focus")) NP.emit?.("focus", { on: false });
       NP.root.removeAttribute("nplus-focus");
       NP.root.style.removeProperty("--nplus-focus-p");
       if (window.gZenCompactModeManager && this.wasCompact === false) gZenCompactModeManager.preference = false;
@@ -299,7 +330,10 @@
           this.done += 1;
           this.saveDone();
           NP.sound?.("done");
-          NP.island?.show({ title: "وقت استراحته ☕", subtitle: `جلسه‌ی ${this.fa(this.done)}ام امروز تموم شد · ۵ دقیقه استراحت`, duration: 6000 });
+          const task = this.task && NP.todo?.list().find((t) => t.id === this.task && !t.done);
+          if (task)
+            NP.island?.show({ title: `«${task.title}» تموم شد؟`, subtitle: "اگه آره، کلیک کن تا تیک بخوره · ۵ دقیقه استراحت", duration: 15000, onClick: () => (NP.todo.toggle(task.id), (this.task = null), NP.island?.show({ title: "آفرین! تیک خورد ✓", duration: 2000 })) });
+          else NP.island?.show({ title: "وقت استراحته ☕", subtitle: `جلسه‌ی ${this.fa(this.done)}ام امروز تموم شد · ۵ دقیقه استراحت`, duration: 6000 });
           this.startPhase("break", 5);
         } else {
           NP.root.removeAttribute("nplus-break");
@@ -341,6 +375,7 @@
     },
 
     openPanel() {
+      this.renderTask();
       const r = this.button.getBoundingClientRect();
       this.panel.hidden = false;
       const w = this.panel.getBoundingClientRect().width;

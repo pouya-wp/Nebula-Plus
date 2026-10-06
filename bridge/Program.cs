@@ -269,6 +269,9 @@ app.MapGet("/favicon", async (string host) =>
 
 app.MapGet("/debug/requests", () => Results.Text(string.Join('\n', recent)));
 
+// Battery / charger / CPU load: { ac, battery, saver, cpu }
+app.MapGet("/power", () => Results.Json(NebulaBridge.Power.Read()));
+
 app.MapGet("/", () => Results.Text("Nebula Bridge is running."));
 
 app.Run();

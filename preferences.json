@@ -1404,6 +1404,97 @@
     "margin": "12px 0"
   },
   {
+    "type": "string",
+    "property": "nplus-gemini-key",
+    "label": "Gemini API key (free at aistudio.google.com; voice typing, fast translate — empty = Gemini web chat)",
+    "defaultValue": "",
+    "margin": "12px 0"
+  },
+  {
+    "type": "string",
+    "property": "nplus-gemini-model",
+    "label": "Gemini model",
+    "defaultValue": "gemini-2.5-flash",
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-wormhole-pull",
+    "label": "Wormhole return trip: links you save from your phone open here (every 10 min)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-focus-shield",
+    "label": "Focus shield: calm overlay on distracting sites during focus",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "string",
+    "property": "nplus-focus-shield-sites",
+    "label": "Distracting sites for the shield (comma separated)",
+    "defaultValue": "youtube.com, instagram.com, x.com, twitter.com, reddit.com, aparat.com, tiktok.com, facebook.com",
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-autolean",
+    "label": "Automatic lean mode on battery / when the CPU is busy",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-wrapped",
+    "label": "Weekly wrapped on Friday evenings",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-voice",
+    "label": "Voice typing (Ctrl+Alt+J, needs the Gemini API key)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-prices",
+    "label": "Digikala price tracker (Ctrl+Alt+I)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-translate",
+    "label": "Translate the whole page to Persian (Ctrl+Alt+X)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-genie",
+    "label": "Gemini in the palette: tab commands, history by meaning, tab summaries",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-clip",
+    "label": "Clipboard history and ;shortcuts (Ctrl+Alt+C)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-modes",
+    "label": "Modes: study / work / leisure",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
     "type": "checkbox",
     "property": "nplus-snap",
     "label": "Smart screenshot: read text / explain a part of the page (Ctrl+Alt+S)",
