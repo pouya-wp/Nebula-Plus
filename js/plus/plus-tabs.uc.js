@@ -483,9 +483,14 @@
       this.canvas = NP.html("canvas", { id: "nplus-sky" });
       document.body.append(this.canvas);
       this.ctx = this.canvas.getContext("2d");
+      // half resolution (soft particles look the same, 4x less to upload);
+      // no buffer at all while the sky is clear
+      this.scale = (window.devicePixelRatio || 1) * 0.5;
       this.resize = () => {
-        this.canvas.width = window.innerWidth * devicePixelRatio;
-        this.canvas.height = window.innerHeight * devicePixelRatio;
+        const on = this.kind && this.kind !== "clear";
+        this.scale = (window.devicePixelRatio || 1) * 0.5;
+        this.canvas.width = on ? Math.ceil(window.innerWidth * this.scale) : 1;
+        this.canvas.height = on ? Math.ceil(window.innerHeight * this.scale) : 1;
       };
       window.addEventListener("resize", this.resize);
       this.resize();
@@ -561,6 +566,7 @@
       cancelAnimationFrame(this.raf);
       this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.canvas.toggleAttribute("active", kind !== "clear");
+      this.resize();
       if (kind === "clear") return;
 
       const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -579,7 +585,7 @@
         const dt = Math.min(80, now - last) / 16.7;
         last = now;
         const { ctx, canvas } = this;
-        const dpr = devicePixelRatio;
+        const dpr = this.scale;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.save();
         // keep web pages clear

@@ -107,6 +107,8 @@
     // Watch the selected tab only, and only while the window is in use.
     select() {
       const on = NP.prefs.get("nplus-ambilight") && document.hasFocus() && !document.fullscreenElement && !window.fullScreen;
+      // switched off: not even an empty layer to composite
+      this.canvas.hidden = !NP.prefs.get("nplus-ambilight");
       const browser = gBrowser.selectedBrowser;
       if (this.browser && this.browser !== browser) this.send(this.browser, false);
       this.browser = browser;
