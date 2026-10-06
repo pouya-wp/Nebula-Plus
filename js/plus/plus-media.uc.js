@@ -223,6 +223,7 @@
         NP.setRootAttr("nplus-bridge", "offline");
         delay = 5000;
       }
+      if (this.browserSrc) this.readBrowserState(this.browserSrc);
       this.publish();
       if (NP.prefs.get("nplus-media-bridge")) {
         this.pollTimer = setTimeout(() => this.poll(), delay);
@@ -231,6 +232,19 @@
 
     // ---------- arbitration ----------
     pick() {
+      // a browser source that went quiet without telling us (tab navigated,
+      // media element gone) must not keep the desktop player hidden
+      const src = this.browserSrc;
+      if (src) {
+        const tab = gBrowser.getTabForBrowser(src.browser);
+        let active = true;
+        try {
+          active = src.controller.isActive !== false;
+        } catch {}
+        if (!tab || !tab.isConnected || (!active && !src.state.playing)) {
+          this.untrackBrowser(false);
+        }
+      }
       const b = this.browserSrc && this.browserSrc.state.title ? this.browserSrc : null;
       const s = this.systemSrc;
       if (b?.state.playing) return "browser";
@@ -316,10 +330,18 @@
       const source = this.current?.source;
       if (source === "browser") {
         const c = this.browserSrc.controller;
+        // newer Firefox wants a reason for pause(); older takes none
+        const pause = () => {
+          try {
+            c.pause("user");
+          } catch {
+            c.pause();
+          }
+        };
         try {
-          if (action === "toggle") c.isPlaying ? c.pause() : c.play();
+          if (action === "toggle") c.isPlaying ? pause() : c.play();
           else if (action === "play") c.play();
-          else if (action === "pause") c.pause();
+          else if (action === "pause") pause();
           else if (action === "next") c.nextTrack();
           else if (action === "prev") c.prevTrack();
         } catch (err) {

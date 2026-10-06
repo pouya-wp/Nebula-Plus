@@ -19,7 +19,6 @@ const DEFAULTS = {
   today: true,
   todo: true,
   words: true,
-  aurora: true,
   hafez: true,
   engine: "google",
   wallBlur: 0,
@@ -939,113 +938,6 @@ const words = {
   },
 };
 
-// ---------------- music aurora ----------------
-// Soft curtains of light at the bottom that sway with the music: drawn on a
-// tiny canvas (upscaled = naturally soft, no blur filters), bass from Nebula
-// Bridge. Runs only while music plays and the page is in view.
-const aurora = {
-  cv: $("#aurora"),
-  bass: 0,
-  high: 0,
-  t: 0,
-  running: false,
-  lastPoll: 0,
-  hue: 220,
-  wake() {
-    document.body.toggleAttribute("aurora", !!S.aurora);
-    const on = S.aurora && document.body.hasAttribute("playing") && !document.hidden;
-    if (on && !this.running) {
-      this.running = true;
-      this.last = performance.now();
-      this.readHue();
-      requestAnimationFrame((t) => this.frame(t));
-    }
-  },
-  // the accent's hue (the curtains are the accent plus two neighbours)
-  readHue() {
-    const g = this.cv.getContext("2d");
-    g.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim() || "#7aa2ff";
-    const m = String(g.fillStyle).match(/^#(..)(..)(..)$/);
-    if (!m) return;
-    const [r, gg, b] = m.slice(1).map((h) => parseInt(h, 16) / 255);
-    const max = Math.max(r, gg, b);
-    const min = Math.min(r, gg, b);
-    if (max === min) return;
-    const d = max - min;
-    let h = max === r ? (gg - b) / d + (gg < b ? 6 : 0) : max === gg ? (b - r) / d + 2 : (r - gg) / d + 4;
-    this.hue = Math.round(h * 60);
-  },
-  async poll() {
-    try {
-      const { b } = await (await fetch(`${BRIDGE}/bands`, { cache: "no-store" })).json();
-      if (Array.isArray(b) && b.length) {
-        const avg = (from, to) => b.slice(from, to).reduce((x, y) => x + y, 0) / Math.max(1, Math.min(to, b.length) - from);
-        this.bassT = avg(0, 4);
-        this.highT = avg(12, 28);
-      }
-    } catch {}
-  },
-  frame(now) {
-    if (!S.aurora || !document.body.hasAttribute("playing") || document.hidden) {
-      this.running = false;
-      return;
-    }
-    requestAnimationFrame((t) => this.frame(t));
-    if (now - this.last < 40) return; // ~25 fps is plenty for slow light
-    const dt = Math.min(0.1, (now - this.last) / 1000);
-    this.last = now;
-    if (now - this.lastPoll > 160) {
-      this.lastPoll = now;
-      this.poll();
-      if (Math.random() < 0.02) this.readHue();
-    }
-    this.bass += ((this.bassT ?? 0) - this.bass) * 0.18;
-    this.high += ((this.highT ?? 0) - this.high) * 0.1;
-    this.t += dt * (0.25 + this.bass * 0.9);
-    this.draw();
-  },
-  draw() {
-    const { cv } = this;
-    const g = (this.g ??= cv.getContext("2d"));
-    const W = cv.width;
-    const H = cv.height;
-    g.clearRect(0, 0, W, H);
-    g.globalCompositeOperation = "lighter";
-    const curtains = [
-      { dh: 0, amp: 0.9, speed: 1, y: 0.95, w: 0.55 },
-      { dh: 40, amp: 0.7, speed: 1.4, y: 0.98, w: 0.4 },
-      { dh: -50, amp: 0.6, speed: 0.8, y: 1, w: 0.35 },
-    ];
-    if (this.gradHue !== this.hue) {
-      // gradients depend only on the colour: build them once per hue
-      this.gradHue = this.hue;
-      this.grads = curtains.map((c) => {
-        const gr = g.createLinearGradient(0, 0, 0, H);
-        gr.addColorStop(0, "transparent");
-        gr.addColorStop(0.45, `hsl(${this.hue + c.dh} 85% 62%)`);
-        gr.addColorStop(1, "transparent");
-        return gr;
-      });
-    }
-    for (const [i, c] of curtains.entries()) {
-      g.beginPath();
-      g.moveTo(0, H);
-      for (let x = 0; x <= W; x += 6) {
-        const p = x / W;
-        const wave = Math.sin(p * 6.2 + this.t * c.speed + i * 1.7) * 0.5 + Math.sin(p * 13 - this.t * 0.7 * c.speed + i) * 0.25;
-        g.lineTo(x, H * (c.y - (0.35 + this.bass * 0.5) * c.amp * (0.65 + 0.35 * wave)));
-      }
-      g.lineTo(W, H);
-      g.closePath();
-      g.globalAlpha = Math.min(0.55, (0.12 + this.bass * 0.35 + this.high * 0.15) * c.w * 1.4);
-      g.fillStyle = this.grads[i];
-      g.fill();
-    }
-    g.globalAlpha = 1;
-    g.globalCompositeOperation = "source-over";
-  },
-};
-
 // ---------------- quote (instead of the notes card) ----------------
 // A line to start with: Jobs, Einstein, Rumi, Saadi… in Persian, the source
 // underneath. A new one every time; click for another. Your own old note
@@ -1271,7 +1163,6 @@ function fillSettings() {
   $("#s-today").checked = S.today;
   $("#s-todo").checked = S.todo;
   $("#s-words").checked = S.words;
-  $("#s-aurora").checked = S.aurora;
   $("#s-hafez").checked = S.hafez;
   $("#s-blur").value = S.wallBlur;
   $("#s-dim").value = S.wallDim;
@@ -1312,7 +1203,6 @@ bind("#s-notes", "notes", (el) => el.checked);
 bind("#s-today", "today", (el) => el.checked, () => today.load());
 bind("#s-todo", "todo", (el) => el.checked, () => todo.load());
 bind("#s-words", "words", (el) => el.checked, () => words.load());
-bind("#s-aurora", "aurora", (el) => el.checked, () => aurora.wake());
 bind("#s-hafez", "hafez", (el) => el.checked);
 $("#s-blur").addEventListener("input", (e) => (S = store.set({ wallBlur: +e.target.value }), renderWall()));
 $("#s-dim").addEventListener("input", (e) => (S = store.set({ wallDim: +e.target.value }), renderWall()));
@@ -1368,11 +1258,8 @@ words.load();
 todo.load();
 quote.next();
 quote.loadHighlight().then(() => quote.hl && Math.random() < 0.3 && quote.next());
-aurora.wake();
-new MutationObserver(() => aurora.wake()).observe(document.body, { attributes: true, attributeFilter: ["playing"] });
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden && player.sleeping) (player.sleeping = false), player.poll();
-  aurora.wake();
   if (!document.hidden) (today.load(), words.load(), todo.load());
 });
 setInterval(() => player.tick(), 250);
