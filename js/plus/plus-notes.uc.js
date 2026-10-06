@@ -200,7 +200,7 @@
     }
 
     // ---- saving ----
-    function send(it) { sendAsyncMessage('nplus:notes1:save', { url: content.location.href, title: d().title, item: it }); }
+    function send(it) { sendAsyncMessage('nplus:notes2:save', { url: content.location.href, title: d().title, item: it }); }
     function find(id) { for (var i = 0; i < items.length; i++) if (items[i].id === id) return items[i]; return null; }
     function create(kind, color) {
       var sel = content.getSelection();
@@ -225,7 +225,7 @@
     function remove(id) {
       items = items.filter(function (x) { return x.id !== id; });
       unwrap(id); closeCard();
-      sendAsyncMessage('nplus:notes1:remove', { url: content.location.href, id: id });
+      sendAsyncMessage('nplus:notes2:remove', { url: content.location.href, id: id });
     }
 
     // ---- UI pieces ----
@@ -330,12 +330,12 @@
       if (stale()) return;
       url = content.location.href; items = []; closeCard();
       if (!/^https?:/.test(url)) return;
-      sendAsyncMessage('nplus:notes1:hello', { url: url });
-      content.clearInterval(poll);
-      poll = content.setInterval(function () { if (stale()) return content.clearInterval(poll); if (content.location.href !== url) hello(); }, 1500);
+      sendAsyncMessage('nplus:notes2:hello', { url: url });
     }
+    // same-page navigations (YouTube, GitHub...): the browser tells us
+    addMessageListener('nplus:notes2:nav', function () { if (!stale() && content.location.href !== url) hello(); });
     addEventListener('DOMContentLoaded', function (e) { if (e.target === content.document) hello(); }, true);
-    addMessageListener('nplus:notes1:items', function (m) {
+    addMessageListener('nplus:notes2:items', function (m) {
       if (stale()) return;
       if (m.data.off) { items.slice().forEach(function (it) { unwrap(it.id); }); items = []; return; }
       if (m.data.url !== url) return;
@@ -347,8 +347,8 @@
       apply(); watch();
       if (focusId) focus(focusId);
     });
-    addMessageListener('nplus:notes1:create', function (m) { if (!stale()) create(m.data.kind, m.data.color); });
-    addMessageListener('nplus:notes1:focus', function (m) { if (!stale()) focus(m.data.id); });
+    addMessageListener('nplus:notes2:create', function (m) { if (!stale()) create(m.data.kind, m.data.color); });
+    addMessageListener('nplus:notes2:focus', function (m) { if (!stale()) focus(m.data.id); });
     if (content.document && content.document.readyState !== 'loading') hello();
   })(this);`;
 
@@ -368,13 +368,23 @@
       if (!sss.sheetRegistered(this.sheet, sss.USER_SHEET)) sss.loadAndRegisterSheet(this.sheet, sss.USER_SHEET);
       this.pending = new WeakMap();
       this.listeners = {
-        "nplus:notes1:hello": (m) => this.hello(m.target, m.data.url),
-        "nplus:notes1:save": (m) => this.save(m.target, m.data),
-        "nplus:notes1:remove": (m) => this.remove(m.target, m.data),
+        "nplus:notes2:hello": (m) => this.hello(m.target, m.data.url),
+        "nplus:notes2:save": (m) => this.save(m.target, m.data),
+        "nplus:notes2:remove": (m) => this.remove(m.target, m.data),
       };
       for (const [k, fn] of Object.entries(this.listeners)) window.messageManager.addMessageListener(k, fn);
       this.script = "data:," + encodeURIComponent(NOTES);
       window.messageManager.loadFrameScript(this.script, true);
+      this.nav = {
+        onLocationChange: (browser, webProgress, request, location, flags) => {
+          if (webProgress?.isTopLevel && flags & Ci.nsIWebProgressListener.LOCATION_CHANGE_SAME_DOCUMENT) {
+            try {
+              browser.messageManager.sendAsyncMessage("nplus:notes2:nav", {});
+            } catch {}
+          }
+        },
+      };
+      gBrowser.addTabsProgressListener(this.nav);
       this.offs = [
         NP.hotkey?.("ctrl+alt+h", () => this.create("hl")),
         NP.hotkey?.("ctrl+alt+n", () => this.create("page")),
@@ -403,7 +413,7 @@
       const f = focus ?? this.pending.get(browser);
       if (f) this.pending.delete(browser);
       try {
-        browser.messageManager.sendAsyncMessage("nplus:notes1:items", { url, items, labels: this.labels(), focus: f });
+        browser.messageManager.sendAsyncMessage("nplus:notes2:items", { url, items, labels: this.labels(), focus: f });
       } catch {}
       const tab = gBrowser.getTabForBrowser(browser);
       tab?.toggleAttribute("nplus-noted", items.length > 0);
@@ -430,7 +440,7 @@
         NP.island?.show({ title: "یادداشت فقط روی صفحه‌های وب", duration: 1800 });
         return;
       }
-      browser.messageManager.sendAsyncMessage("nplus:notes1:create", { kind, color });
+      browser.messageManager.sendAsyncMessage("nplus:notes2:create", { kind, color });
     },
 
     markTabs() {
@@ -524,7 +534,7 @@
       const tab = gBrowser.tabs.find((t) => !t.hasAttribute("nplus-worker") && pageKey(t.linkedBrowser.currentURI.spec) === n.key);
       if (tab) {
         gBrowser.selectedTab = tab;
-        tab.linkedBrowser.messageManager.sendAsyncMessage("nplus:notes1:focus", { id: n.id });
+        tab.linkedBrowser.messageManager.sendAsyncMessage("nplus:notes2:focus", { id: n.id });
         return;
       }
       const t = gBrowser.addTab(n.url, { triggeringPrincipal: Services.scriptSecurityManager.getSystemPrincipal() });
@@ -551,11 +561,12 @@
     destroy() {
       try {
         window.messageManager.removeDelayedFrameScript(this.script);
-        window.messageManager.broadcastAsyncMessage("nplus:notes1:items", { off: true });
+        window.messageManager.broadcastAsyncMessage("nplus:notes2:items", { off: true });
         for (const [k, fn] of Object.entries(this.listeners ?? {})) window.messageManager.removeMessageListener(k, fn);
         const sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
         if (this.sheet && sss.sheetRegistered(this.sheet, sss.USER_SHEET)) sss.unregisterSheet(this.sheet, sss.USER_SHEET);
       } catch {}
+      if (this.nav) gBrowser.removeTabsProgressListener(this.nav);
       for (const off of this.offs ?? []) off?.();
       window.removeEventListener("mousedown", this.onDocDown, true);
       gBrowser.tabContainer.removeEventListener("TabSelect", this.onLoc);

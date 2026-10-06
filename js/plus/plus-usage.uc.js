@@ -70,7 +70,7 @@
         setTimeout(() => {
           this.dirty = false;
           NP.store.set("usage", this.data());
-        }, 60000);
+        }, 180000);
       }
       this.checkLimit(site, today[site]);
       if (!this.panel.hidden) this.render();
@@ -191,7 +191,7 @@
           ]);
           row.toggleAttribute("over", !!lim && s > lim[1]);
           row.querySelector(".np-fill").style.width = `${Math.max(2, (s / max) * 100)}%`;
-          row.querySelector(".us-ico").onerror = (e) => (e.target.style.visibility = "hidden");
+          row.querySelector(".us-ico").onerror = (e) => (e.target.dataset.f ? (e.target.style.visibility = "hidden") : ((e.target.dataset.f = 1), (e.target.src = `https://icons.duckduckgo.com/ip3/${h}.ico`)));
           row.addEventListener("click", () => (openTrustedLinkIn(`https://${h}/`, "tab"), this.close()));
           return row;
         }),

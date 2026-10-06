@@ -56,8 +56,12 @@
       const now = Date.now();
       const sig = tabs.map((x) => x.u).sort().join("\n");
       const last = this.line.at(-1);
-      if (last && last.sig === sig) last.to = now;
+      const same = last && last.sig === sig;
+      if (same) last.to = now;
       else this.line.push({ at: now, to: now, sig, tabs });
+      // nothing new: the "until" time can wait for the next real change
+      if (same && now - (this.wrote ?? 0) < 30 * 60000) return;
+      this.wrote = now;
       this.line = this.line.filter((s) => s.to > now - KEEP).slice(-400);
       try {
         await IOUtils.writeJSON(PATH, this.line, { tmpPath: `${PATH}.tmp` });
@@ -136,7 +140,7 @@
               { class: "tm-icons" },
               hosts.map((h) => {
                 const img = NP.html("img", { src: `http://127.0.0.1:47321/favicon?host=${h}`, title: h });
-                img.onerror = () => img.remove();
+                img.onerror = () => (img.dataset.f ? img.remove() : ((img.dataset.f = 1), (img.src = `https://icons.duckduckgo.com/ip3/${h}.ico`)));
                 return img;
               }),
             ),
@@ -159,7 +163,7 @@
                   NP.html("span", { dir: "auto", text: x.t }),
                   open.has(x.u) ? NP.html("span", { class: "tm-open", text: "باز" }) : null,
                 ].filter(Boolean));
-                r.querySelector("img").onerror = (e) => (e.target.style.visibility = "hidden");
+                r.querySelector("img").onerror = (e) => (e.target.dataset.f ? (e.target.style.visibility = "hidden") : ((e.target.dataset.f = 1), (e.target.src = `https://icons.duckduckgo.com/ip3/${host(x.u)}.ico`)));
                 r.addEventListener("click", () => this.restore([x], true));
                 return r;
               }),

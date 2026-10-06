@@ -586,6 +586,8 @@ const player = {
       document.body.removeAttribute("playing");
       return setTimeout(() => player.poll(), 3000);
     }
+    // out of sight (a new tab left open in the background): check rarely
+    if (document.hidden) return (this.sleeping = true);
     let delay = 1000;
     try {
       const st = await (await fetch(`${BRIDGE}/state`, { cache: "no-store" })).json();
@@ -666,7 +668,7 @@ const player = {
 
   tick() {
     const st = this.state;
-    if (!st) return;
+    if (!st || document.hidden) return;
     const pos = this.position();
     $("#p-fill").style.setProperty("--p", st.duration ? pos / st.duration : 0);
     $("#p-time").textContent = fmt(pos);
@@ -930,10 +932,10 @@ const aurora = {
       return;
     }
     requestAnimationFrame((t) => this.frame(t));
-    if (now - this.last < 33) return; // ~30 fps is plenty for slow light
+    if (now - this.last < 40) return; // ~25 fps is plenty for slow light
     const dt = Math.min(0.1, (now - this.last) / 1000);
     this.last = now;
-    if (now - this.lastPoll > 100) {
+    if (now - this.lastPoll > 160) {
       this.lastPoll = now;
       this.poll();
       if (Math.random() < 0.02) this.readHue();
@@ -945,7 +947,7 @@ const aurora = {
   },
   draw() {
     const { cv } = this;
-    const g = cv.getContext("2d");
+    const g = (this.g ??= cv.getContext("2d"));
     const W = cv.width;
     const H = cv.height;
     g.clearRect(0, 0, W, H);
@@ -955,20 +957,30 @@ const aurora = {
       { dh: 40, amp: 0.7, speed: 1.4, y: 0.98, w: 0.4 },
       { dh: -50, amp: 0.6, speed: 0.8, y: 1, w: 0.35 },
     ];
+    if (this.gradHue !== this.hue) {
+      // gradients depend only on the colour: build them once per hue
+      this.gradHue = this.hue;
+      this.grads = curtains.map((c) => {
+        const gr = g.createLinearGradient(0, 0, 0, H);
+        gr.addColorStop(0, "transparent");
+        gr.addColorStop(0.45, `hsl(${this.hue + c.dh} 85% 62%)`);
+        gr.addColorStop(1, "transparent");
+        return gr;
+      });
+    }
     for (const [i, c] of curtains.entries()) {
-      const col = `hsl(${this.hue + c.dh} 85% 62%)`;
-      for (let x = 0; x <= W; x += 2) {
+      g.beginPath();
+      g.moveTo(0, H);
+      for (let x = 0; x <= W; x += 6) {
         const p = x / W;
         const wave = Math.sin(p * 6.2 + this.t * c.speed + i * 1.7) * 0.5 + Math.sin(p * 13 - this.t * 0.7 * c.speed + i) * 0.25;
-        const top = H * (c.y - (0.35 + this.bass * 0.5) * c.amp * (0.65 + 0.35 * wave));
-        const grad = g.createLinearGradient(0, top, 0, H);
-        grad.addColorStop(0, "transparent");
-        grad.addColorStop(0.3, col);
-        grad.addColorStop(1, "transparent");
-        g.globalAlpha = Math.min(0.55, (0.12 + this.bass * 0.35 + this.high * 0.15) * c.w * (0.7 + 0.3 * Math.sin(p * 9 + this.t + i)));
-        g.fillStyle = grad;
-        g.fillRect(x, top, 2, H - top);
+        g.lineTo(x, H * (c.y - (0.35 + this.bass * 0.5) * c.amp * (0.65 + 0.35 * wave)));
       }
+      g.lineTo(W, H);
+      g.closePath();
+      g.globalAlpha = Math.min(0.55, (0.12 + this.bass * 0.35 + this.high * 0.15) * c.w * 1.4);
+      g.fillStyle = this.grads[i];
+      g.fill();
     }
     g.globalAlpha = 1;
     g.globalCompositeOperation = "source-over";
@@ -1163,6 +1175,7 @@ words.load();
 aurora.wake();
 new MutationObserver(() => aurora.wake()).observe(document.body, { attributes: true, attributeFilter: ["playing"] });
 document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && player.sleeping) (player.sleeping = false), player.poll();
   aurora.wake();
   if (!document.hidden) (today.load(), words.load());
 });

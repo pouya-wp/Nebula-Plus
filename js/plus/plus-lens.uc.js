@@ -181,31 +181,51 @@
       if (!cfg || !d || !d.body || !/^https?:/.test(content.location.href)) return;
       scan(d.body);
       if (observer) observer.disconnect();
-      var pending = [];
+      // Busy pages (YouTube, a streaming AI answer) change all the time:
+      // collect changed spots in a capped set, ignore long streaming text,
+      // and look at them only when the page is idle.
+      var pending = new Set(), overflow = false;
       observer = new content.MutationObserver(function (muts) {
-        muts.forEach(function (m) {
-          if (m.type === 'characterData') { if (m.target.parentNode && m.target.parentNode.parentNode) pending.push(m.target.parentNode.parentNode); return; }
-          m.addedNodes.forEach(function (a) { if (a.nodeType === 1 || a.nodeType === 3) pending.push(a); });
-        });
+        for (var i = 0; i < muts.length; i++) {
+          var m = muts[i];
+          if (m.type === 'characterData') {
+            var t = m.target;
+            if (t.data.length > 120 || !/\\d/.test(t.data)) continue;
+            seen.delete(t); pending.add(t); continue;
+          }
+          var added = m.addedNodes;
+          for (var j = 0; j < added.length; j++) {
+            var x = added[j];
+            if (x.nodeType === 1 && x.classList && (x.classList.contains('nplus-toman') || x.classList.contains('nplus-jdate'))) continue;
+            if (x.nodeType === 1 || x.nodeType === 3) pending.add(x);
+          }
+        }
+        if (pending.size > 1500) { pending.clear(); overflow = true; }
         if (timer) return;
         timer = content.setTimeout(function () {
-          timer = 0;
-          var batch = pending.splice(0, 400);
-          batch.forEach(function (a) {
-            if (!a.isConnected) return;
-            var el = a.nodeType === 3 ? a.parentNode : a;
-            scan(el);
-            // a number filled into <span>4</span> completes "$ 4 USD" a level or two up
-            for (var up = el && el.parentNode, i = 0; up && up.nodeType === 1 && i < 2; up = up.parentNode, i++) splitPrices(up, true);
+          var idle = content.requestIdleCallback ? function (f) { content.requestIdleCallback(f, { timeout: 3000 }); } : function (f) { content.setTimeout(f, 0); };
+          idle(function () {
+            timer = 0;
+            if (stale() || !cfg) return;
+            if (overflow) { overflow = false; pending.clear(); scan(d.body); return; }
+            var batch = Array.from(pending); pending.clear();
+            batch.forEach(function (a) {
+              if (!a.isConnected) return;
+              var el = a.nodeType === 3 ? a.parentNode : a;
+              if (a.nodeType === 3) seen.delete(a);
+              scan(el);
+              // a number filled into <span>4</span> completes "$ 4 USD" a level or two up
+              for (var up = el && el.parentNode, k = 0; up && up.nodeType === 1 && k < 2; up = up.parentNode, k++) splitPrices(up, true);
+            });
           });
         }, 1200);
       });
       observer.observe(d.body, { childList: true, characterData: true, subtree: true });
     }
 
-    addMessageListener('nplus:lens2:cfg', function (m) { if (stale()) { cfg = null; if (observer) observer.disconnect(); return; } cfg = m.data; if (cfg.on) start(); });
+    addMessageListener('nplus:lens3:cfg', function (m) { if (stale()) { cfg = null; if (observer) observer.disconnect(); return; } cfg = m.data; if (cfg.on) start(); });
     addEventListener('DOMContentLoaded', function (e) { if (e.target === content.document && cfg && cfg.on) content.setTimeout(start, 600); }, false);
-    sendAsyncMessage('nplus:lens2:hello', {});
+    sendAsyncMessage('nplus:lens3:hello', {});
   })(this);`;
 
   NP.feature({
@@ -218,11 +238,12 @@
       this.sheet = Services.io.newURI("data:text/css;charset=utf-8," + encodeURIComponent(SHEET));
       if (!sss.sheetRegistered(this.sheet, sss.USER_SHEET)) sss.loadAndRegisterSheet(this.sheet, sss.USER_SHEET);
       this.onHello = (m) => this.sendCfg(m.target.messageManager);
-      window.messageManager.addMessageListener("nplus:lens2:hello", this.onHello);
+      window.messageManager.addMessageListener("nplus:lens3:hello", this.onHello);
       // every tab in this window, now and later
       this.script = "data:," + encodeURIComponent(LENS);
       window.messageManager.loadFrameScript(this.script, true);
       window.messageManager.broadcastAsyncMessage("nplus:lens:cfg", { on: false }); // pre-versioned copies
+      window.messageManager.broadcastAsyncMessage("nplus:lens2:cfg", { on: false }); // copies before the idle queue
       await this.refresh();
       this.timer = setInterval(() => this.refresh(), 30 * 60 * 1000);
     },
@@ -237,7 +258,7 @@
 
     sendCfg(mm) {
       try {
-        mm.sendAsyncMessage("nplus:lens2:cfg", this.cfg());
+        mm.sendAsyncMessage("nplus:lens3:cfg", this.cfg());
       } catch {}
     },
 
@@ -261,7 +282,7 @@
       }
       // tell every page the latest rate
       try {
-        window.messageManager.broadcastAsyncMessage("nplus:lens2:cfg", this.cfg());
+        window.messageManager.broadcastAsyncMessage("nplus:lens3:cfg", this.cfg());
       } catch {}
     },
 
@@ -269,8 +290,8 @@
       clearInterval(this.timer);
       try {
         window.messageManager.removeDelayedFrameScript(this.script);
-        window.messageManager.broadcastAsyncMessage("nplus:lens2:cfg", { on: false });
-        window.messageManager.removeMessageListener("nplus:lens2:hello", this.onHello);
+        window.messageManager.broadcastAsyncMessage("nplus:lens3:cfg", { on: false });
+        window.messageManager.removeMessageListener("nplus:lens3:hello", this.onHello);
         const sss = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
         if (this.sheet && sss.sheetRegistered(this.sheet, sss.USER_SHEET)) sss.unregisterSheet(this.sheet, sss.USER_SHEET);
       } catch {}
