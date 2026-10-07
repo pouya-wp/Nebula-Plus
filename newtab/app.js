@@ -993,22 +993,60 @@ const today = {
   },
 };
 
-// ---------------- word review ----------------
+// ---------------- review card: spelling (Kaizen) first, then words ----------------
 const words = {
   flipped: false,
   current: null,
+  mode: "word",
   async load(res) {
     const box = $("#words");
     if (!S.words) return (box.hidden = true);
-    res ??= await link.ask("word");
+    // a spelling card due comes first: it's your own mistake
+    const sp = res?.spell !== undefined ? res : await link.ask("spell");
+    if (sp?.spell?.card) return this.renderSpell(sp.spell);
+    res = res?.word !== undefined ? res : await link.ask("word");
     const w = res?.word;
     if (!w || !w.total) return (box.hidden = true);
     box.hidden = false;
+    this.mode = "word";
     this.current = w.card;
     this.flipped = false;
     this.render(w);
   },
+  renderSpell(sp) {
+    const box = $("#words");
+    box.hidden = false;
+    this.mode = "spell";
+    const c = sp.card;
+    box.querySelector(".widget-title").textContent = "Kaizen · املا";
+    $("#words-left").textContent = sp.left ? `${num(sp.left)} مونده` : "";
+    const card = $("#words-card");
+    card.onclick = null;
+    card.removeAttribute("flipped");
+    const el = (tag, cls, text) => Object.assign(document.createElement(tag), { className: cls, textContent: text ?? "" });
+    const wrong = el("div", "wc-word ks-wrong");
+    wrong.append(el("s", "", c.wrong));
+    const input = el("input", "ks-input");
+    input.type = "text";
+    input.spellcheck = false;
+    input.dir = c.lang === "fa" ? "rtl" : "ltr";
+    input.placeholder = "درستش رو بنویس…";
+    const hint = el("div", "wc-hint ks-hint", c.n > 1 ? `${num(c.n)} بار این‌جوری نوشتی` : "این‌جوری نوشته بودی");
+    hint.dir = "rtl";
+    card.replaceChildren(wrong, input, hint);
+    $("#words-actions").replaceChildren();
+    input.addEventListener("keydown", async (e) => {
+      e.stopPropagation();
+      if (e.key !== "Enter" || !input.value.trim()) return;
+      const ok = input.value.trim().toLowerCase() === c.right.toLowerCase();
+      card.dataset.result = ok ? "ok" : "bad";
+      hint.textContent = ok ? `آفرین ✓` : `درستش: ${c.right}`;
+      const next = await link.ask("spell-grade", { key: c.key, ok });
+      setTimeout(() => (delete card.dataset.result, this.load(next?.spell?.card ? next : undefined)), ok ? 650 : 1700);
+    });
+  },
   render(w) {
+    $("#words").querySelector(".widget-title").textContent = "مرور لغت";
     $("#words-left").textContent = w.left ? `${num(w.left)} مونده` : "";
     const card = $("#words-card");
     const c = this.current;

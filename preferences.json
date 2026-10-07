@@ -1300,6 +1300,27 @@
   },
   {
     "type": "checkbox",
+    "property": "nplus-kaizen",
+    "label": "Kaizen: spelling coach — fixes slips, remembers mistakes, flashcards (Ctrl+Alt+Q)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-kaizen-autocorrect",
+    "label": "Kaizen: fix obvious English slips while typing (Ctrl+Z undoes)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
+    "property": "nplus-kaizen-fa",
+    "label": "Kaizen: Persian spelling (ی/ک at once, the rest checked by Gemini)",
+    "defaultValue": true,
+    "margin": "12px 0"
+  },
+  {
+    "type": "checkbox",
     "property": "nplus-wormhole",
     "label": "Wormhole: send links/text to your phone via Rubika Saved Messages (Ctrl+Alt+P, right-click, drag)",
     "defaultValue": true,

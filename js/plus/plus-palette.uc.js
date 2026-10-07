@@ -82,6 +82,7 @@
     { t: "Weather effect: like the real weather", k: "آب و هوا واقعی خودکار افکت weather auto", icon: ICON("sparkles"), run: () => NP.prefs.set("nplus-weather-fx", 1) },
     { t: "Weather effect: off", k: "خاموش افکت بارون برف weather off", icon: ICON("sparkles"), run: () => NP.prefs.set("nplus-weather-fx", 0) },
     { t: "Free up memory now", k: "آزاد کردن حافظه رم مموری memory minimize", icon: ICON("sparkles"), run: () => (NP.memory?.minimize(), NP.island?.show({ title: "حافظه آزاد شد 🍃", duration: 1800 })) },
+    { t: "Kaizen: my spelling", k: "املا غلط املایی کایزن اشتباه تایپ spelling kaizen typos", icon: ICON("edit"), run: () => NP.kaizen?.open() },
     { t: "Watched items", k: "چشم مراقب لیست زیر نظر watches", icon: ICON("selectable/eye"), run: () => NP.watch?.open() },
     { t: "Remix this site (AI)", k: "ریمیکس ظاهر سایت تم هوش مصنوعی remix restyle theme ai", icon: ICON("sparkles"), run: () => NP.remix?.open() },
     { t: "Remix: back to the original site", k: "ریمیکس برگردون اصلی remix undo original", icon: ICON("sparkles"), run: () => NP.remix?.off() },

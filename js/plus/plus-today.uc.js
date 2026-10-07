@@ -113,6 +113,11 @@
         case "open-url":
           if (/^https?:\/\//.test(req.url ?? "")) openTrustedLinkIn(req.url, "tab");
           return this.reply(browser, req.id, {});
+        case "spell":
+          return this.reply(browser, req.id, { spell: NP.kaizen?.next() ?? null });
+        case "spell-grade":
+          NP.kaizen?.grade(req.key, !!req.ok);
+          return this.reply(browser, req.id, { spell: NP.kaizen?.next() ?? null });
         case "weather-fx": {
           const mode = { auto: 1, rain: 2, snow: 3, off: 0 }[req.mode];
           if (mode !== undefined) NP.prefs.set("nplus-weather-fx", mode);
@@ -135,6 +140,7 @@
             notes: () => NP.notes?.open(),
             tm: () => NP.timeMachine?.open(),
             todo: () => NP.todo?.open(),
+            kaizen: () => NP.kaizen?.open(),
           };
           map[req.what]?.();
           return this.reply(browser, req.id, {});
@@ -199,6 +205,13 @@
       // overdue tasks
       const overdue = NP.todo ? NP.todo.list().filter((t) => NP.todo.state(t) === "overdue").length : 0;
       if (overdue) items.push({ icon: "⏰", text: `${fa(overdue)} کار عقب افتاده`, open: "todo", hot: true });
+
+      // Kaizen: today's spelling
+      const kz = NP.kaizen?.stats();
+      if (kz && (kz.today.words >= 10 || kz.due)) {
+        const acc = kz.today.acc == null ? "" : `دقت املا ${Math.round(kz.today.acc * 1000) / 10}٪`.replace(/\d/g, (x) => "۰۱۲۳۴۵۶۷۸۹"[x]);
+        items.push({ icon: "✍️", text: acc || "Kaizen", sub: kz.due ? `${fa(kz.due)} کارت املا برای مرور` : kz.streak ? `${fa(kz.streak)} روز پشت سر هم 🔥` : "", open: "kaizen", hot: kz.due > 0 });
+      }
 
       // words due
       const ws = NP.words?.stats();
