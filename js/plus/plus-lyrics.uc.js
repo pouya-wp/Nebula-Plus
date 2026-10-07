@@ -346,11 +346,19 @@
       clearInterval(this.timer);
       this.timer = null;
       if (on && this.lines.length && this.enabled) {
-        this.timer = setInterval(() => this.sync(), 100);
+        // 10x a second only while you can see it (window in use, sidebar
+        // showing); otherwise just keep the current line, twice a second
+        this.timer = setInterval(() => {
+          const seen = Services.focus.activeWindow === window && !document.hidden && this.panel.getClientRects().length > 0;
+          const now = performance.now();
+          if (!seen && now - (this.lastSlow ?? 0) < 500) return;
+          this.lastSlow = now;
+          this.sync(false, !seen);
+        }, 100);
       }
     },
 
-    sync(force = false) {
+    sync(force = false, quiet = false) {
       if (!this.lines.length || !NP.media?.current) return;
       const pos = NP.media.position() + (this.offset || 0) + (this.trackOffset || 0);
 
@@ -384,7 +392,7 @@
 
       // Karaoke fill for the active line.
       const line = this.lines[idx];
-      if (line && NP.prefs.get("nplus-lyrics-karaoke")) {
+      if (line && !quiet && NP.prefs.get("nplus-lyrics-karaoke")) {
         const end = this.lines[idx + 1]?.time ?? line.time + 5;
         const p = Math.min(1, Math.max(0, (pos - line.time) / Math.max(0.3, end - line.time)));
         nodes[idx]?.style.setProperty("--nplus-line-progress", p.toFixed(3));

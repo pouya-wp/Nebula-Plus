@@ -19,17 +19,11 @@
       // the pomodoro fills the active tab like an hourglass: one long GPU
       // animation per session, paused and resumed with the timer
       NP.lights = {
+        // set from the pomodoro's once-a-second tick (no endless animation)
         focus: (st) => {
-          const key = st ? `${st.phase}|${st.running}|${st.end}` : "off";
-          if (key === this.focusKey) return;
-          this.focusKey = key;
-          this.focusAnim?.cancel();
-          this.focusAnim = null;
-          if (!st || st.phase !== "focus") return;
-          const left = Math.max(0, st.running ? st.end - Date.now() : st.remaining);
-          const p = Math.min(1, Math.max(0, 1 - left / st.total));
-          this.focusAnim = this.focusBar.animate([{ transform: `scaleX(${p})` }, { transform: "scaleX(1)" }], { duration: Math.max(1, left), fill: "forwards" });
-          if (!st.running) this.focusAnim.pause();
+          const p = st?.phase === "focus" ? Math.min(1, Math.max(0, 1 - Math.max(0, st.running ? st.end - Date.now() : st.remaining) / st.total)) : 0;
+          const v = `scaleX(${p.toFixed(4)})`;
+          if (this.focusBar.style.transform !== v) this.focusBar.style.transform = v;
         },
       };
       document.querySelector("#urlbar > .urlbar-background")?.append(this.urlLight);
@@ -51,6 +45,19 @@
         if (ch.includes("soundplaying") || ch.includes("muted")) this.place();
         if (ch.includes("busy")) this.loading(e.target);
       };
+      // the lights move for a few seconds after something happens (tab
+      // switch, hover, URL bar, a new song), then rest as a still glow: an
+      // idle window then needs no frames at all
+      this.wake = () => {
+        NP.setRootAttr("nplus-glow-awake", true);
+        clearTimeout(this.sleepT);
+        this.sleepT = setTimeout(() => NP.setRootAttr("nplus-glow-awake", false), 8000);
+      };
+      this.onHover = (e) => e.target.closest?.(".tabbrowser-tab[selected], #urlbar, #nplus-desktop-card, .zen-media-card, #nplus-island") && this.wake();
+      document.addEventListener("mouseover", this.onHover, { passive: true });
+      gBrowser.tabContainer.addEventListener("TabSelect", this.wake);
+      this.offTrack = NP.on("trackchange", this.wake);
+      this.wake();
       gBrowser.tabContainer.addEventListener("TabSelect", this.place);
       gBrowser.tabContainer.addEventListener("TabAttrModified", this.onAttr);
       this.onClose = () => setTimeout(this.place, 0);
@@ -94,7 +101,11 @@
     },
 
     destroy() {
-      this.focusAnim?.cancel();
+      clearTimeout(this.sleepT);
+      NP.setRootAttr("nplus-glow-awake", false);
+      document.removeEventListener("mouseover", this.onHover);
+      gBrowser.tabContainer.removeEventListener("TabSelect", this.wake);
+      this.offTrack?.();
       delete NP.lights;
       this.offBeat?.();
       gBrowser.tabContainer.removeEventListener("TabSelect", this.place);

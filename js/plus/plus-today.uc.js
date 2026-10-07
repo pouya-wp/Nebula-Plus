@@ -113,6 +113,11 @@
         case "open-url":
           if (/^https?:\/\//.test(req.url ?? "")) openTrustedLinkIn(req.url, "tab");
           return this.reply(browser, req.id, {});
+        case "weather-fx": {
+          const mode = { auto: 1, rain: 2, snow: 3, off: 0 }[req.mode];
+          if (mode !== undefined) NP.prefs.set("nplus-weather-fx", mode);
+          return this.reply(browser, req.id, {});
+        }
         case "todos":
           return this.reply(browser, req.id, { todos: this.todos() });
         case "todo-add":

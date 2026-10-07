@@ -338,8 +338,7 @@
   background: linear-gradient(90deg, color-mix(in srgb, var(--nplus-accent) 70%, white), var(--nplus-accent));
   box-shadow: 0 0 8px color-mix(in srgb, var(--nplus-accent) 60%, transparent);
   transform-origin: left;
-  transform: scaleX(var(--p, 0));
-  transition: transform 0.5s linear;
+  transform: scaleX(0);
 }
 
 .nplus-dc-controls {

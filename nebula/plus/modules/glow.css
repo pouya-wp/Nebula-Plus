@@ -156,3 +156,9 @@
     }
   }
 }
+
+/* resting: after a few quiet seconds the lights stay where they are
+   (still glowing) and the GPU stops drawing frames for them */
+:root:not([nplus-glow-awake]) :is(.nplus-light-tab, .nplus-light-card, .nplus-light-pulse) {
+  animation-play-state: paused !important;
+}

@@ -572,7 +572,7 @@
       this.off = NP.on("media", (m) => this.render(m));
       this.offPos = NP.on("mediaposition", () => this.tick());
       NP.prefs.watch("nplus-desktop-card", () => this.render(NP.media?.current));
-      this.timer = setInterval(() => this.tick(), 500);
+      this.timer = setInterval(() => this.tick(), 1000);
 
       this.toolbar = toolbar;
       this.layout = this.layout.bind(this);
@@ -656,9 +656,12 @@
       const pos = NP.media.position();
       this.card.querySelector(".nplus-dc-time").textContent = NP.formatTime(pos);
       this.card.querySelector(".nplus-dc-duration").textContent = NP.formatTime(m.duration);
-      this.card
-        .querySelector(".nplus-dc-fill")
-        .style.setProperty("--p", m.duration ? pos / m.duration : 0);
+      // the bar moves a pixel or so per second: set it once a second, no
+      // animation (an endless animation keeps the window drawing frames)
+      const p = m.duration ? Math.min(1, pos / m.duration) : 0;
+      const v = `scaleX(${p.toFixed(4)})`;
+      const fill = this.card.querySelector(".nplus-dc-fill");
+      if (fill.style.transform !== v) fill.style.transform = v;
     },
 
     destroy() {
@@ -799,10 +802,24 @@
 
     loop(now) {
       const on = NP.prefs.get("nplus-visualizer") && NP.media?.current?.playing && !document.hidden;
+      // a window you're not using: stop completely (no frame loop at all)
+      // and pick up again when it's focused
+      if (on && Services.focus.activeWindow !== window) {
+        this.raf = null;
+        if (!this.onFocusBack) {
+          this.onFocusBack = () => {
+            window.removeEventListener("focus", this.onFocusBack);
+            this.onFocusBack = null;
+            this.wake();
+          };
+          window.addEventListener("focus", this.onFocusBack);
+        }
+        return;
+      }
       const lean = NP.prefs.get("nplus-lean");
-      // lean: ~30 fps (a faint outline doesn't need more), frozen while the
-      // window isn't in use; targets and colour are re-read every half second
-      if (lean && on && this.raf && (now - (this.lastFrame ?? 0) < 31 || !document.hasFocus())) {
+      // lean: ~24 fps (a faint outline doesn't need more); targets and
+      // colour are re-read every half second
+      if (lean && on && this.raf && now - (this.lastFrame ?? 0) < 40) {
         this.raf = requestAnimationFrame(this.loop);
         return;
       }

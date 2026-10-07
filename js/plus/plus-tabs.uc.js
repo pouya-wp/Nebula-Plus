@@ -52,7 +52,8 @@
         this.captureTimer = setTimeout(() => this.capture(gBrowser.selectedTab), 1500);
       };
       window.addEventListener("TabSelect", this.onSelect);
-      this.captureInterval = setInterval(() => this.capture(gBrowser.selectedTab), 15_000);
+      // refresh the selected tab's picture now and then, only while you use the window
+      this.captureInterval = setInterval(() => Services.focus.activeWindow === window && !document.hidden && this.capture(gBrowser.selectedTab), 30_000);
       this.onSelect();
 
       tabs.addEventListener("mouseover", this.onOver);
@@ -448,9 +449,12 @@
 
     tick() {
       const m = NP.media?.current;
-      if (!m || !this.el.hasAttribute("active")) return;
+      // nothing to do while it isn't on screen
+      if (!m || !this.el.hasAttribute("active") || !this.el.getClientRects().length || Services.focus.activeWindow !== window) return;
       const pos = NP.media.position();
-      this.el.querySelector(".mn-fill").style.setProperty("--p", m.duration ? pos / m.duration : 0);
+      const p = (m.duration ? pos / m.duration : 0).toFixed(3);
+      const fill = this.el.querySelector(".mn-fill");
+      if (fill.style.getPropertyValue("--p") !== p) fill.style.setProperty("--p", p);
       // the current lyric line, in place of the artist while it plays
       const st = NP.lyricsState;
       let line = "";

@@ -451,7 +451,7 @@ const Neon = {
     }).observe(document.documentElement, { attributes: true, attributeFilter: ["style"] });
     // a light sweep crosses the row every few seconds, one sign after another
     setInterval(() => {
-      if (document.hidden) return;
+      if (document.hidden || document.documentElement.hasAttribute("settled")) return;
       this.items.filter((it) => it.cv.isConnected).forEach((it, k) => setTimeout(() => this.sweep(it), k * 140));
     }, 7000);
     document.addEventListener("pointerover", (e) => {
@@ -473,7 +473,6 @@ const WMO = {
   95: ["رعدوبرق", "⛈️"], 96: ["رعدوبرق و تگرگ", "⛈️"], 99: ["رعدوبرق و تگرگ", "⛈️"],
 };
 
-const wIcon = (code, day = 1) => (day === 0 && code <= 1 ? "🌙" : day === 0 && code === 2 ? "☁️" : (WMO[code] ?? ["", "🌡️"])[1]);
 
 async function loadWeather() {
   const box = $("#weather");
@@ -507,40 +506,112 @@ async function loadWeather() {
   }
 }
 
+// small line-icons for the chips (no emoji)
+const GLYPH = {
+  up: '<svg viewBox="0 0 16 16"><path d="M8 13V3M4 7l4-4 4 4"/></svg>',
+  down: '<svg viewBox="0 0 16 16"><path d="M8 3v10M4 9l4 4 4-4"/></svg>',
+  drop: '<svg viewBox="0 0 16 16"><path d="M8 2s-4.5 5-4.5 8a4.5 4.5 0 0 0 9 0C12.5 7 8 2 8 2z"/></svg>',
+  umbrella: '<svg viewBox="0 0 16 16"><path d="M2 8a6 6 0 0 1 12 0zM8 8v4.5a1.5 1.5 0 0 1-3 0"/></svg>',
+  wind: '<svg viewBox="0 0 16 16"><path d="M2 6h8.5a2 2 0 1 0-2-2M2 10h11a2 2 0 1 1-2 2"/></svg>',
+};
+
+// a line that fits the weather (instead of a forecast in numbers)
+function vibe(kind, isDay, t, rain) {
+  if (kind === "storm") return "رعدوبرقه؛ امروز خونه بمونی بهتره";
+  if (kind === "snow") return "برف می‌باره… یه چای داغ می‌چسبه";
+  if (kind === "heavy" || kind === "rain") return "چتر یادت نره";
+  if (kind === "drizzle") return "نم‌نم بارونه؛ هوای قدم زدن زیر بارون";
+  if (kind === "fog") return "مه غلیظه؛ آروم رانندگی کن";
+  if (t >= 33) return "داغه! آب زیاد بخور و زیر آفتاب نمون";
+  if (t <= 3) return "سرد سرده؛ حسابی گرم بپوش";
+  if ((rain ?? 0) >= 50) return "احتمال بارون بالاست؛ چتر همراهت باشه";
+  if (!isDay && kind === "clear") return "شب صافیه؛ ستاره‌ها پیدان";
+  if (kind === "clear") return "هوا عالیه؛ وقت یه قدم زدن";
+  return "هوای آرومیه؛ روز خوبی داشته باشی";
+}
+
+// the next hours as a smooth temperature line with little illustrations
+function hourCurve(h) {
+  const pts = [];
+  for (let i = 1; i < h.time.length && pts.length < 6; i += 2) pts.push({ t: new Date(h.time[i]), v: h.temperature_2m[i], code: h.weather_code[i], day: h.is_day[i] });
+  if (pts.length < 2) return document.createElement("div");
+  const W = 258, H = 78, top = 28, bottom = 58, padX = 18;
+  const lo = Math.min(...pts.map((p) => p.v)), hi = Math.max(...pts.map((p) => p.v));
+  const xy = pts.map((p, i) => [padX + (i * (W - padX * 2)) / (pts.length - 1), bottom - ((p.v - lo) / (hi - lo || 1)) * (bottom - top - 8) - 4]);
+  // Catmull-Rom → Bézier for a soft line
+  let d = `M${xy[0][0]},${xy[0][1]}`;
+  for (let i = 0; i < xy.length - 1; i++) {
+    const p0 = xy[i - 1] ?? xy[i], p1 = xy[i], p2 = xy[i + 1], p3 = xy[i + 2] ?? p2;
+    d += ` C${p1[0] + (p2[0] - p0[0]) / 6},${p1[1] + (p2[1] - p0[1]) / 6} ${p2[0] - (p3[0] - p1[0]) / 6},${p2[1] - (p3[1] - p1[1]) / 6} ${p2[0]},${p2[1]}`;
+  }
+  const area = `${d} L${xy.at(-1)[0]},${H - 14} L${xy[0][0]},${H - 14} Z`;
+  const box = document.createElement("div");
+  box.className = "w-curve";
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs>
+    <linearGradient id="wcg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".35"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient>
+    <linearGradient id="wcl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6ec8ff"/><stop offset=".5" stop-color="var(--accent)"/><stop offset="1" stop-color="#ffb35c"/></linearGradient></defs>
+    <path d="${area}" fill="url(#wcg)"/><path d="${d}" fill="none" stroke="url(#wcl)" stroke-width="2.4" stroke-linecap="round"/>
+    ${xy.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3" fill="var(--bg-dot, #fff)" stroke="var(--accent)" stroke-width="1.6"/>`).join("")}</svg>`;
+  pts.forEach((p, i) => {
+    const [x, y] = xy[i];
+    const lab = document.createElement("div");
+    lab.className = "w-pt";
+    lab.style.left = `${(x / W) * 100}%`;
+    const art = weatherArt(weatherKindOf(p.code), !!p.day, { still: true });
+    lab.append(art);
+    lab.insertAdjacentHTML("beforeend", `<span class="w-pt-v" style="top:${y - 22}px">${num(Math.round(p.v))}°</span><span class="w-pt-t">${num(p.t.getHours(), 2)}</span>`);
+    box.append(lab);
+  });
+  return box;
+}
+
+// rain / snow on demand: click the illustration — auto → rain → snow → off
+const FX = ["auto", "rain", "snow", "off"];
+const FX_LABEL = { auto: "خودکار (مثل هوای واقعی)", rain: "بارون", snow: "برف", off: "خاموش" };
+function applyFx(realKind) {
+  const fx = S.fx || "auto";
+  const kind = fx === "auto" ? realKind : fx === "off" ? "clear" : fx;
+  sky.set(new URLSearchParams(location.search).get("sky") || kind);
+  const badge = $("#w-fx");
+  badge.hidden = fx === "auto";
+  badge.textContent = `افکت: ${FX_LABEL[fx]}`;
+}
+$("#w-icon").addEventListener("click", () => {
+  const next = FX[(FX.indexOf(S.fx || "auto") + 1) % FX.length];
+  S = store.set({ fx: next });
+  applyFx(document.body.dataset.weather || "clear");
+  // the browser's own sky follows (sidebar, toolbars)
+  link.ask("weather-fx", { mode: next });
+});
+
 function renderWeather(data) {
   const c = data.w.current;
   const d = data.w.daily;
   const [desc] = WMO[c.weather_code] ?? [""];
+  const kind = weatherKindOf(c.weather_code);
   document.body.dataset.weather = weatherKind(c.weather_code);
+  const box = $("#weather");
+  box.dataset.kind = kind;
+  box.toggleAttribute("night", !c.is_day);
   $("#w-city").textContent = data.place;
   const mins = Math.round((Date.now() - data.at) / 60000);
   $("#w-updated").textContent = mins < 1 ? "همین الان" : `${num(mins)} دقیقه پیش`;
-  $("#w-icon").textContent = wIcon(c.weather_code, c.is_day);
+  $("#w-icon").replaceChildren(weatherArt(kind, !!c.is_day));
   $("#w-temp").textContent = `${num(Math.round(c.temperature_2m))}°`;
   $("#w-desc").textContent = `${desc} · حس ${num(Math.round(c.apparent_temperature))}°`;
+  $("#w-vibe").textContent = vibe(kind, !!c.is_day, c.temperature_2m, d.precipitation_probability_max?.[0]);
+  $("#w-hours").replaceChildren(hourCurve(data.w.hourly));
 
-  // next hours, every 2 hours
-  const h = data.w.hourly;
-  const hours = [];
-  for (let i = 1; i < h.time.length && hours.length < 5; i += 2) {
-    const t = new Date(h.time[i]);
-    hours.push(
-      `<div class="w-hour"><span class="w-h-t">${num(t.getHours(), 2)}</span>` +
-        `<span class="w-h-i">${wIcon(h.weather_code[i], h.is_day[i])}</span>` +
-        `<span class="w-h-v">${num(Math.round(h.temperature_2m[i]))}°</span></div>`,
-    );
-  }
-  $("#w-hours").innerHTML = hours.join("");
-
-  const chip = (label, value) => `<span class="w-chip"><b>${label}</b>${value}</span>`;
+  const chip = (glyph, value, title) => `<span class="w-chip" title="${title}">${GLYPH[glyph]}${value}</span>`;
   $("#w-chips").innerHTML = [
-    chip("↑", `${num(Math.round(d.temperature_2m_max[0]))}°`),
-    chip("↓", `${num(Math.round(d.temperature_2m_min[0]))}°`),
-    chip("💧", `${num(c.relative_humidity_2m)}٪`),
-    d.precipitation_probability_max?.[0] ? chip("☔", `${num(d.precipitation_probability_max[0])}٪`) : "",
+    chip("up", `${num(Math.round(d.temperature_2m_max[0]))}°`, "بیشترین"),
+    chip("down", `${num(Math.round(d.temperature_2m_min[0]))}°`, "کمترین"),
+    chip("drop", `${num(c.relative_humidity_2m)}٪`, "رطوبت"),
+    c.wind_speed_10m != null ? chip("wind", `${num(Math.round(c.wind_speed_10m))}`, "باد (کیلومتر بر ساعت)") : "",
+    d.precipitation_probability_max?.[0] ? chip("umbrella", `${num(d.precipitation_probability_max[0])}٪`, "احتمال بارش") : "",
   ].join("");
   // ?sky=rain / ?sky=snow forces an effect (for testing)
-  sky.set(new URLSearchParams(location.search).get("sky") || weatherKind(c.weather_code));
+  applyFx(weatherKind(c.weather_code));
 }
 
 // rain | snow | clear (drives the gentle weather effect)
@@ -709,8 +780,12 @@ const player = {
     const st = this.state;
     if (!st || document.hidden) return;
     const pos = this.position();
-    $("#p-fill").style.setProperty("--p", st.duration ? pos / st.duration : 0);
-    $("#p-time").textContent = fmt(pos);
+    // the bar moves a pixel or so per second: set it, no endless animation
+    const v = `scaleX(${(st.duration ? Math.min(1, pos / st.duration) : 0).toFixed(4)})`;
+    const fillEl = $("#p-fill");
+    if (fillEl.style.transform !== v) fillEl.style.transform = v;
+    const time = fmt(pos);
+    if (time !== this.timeShown) $("#p-time").textContent = this.timeShown = time;
     if (!this.lines.length) return;
     let idx = -1;
     for (let i = 0; i < this.lines.length; i++) if (this.lines[i].t <= pos) idx = i;
@@ -1234,6 +1309,32 @@ function applyVisibility() {
   $("#hafez-btn").hidden = !S.hafez;
   if (!S.player) $("#player").hidden = true;
 }
+
+// ---------------- rest when idle ----------------
+// The ambient loops (edge lights, neon breathing, the weather icon, the
+// clock colon) play while you're interacting and for a few seconds after,
+// then settle: an idle new tab draws no frames at all.
+const settle = {
+  t: 0,
+  wake() {
+    const root = document.documentElement;
+    if (root.hasAttribute("settled")) root.removeAttribute("settled");
+    clearTimeout(this.t);
+    this.t = setTimeout(() => root.setAttribute("settled", ""), 8000);
+  },
+};
+let lastWake = 0;
+for (const ev of ["pointermove", "keydown", "wheel", "focus"]) {
+  window.addEventListener(
+    ev,
+    () => {
+      const now = performance.now();
+      if (now - lastWake > 500) (lastWake = now), settle.wake();
+    },
+    { passive: true },
+  );
+}
+settle.wake();
 
 // ---------------- edge lights (GPU) ----------------
 for (const host of document.querySelectorAll(".glow-host")) {
