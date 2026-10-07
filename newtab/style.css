@@ -53,7 +53,7 @@ html,
 body {
   margin: 0;
   height: 100%;
-  overflow: hidden auto;
+  overflow: hidden; /* never scrolls: the stage scales to fit instead */
   scrollbar-width: none;
   /* Transparent: with browser.tabs.allow_transparent_browser (on here)
      Zen's own glass background shows through. */
@@ -104,8 +104,9 @@ body[playing] #ambient {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(14px, 3vh, 26px);
-  padding: clamp(18px, 4vh, 40px) 24px 80px;
+  gap: clamp(12px, 2.6vh, 24px);
+  padding: clamp(14px, 3vh, 34px) 24px 64px;
+  transform-origin: top center;
   animation: rise 0.9s var(--ease) both;
 }
 
@@ -776,14 +777,20 @@ body[playing] #ambient {
   z-index: 1;
 }
 
-/* player (left-to-right like every music app; text keeps its own direction) */
+/* player (left-to-right like every music app; text keeps its own direction):
+   a record sleeve — the cover with its vinyl sliding out behind it — the
+   lyric line in the middle, and a round play button in the album's colour */
 #player {
   width: 320px;
   overflow: clip;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 14px;
+  gap: 8px;
+  padding: 14px 16px 12px;
+  background:
+    radial-gradient(120% 70% at 0% 0%, color-mix(in srgb, var(--accent) 34%, transparent), transparent 70%),
+    radial-gradient(90% 60% at 100% 100%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%),
+    var(--glass);
 }
 
 .p-bg {
@@ -791,35 +798,115 @@ body[playing] #ambient {
   inset: 0;
   z-index: -1;
   background: center / cover;
-  filter: blur(30px) saturate(1.6);
-  opacity: 0.4;
+  filter: blur(34px) saturate(1.7);
+  opacity: 0.32;
   scale: 1.4;
 }
 
-.p-row {
+.p-stage {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   min-width: 0;
+}
+
+.p-sleeve {
+  position: relative;
+  flex: none;
+  width: 98px;
+  height: 78px;
 }
 
 #p-art {
-  width: 54px;
-  height: 54px;
-  flex-shrink: 0;
-  border-radius: 13px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+  width: 78px;
+  height: 78px;
+  border-radius: 14px;
   background: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 8%)) center / cover;
-  box-shadow: 0 8px 22px -10px color-mix(in srgb, var(--accent) 70%, black);
+  box-shadow:
+    0 14px 28px -12px color-mix(in srgb, var(--accent) 60%, black),
+    inset 0 0 0 0.5px rgb(255 255 255 / 18%);
   transition: scale 0.4s var(--spring);
 
   body:not([playing]) & {
-    scale: 0.92;
+    scale: 0.94;
   }
 }
 
-.p-info {
+/* the record peeks out while it plays */
+.p-disc {
+  position: absolute;
+  left: 4px;
+  top: 3px;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, transparent 0 13px, rgb(255 255 255 / 6%) 13.5px 14px, transparent 14.5px 17px, rgb(255 255 255 / 5%) 17.5px 18px, transparent 18.5px),
+    repeating-radial-gradient(circle, #141418 0 2px, #1d1d23 2.5px 3px),
+    #111;
+  box-shadow: 0 8px 18px -8px rgb(0 0 0 / 70%);
+  translate: 0 0;
+  transition: translate 0.7s var(--spring);
+  animation: p-spin 5s linear infinite;
+  animation-play-state: paused;
+
+  body[playing] & {
+    translate: 24px 0;
+    animation-play-state: running;
+  }
+}
+
+.p-label {
+  position: absolute;
+  inset: 24px;
+  border-radius: 50%;
+  background: var(--accent) center / cover;
+  box-shadow: 0 0 0 2px #0c0c10;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 9px;
+    border-radius: 50%;
+    background: #0c0c10;
+  }
+}
+
+@keyframes p-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+:root:is([settled], [idle]) .p-disc {
+  animation-play-state: paused !important;
+}
+
+.p-meta {
   flex: 1;
   min-width: 0;
+}
+
+#p-app {
+  display: inline-block;
+  max-width: 100%;
+  margin-bottom: 5px;
+  padding: 1px 8px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:empty {
+    display: none;
+  }
 }
 
 #p-title,
@@ -832,8 +919,11 @@ body[playing] #ambient {
 }
 
 #p-title {
-  font-weight: 700;
-  font-size: 15px;
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 1.3;
+  background: linear-gradient(100deg, var(--text) 55%, color-mix(in srgb, var(--accent) 65%, var(--text))) text;
+  color: transparent;
 }
 
 #p-artist {
@@ -841,8 +931,60 @@ body[playing] #ambient {
   color: var(--text-soft);
 }
 
+/* the middle: the lyric line, or a small equalizer when there are none */
+.p-middle {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  min-height: 46px;
+}
+
+.p-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 26px;
+
+  i {
+    width: 4px;
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(to top, var(--accent), color-mix(in srgb, var(--accent) 40%, white));
+    transform-origin: bottom;
+    scale: 1 0.3;
+    opacity: 0.8;
+    animation: p-eq 1.1s ease-in-out infinite alternate paused;
+  }
+
+  i:nth-child(2) { animation-delay: -0.3s; }
+  i:nth-child(3) { animation-delay: -0.7s; }
+  i:nth-child(4) { animation-delay: -0.1s; }
+  i:nth-child(5) { animation-delay: -0.5s; }
+  i:nth-child(6) { animation-delay: -0.9s; }
+  i:nth-child(7) { animation-delay: -0.2s; }
+
+  body[playing] & i {
+    animation-play-state: running;
+  }
+
+  :root:is([settled], [idle]) & i {
+    animation-play-state: paused !important;
+  }
+
+  #player:has(#p-lyrics .line) & {
+    display: none;
+  }
+}
+
+@keyframes p-eq {
+  to {
+    scale: 1 1;
+  }
+}
+
 #p-lyrics {
   position: relative;
+  width: 100%;
   height: 2.9em; /* room for two lines */
   font-size: 14.5px;
   font-weight: 700;
@@ -870,7 +1012,6 @@ body[playing] #ambient {
     color: transparent;
     animation: sweep 1.6s var(--ease) 0.35s both;
     text-shadow: none;
-    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 45%, transparent));
   }
 
   & .w {
@@ -893,7 +1034,6 @@ body[playing] #ambient {
 @keyframes word-in {
   from {
     opacity: 0;
-    filter: blur(8px);
     translate: 0 0.6em;
     scale: 0.92;
   }
@@ -902,7 +1042,6 @@ body[playing] #ambient {
 @keyframes line-out {
   to {
     opacity: 0;
-    filter: blur(6px);
     translate: 0 -0.7em;
   }
 }
@@ -970,31 +1109,50 @@ body[playing] #ambient {
 .p-controls {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  align-items: center;
+  gap: 18px;
 
   & button {
     width: 34px;
     height: 34px;
     border: none;
-    border-radius: 10px;
+    border-radius: 50%;
+    corner-shape: round;
     background: transparent;
     cursor: pointer;
     display: grid;
     place-items: center;
-    transition: background-color 0.15s ease;
+    transition:
+      background-color 0.15s ease,
+      scale 0.25s var(--spring);
 
     &:hover {
       background: light-dark(rgb(0 0 0 / 6%), rgb(255 255 255 / 9%));
     }
 
-    &:active i {
-      scale: 0.85;
+    &:active {
+      scale: 0.9;
     }
   }
 
-  & #p-toggle i {
-    width: 18px;
-    height: 18px;
+  /* the big round play button in the album's colour */
+  & #p-toggle {
+    width: 44px;
+    height: 44px;
+    color: white;
+    background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 80%, white), var(--accent));
+    box-shadow:
+      0 10px 22px -8px color-mix(in srgb, var(--accent) 75%, black),
+      inset 0 1px 0 rgb(255 255 255 / 35%);
+
+    &:hover {
+      background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 65%, white), var(--accent));
+    }
+
+    i {
+      width: 18px;
+      height: 18px;
+    }
   }
 }
 

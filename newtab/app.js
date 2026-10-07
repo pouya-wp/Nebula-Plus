@@ -571,7 +571,7 @@ const FX_LABEL = { auto: "خودکار (مثل هوای واقعی)", rain: "ب�
 function applyFx(realKind) {
   const fx = S.fx || "auto";
   const kind = fx === "auto" ? realKind : fx === "off" ? "clear" : fx;
-  sky.set(new URLSearchParams(location.search).get("sky") || kind);
+  sky.set(new URLSearchParams(location.search).get("sky") || kind, fx !== "auto");
   const badge = $("#w-fx");
   badge.hidden = fx === "auto";
   badge.textContent = `افکت: ${FX_LABEL[fx]}`;
@@ -625,56 +625,75 @@ function weatherKind(code) {
 // Very few, very faint particles: atmosphere, not a screensaver.
 const sky = {
   kind: "clear",
-  set(kind) {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) kind = "clear";
+  // manual = picked by you (shown even with "reduce motion" on)
+  set(kind, manual = false) {
+    if (!manual && matchMedia("(prefers-reduced-motion: reduce)").matches) kind = "clear";
     if (kind === this.kind) return;
     this.kind = kind;
     cancelAnimationFrame(this.raf);
     const cv = $("#sky");
     const ctx = cv.getContext("2d");
-    if (kind === "clear") return ctx.clearRect(0, 0, cv.width, cv.height);
+    cv.toggleAttribute("on", kind !== "clear");
+    if (kind === "clear") {
+      cv.width = cv.height = 1;
+      return;
+    }
+    // half resolution (soft streaks look the same), ~30 fps
+    const scale = (devicePixelRatio || 1) * 0.5;
     const resize = () => {
-      cv.width = innerWidth * devicePixelRatio;
-      cv.height = innerHeight * devicePixelRatio;
+      cv.width = Math.ceil(innerWidth * scale);
+      cv.height = Math.ceil(innerHeight * scale);
     };
     resize();
-    addEventListener("resize", resize);
-    const n = kind === "rain" ? 38 : 28;
-    const P = Array.from({ length: n }, () => this.spawn(kind, true));
+    this.onResize && removeEventListener("resize", this.onResize);
+    addEventListener("resize", (this.onResize = resize));
+    const light = !matchMedia("(prefers-color-scheme: dark)").matches;
+    const ink = kind === "rain" ? (light ? "60, 92, 140" : "205, 225, 255") : light ? "150, 175, 210" : "255, 255, 255";
+    const n = kind === "rain" ? 70 : 46;
+    const P = Array.from({ length: n }, () => this.spawn(kind, true, cv.width, cv.height, scale));
     let last = performance.now();
+    let acc = 0;
     const frame = (now) => {
-      const dt = Math.min(50, now - last) / 16.7;
+      this.raf = requestAnimationFrame(frame);
+      acc += now - last;
+      const dt = Math.min(80, now - last) / 16.7;
       last = now;
+      if (acc < 32) return;
+      acc = 0;
       const W = cv.width;
       const H = cv.height;
-      const dpr = devicePixelRatio;
       ctx.clearRect(0, 0, W, H);
+      ctx.lineCap = "round";
       for (const p of P) {
-        p.y += p.vy * dt * dpr;
-        p.x += (p.vx + (kind === "snow" ? Math.sin((now / 1000) * p.f + p.ph) * 0.35 : 0)) * dt * dpr;
-        if (p.y > H + 20 || p.x < -20 || p.x > W + 20) Object.assign(p, this.spawn(kind, false, W, H));
+        p.y += p.vy * dt * 2 * scale;
+        p.x += (p.vx + (kind === "snow" ? Math.sin((now / 1000) * p.f + p.ph) * 0.35 : 0)) * dt * 2 * scale;
+        if (p.y > H + 20 || p.x < -20 || p.x > W + 20) Object.assign(p, this.spawn(kind, false, W, H, scale));
         if (kind === "rain") {
-          ctx.strokeStyle = `rgba(200, 215, 235, ${p.a})`;
-          ctx.lineWidth = 1 * dpr;
+          const g = ctx.createLinearGradient(p.x, p.y - p.len * scale, p.x, p.y);
+          g.addColorStop(0, `rgba(${ink}, 0)`);
+          g.addColorStop(1, `rgba(${ink}, ${p.a})`);
+          ctx.strokeStyle = g;
+          ctx.lineWidth = p.w * scale;
           ctx.beginPath();
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(p.x - p.vx * 2.2 * dpr, p.y - p.len * dpr);
+          ctx.moveTo(p.x - p.vx * 2.2 * scale, p.y - p.len * scale);
+          ctx.lineTo(p.x, p.y);
           ctx.stroke();
         } else {
-          ctx.fillStyle = `rgba(255, 255, 255, ${p.a})`;
+          ctx.fillStyle = `rgba(${ink}, ${p.a})`;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r * dpr, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, p.r * scale, 0, Math.PI * 2);
           ctx.fill();
         }
       }
-      this.raf = requestAnimationFrame(frame);
     };
     this.raf = requestAnimationFrame(frame);
   },
-  spawn(kind, anywhere, W = innerWidth * devicePixelRatio, H = innerHeight * devicePixelRatio) {
+  spawn(kind, anywhere, W, H, scale) {
     const p = { x: Math.random() * W, y: anywhere ? Math.random() * H : -20, ph: Math.random() * 6.28, f: 0.4 + Math.random() * 0.6 };
-    if (kind === "rain") Object.assign(p, { vx: -0.8, vy: 9 + Math.random() * 5, len: 12 + Math.random() * 12, a: 0.22 + Math.random() * 0.14 });
-    else Object.assign(p, { vx: -0.15, vy: 0.5 + Math.random() * 0.7, r: 1.1 + Math.random() * 1.8, a: 0.45 + Math.random() * 0.3 });
+    // a few near drops (long, bright), most far away (short, faint)
+    const near = Math.random() < 0.25;
+    if (kind === "rain") Object.assign(p, { vx: -0.9, vy: near ? 15 + Math.random() * 4 : 9 + Math.random() * 4, len: near ? 34 + Math.random() * 16 : 16 + Math.random() * 12, w: near ? 2.2 : 1.4, a: near ? 0.75 : 0.45 + Math.random() * 0.2 });
+    else Object.assign(p, { vx: -0.15, vy: near ? 1.3 + Math.random() * 0.6 : 0.5 + Math.random() * 0.6, r: near ? 3 + Math.random() * 1.5 : 1.4 + Math.random() * 1.6, a: near ? 0.95 : 0.6 + Math.random() * 0.3 });
     return p;
   },
 };
@@ -729,7 +748,8 @@ const player = {
     box.hidden = false;
     document.body.toggleAttribute("playing", st.playing);
     $("#p-title").textContent = st.title;
-    $("#p-artist").textContent = [st.artist, st.app].filter(Boolean).join(" · ");
+    $("#p-artist").textContent = st.artist || "";
+    $("#p-app").textContent = st.app || "";
     $("#p-toggle i").className = st.playing ? "i-pause" : "i-play";
     const key = `${st.title}|${st.artist}`;
     if (key !== this.key) {
@@ -748,6 +768,7 @@ const player = {
       const art = artId ? `${BRIDGE}/art/${artId}` : null;
       $("#p-art").style.backgroundImage = art ? `url("${art}")` : "";
       $(".p-bg").style.backgroundImage = art ? `url("${art}")` : "";
+      $(".p-label").style.backgroundImage = art ? `url("${art}")` : "";
       if (art) accentFrom(art);
       else document.documentElement.style.removeProperty("--accent");
     }
@@ -1309,6 +1330,29 @@ function applyVisibility() {
   $("#hafez-btn").hidden = !S.hafez;
   if (!S.player) $("#player").hidden = true;
 }
+
+// ---------------- always fits the window (no scrolling) ----------------
+// If everything is taller than the window, the stage is zoomed down just
+// enough to fit; on a tall enough window it stays at full size.
+const fit = {
+  z: 1,
+  run() {
+    const st = $("#stage");
+    st.style.zoom = 1;
+    const need = st.scrollHeight;
+    const z = Math.max(0.7, Math.min(1, innerHeight / need));
+    this.z = z;
+    st.style.zoom = z < 0.995 ? z.toFixed(3) : "";
+  },
+  later() {
+    cancelAnimationFrame(this.raf);
+    this.raf = requestAnimationFrame(() => this.run());
+  },
+};
+addEventListener("resize", () => fit.later());
+// widgets appear / change size (weather, todo, words, player)
+new ResizeObserver(() => fit.later()).observe($("#widgets"));
+fit.later();
 
 // ---------------- rest when idle ----------------
 // The ambient loops (edge lights, neon breathing, the weather icon, the
