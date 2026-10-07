@@ -349,8 +349,9 @@ const Neon = {
     let h = 0;
     if (d) h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
     h *= 60;
-    const sat = d < 0.06 ? 0.15 : 0.9;
-    const light = 0.6;
+    // on the dark tiles: a bright, saturated tube
+    const sat = d < 0.06 ? 0.2 : 1;
+    const light = 0.66;
     const k = (n) => (n + h / 30) % 12;
     const a = sat * Math.min(light, 1 - light);
     const f = (n) => light - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1));
@@ -396,7 +397,7 @@ const Neon = {
     // The blurred glow is the expensive part: it's rendered once per colour
     // and cached; a sweep frame only recomposes the sign on top of it.
     const ctx = cv.getContext("2d");
-    const key = `${r},${g},${b}`;
+    const key = `v2|${r},${g},${b}`;
     if (item.glowKey !== key || !item.glowLayer) {
       const G = (item.glowLayer ??= document.createElement("canvas"));
       G.width = G.height = W;
@@ -410,10 +411,10 @@ const Neon = {
         gx.shadowOffsetX = W * 2;
         gx.drawImage(L, -W * 2, 0);
       };
-      glow(24, col(1, 0.85));
-      glow(24, col(1, 0.5));
-      glow(9, col(1.2, 0.9));
-      glow(3, col(1.5, 0.9));
+      glow(24, col(1, 1));
+      glow(16, col(1.1, 0.8));
+      glow(8, col(1.3, 1));
+      glow(3, col(1.6, 1));
       item.glowKey = key;
     }
     ctx.clearRect(0, 0, W, W);

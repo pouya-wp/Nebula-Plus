@@ -809,10 +809,12 @@
         if (!this.onFocusBack) {
           this.onFocusBack = () => {
             window.removeEventListener("focus", this.onFocusBack);
+            window.removeEventListener("activate", this.onFocusBack);
             this.onFocusBack = null;
             this.wake();
           };
           window.addEventListener("focus", this.onFocusBack);
+          window.addEventListener("activate", this.onFocusBack);
         }
         return;
       }

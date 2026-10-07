@@ -74,7 +74,8 @@ function weatherKindOf(code) {
 function weatherArt(kind, isDay = true, { still = false } = {}) {
   const u = ++uid;
   const box = document.createElement("div");
-  box.className = `wa wa-${kind}${isDay ? "" : " wa-night"}${still ? " wa-still" : ""}`;
+  // the kind goes in its own namespace (wa-fog is also a layer's class)
+  box.className = `wa wa-k-${kind}${isDay ? "" : " wa-night"}${still ? " wa-still" : ""}`;
   const orb = () => (isDay ? layer("wa-sun", SUN(u)) : [layer("wa-moon", MOON(u)), layer("wa-stars", STARS())]);
   const add = (x) => [].concat(x).forEach((e) => box.append(e));
   switch (kind) {

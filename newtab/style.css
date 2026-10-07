@@ -2059,9 +2059,34 @@ i {
   }
 }
 
-/* small link tiles: no blur of their own (six live blurs cost more than
-   they add); the cards keep their glass */
+/* link tiles: a dark "night sign" for the neon to glow against (light
+   tiles washed the neon out). No blur of their own: cheaper too. */
 .tile.glass {
   backdrop-filter: none;
-  background: light-dark(rgb(255 255 255 / 62%), rgb(255 255 255 / 9%));
+  border-radius: 16px;
+  background:
+    radial-gradient(90% 80% at 50% 25%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%),
+    linear-gradient(165deg, #1c1c27 0%, #0d0d14 100%);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 7%),
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    0 10px 24px -12px rgb(0 0 0 / 55%),
+    0 0 26px -12px var(--accent);
+}
+
+.link:hover .tile.glass {
+  background:
+    radial-gradient(90% 80% at 50% 25%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 70%),
+    linear-gradient(165deg, #21212e 0%, #0d0d14 100%);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 14%),
+    0 12px 28px -12px rgb(0 0 0 / 60%),
+    0 0 34px -8px var(--accent);
+}
+
+.link span {
+  color: var(--text);
+  font-weight: 600;
+  opacity: 0.75;
 }
