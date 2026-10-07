@@ -184,7 +184,7 @@ function neonIcon(host) {
 }
 
 async function neonCached(host) {
-  const key = `nplus-neon3:${host}`;
+  const key = `nplus-neon4:${host}`;
   try {
     const hit = JSON.parse(localStorage.getItem(key) || "null");
     if (hit && Date.now() - hit.t < 7 * 86400000) {
@@ -211,7 +211,8 @@ async function buildNeon(host) {
   img.crossOrigin = "anonymous";
   img.src = `${BRIDGE}/favicon?host=${encodeURIComponent(host)}`;
   await img.decode();
-  const N = 96, pad = 8, inner = N - pad * 2;
+  // twice the resolution: the tube comes out thin and sharp when scaled down
+  const N = 192, pad = 16, inner = N - pad * 2;
   const c = document.createElement("canvas");
   c.width = c.height = N;
   const ctx = c.getContext("2d", { willReadFrequently: true });
@@ -273,16 +274,19 @@ async function buildNeon(host) {
     const a = (dx, dy) => f[(y + dy) * N + x + dx];
     const gx = a(1, -1) + 2 * a(1, 0) + a(1, 1) - a(-1, -1) - 2 * a(-1, 0) - a(-1, 1);
     const gy = a(-1, 1) + 2 * a(0, 1) + a(1, 1) - a(-1, -1) - 2 * a(0, -1) - a(1, -1);
-    return Math.min(1, Math.hypot(gx, gy) * 0.9);
+    return Math.hypot(gx, gy);
   };
+  // a crisp, thin line instead of a soft band
+  const tube = (f, x, y) => Math.min(1, Math.max(0, (sobel(f, x, y) - 0.35) / 0.45));
   const out = ctx.createImageData(N, N);
   for (let y = 1; y < N - 1; y++) {
     for (let x = 1; x < N - 1; x++) {
       const i = y * N + x;
       // tube around the shape, the symbol fully lit, the body a faint haze
+      // neon is a tube: outlines everywhere (the symbol too), only a faint fill
       const v = inkOnly
-        ? Math.max(sobel(alpha, x, y), alpha[i] * 0.1)
-        : Math.max(sobel(alpha, x, y) * 0.95, ink[i], alpha[i] * 0.07);
+        ? Math.max(tube(alpha, x, y), alpha[i] * 0.08)
+        : Math.max(tube(alpha, x, y) * 0.9, tube(ink, x, y), ink[i] * 0.22, alpha[i] * 0.05);
       const o = i * 4;
       out.data[o] = out.data[o + 1] = out.data[o + 2] = 255;
       out.data[o + 3] = v * 255;
@@ -397,7 +401,7 @@ const Neon = {
     // The blurred glow is the expensive part: it's rendered once per colour
     // and cached; a sweep frame only recomposes the sign on top of it.
     const ctx = cv.getContext("2d");
-    const key = `v2|${r},${g},${b}`;
+    const key = `v3|${r},${g},${b}`;
     if (item.glowKey !== key || !item.glowLayer) {
       const G = (item.glowLayer ??= document.createElement("canvas"));
       G.width = G.height = W;
@@ -411,10 +415,10 @@ const Neon = {
         gx.shadowOffsetX = W * 2;
         gx.drawImage(L, -W * 2, 0);
       };
-      glow(24, col(1, 1));
-      glow(16, col(1.1, 0.8));
-      glow(8, col(1.3, 1));
-      glow(3, col(1.6, 1));
+      // a wide soft halo, a tight glow, and a thin hot core
+      glow(14, col(1, 0.75));
+      glow(6, col(1.15, 0.95));
+      glow(1.6, col(1.6, 1));
       item.glowKey = key;
     }
     ctx.clearRect(0, 0, W, W);
@@ -954,6 +958,7 @@ const today = {
       ...items.map((it) => {
         const row = document.createElement("button");
         row.className = "td-row";
+        row.style.setProperty("--ti", items.indexOf(it));
         row.toggleAttribute("hot", !!it.hot);
         const ico = Object.assign(document.createElement("span"), { className: "td-ico", textContent: it.icon });
         const body = Object.assign(document.createElement("span"), { className: "td-body" });
@@ -1105,6 +1110,9 @@ const quote = {
     $("#quote-text").textContent = text;
     $("#quote-by").textContent = by === "—" ? "" : by;
     box.classList.add("in");
+    // only the first one waits for its turn in the opening
+    box.classList.toggle("first", !this.shown);
+    this.shown = true;
   },
 };
 $("#quote").addEventListener("click", (e) => {
@@ -1380,6 +1388,12 @@ for (const ev of ["pointermove", "keydown", "wheel", "focus"]) {
   );
 }
 settle.wake();
+
+// the cards swing up in order (the column of two counts as one)
+[...document.querySelectorAll("#widgets > *")].forEach((el, i) => {
+  el.style.setProperty("--wi", i);
+  for (const w of el.matches(".widget-stack") ? el.children : []) w.style.setProperty("--wi", i);
+});
 
 // ---------------- edge lights (GPU) ----------------
 for (const host of document.querySelectorAll(".glow-host")) {

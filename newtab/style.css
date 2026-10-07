@@ -107,7 +107,6 @@ body[playing] #ambient {
   gap: clamp(12px, 2.6vh, 24px);
   padding: clamp(14px, 3vh, 34px) 24px 64px;
   transform-origin: top center;
-  animation: rise 0.9s var(--ease) both;
 }
 
 @keyframes rise {
@@ -373,8 +372,8 @@ body[playing] #ambient {
   text-decoration: none;
   color: inherit;
   font-size: 12.5px;
-  animation: rise 0.6s var(--ease) both;
-  animation-delay: calc(var(--i) * 40ms + 150ms);
+  animation: nt-pop 0.75s var(--spring) both;
+  animation-delay: calc(var(--i) * 55ms + 520ms);
 
   & .tile {
     width: 56px;
@@ -405,8 +404,10 @@ body[playing] #ambient {
       height: 64px;
       margin: -4px;
       pointer-events: none;
-      animation: neon-breathe 5s ease-in-out infinite;
-      animation-delay: calc(var(--i) * -0.7s);
+      /* the tube flickers on like a real neon sign, then breathes */
+      animation:
+        nt-ignite 1s linear calc(var(--i) * 70ms + 650ms) both,
+        neon-breathe 5s ease-in-out calc(var(--i) * 0.4s + 2s) infinite;
     }
   }
 
@@ -441,8 +442,8 @@ body[playing] #ambient {
   width: 240px;
   min-height: 128px;
   padding: 14px 16px;
-  animation: rise 0.7s var(--ease) both;
-  animation-delay: 0.3s;
+  animation: nt-card 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--wi, 0) * 85ms + 760ms);
 }
 
 .widget-title {
@@ -1803,8 +1804,7 @@ i {
   justify-content: center;
   max-width: min(980px, 92vw);
   margin-top: -4px;
-  animation: rise 0.7s var(--ease) both;
-  animation-delay: 0.25s;
+  animation: nt-fade-up 0.7s var(--ease) 0.66s both;
 
   &[hidden] {
     display: none;
@@ -2089,4 +2089,133 @@ i {
   color: var(--text);
   font-weight: 600;
   opacity: 0.75;
+}
+
+/* ---------------- the opening ----------------
+   A short choreography, transform/opacity only (GPU): the clock's digits
+   drop into place and a light runs across them, the date and greeting
+   follow, the search bar unfolds from the centre, the link tiles pop up
+   and their neon flickers on one by one, the chips rise, and the cards
+   swing up from below in a row. About 1.6 s, then everything rests. */
+#clock-h,
+#clock-m,
+#clock-sep {
+  display: inline-block;
+}
+
+#clock-h {
+  animation: nt-digit 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+}
+
+#clock-m {
+  animation: nt-digit 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.17s both;
+}
+
+#clock {
+  /* a light runs across the digits once */
+  background:
+    linear-gradient(100deg, transparent 38%, color-mix(in srgb, var(--accent) 35%, white) 50%, transparent 62%) -150% 0 / 60% 100% no-repeat text,
+    linear-gradient(170deg, var(--text) 35%, color-mix(in srgb, var(--accent) 70%, var(--text))) text;
+  animation: nt-clock-sheen 1.3s cubic-bezier(0.3, 0, 0.2, 1) 0.45s both;
+}
+
+#date-line {
+  animation: nt-fade-up 0.7s var(--ease) 0.28s both;
+}
+
+#greeting {
+  animation: nt-fade-up 0.8s var(--ease) 0.36s both;
+}
+
+#quote.in.first {
+  animation-delay: 0.44s;
+}
+
+#search {
+  animation: nt-unfold 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+#hafez-btn,
+#settings-btn {
+  animation: nt-fade-up 0.6s var(--ease) 1.3s both;
+}
+
+@keyframes nt-digit {
+  from {
+    opacity: 0;
+    translate: 0 -0.32em;
+    scale: 1.22;
+  }
+
+  55% {
+    opacity: 1;
+  }
+}
+
+@keyframes nt-clock-sheen {
+  from {
+    background-position: -150% 0, 0 0;
+  }
+
+  to {
+    background-position: 250% 0, 0 0;
+  }
+}
+
+@keyframes nt-fade-up {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+}
+
+@keyframes nt-unfold {
+  from {
+    opacity: 0;
+    scale: 0.45 0.8;
+  }
+
+  45% {
+    opacity: 1;
+  }
+}
+
+@keyframes nt-pop {
+  from {
+    opacity: 0;
+    scale: 0.4;
+    translate: 0 18px;
+  }
+
+  60% {
+    opacity: 1;
+  }
+}
+
+@keyframes nt-ignite {
+  0% { opacity: 0; }
+  8% { opacity: 0.9; }
+  12% { opacity: 0.05; }
+  22% { opacity: 0.75; }
+  26% { opacity: 0.15; }
+  40% { opacity: 1; }
+  46% { opacity: 0.55; }
+  60%, 100% { opacity: 1; }
+}
+
+@keyframes nt-card {
+  from {
+    opacity: 0;
+    transform: perspective(900px) translateY(46px) rotateX(24deg) scale(0.95);
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+/* the chips in the «today» row rise one after another */
+.td-row {
+  animation: nt-fade-up 0.6s var(--ease) both;
+  animation-delay: calc(var(--ti, 0) * 60ms + 0.7s);
 }
