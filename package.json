@@ -1,6 +1,13 @@
 {
-  "name": "Zen-Nebula",
-  "private": true,
+  "name": "nebula-plus",
+  "version": "3.3.3-plus.1",
+  "description": "An intelligent, high-performance productivity & glassmorphism suite for Zen Browser (Firefox), featuring a native C# audio bridge, Gemini AI integration, and compositor-accelerated UI.",
+  "author": "Pouya (pouya-wp)",
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pouya-wp/Nebula-Plus.git"
+  },
   "scripts": {
     "lint": "bun lint:pretty && stylelint '**/*.css'",
     "lint:fix": "bun pretty && stylelint '**/*.css' --fix",

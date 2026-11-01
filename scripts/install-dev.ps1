@@ -11,11 +11,21 @@
 # Undo: scripts\uninstall-dev.ps1
 
 param(
-  [string]$Profile = "$env:APPDATA\zen\Profiles\r8ayobza.Default (release)-1",
+  [string]$Profile = "",
   [string]$ZenExe = "C:\Program Files\Zen Browser\zen.exe"
 )
 
 $ErrorActionPreference = "Stop"
+
+if (-not $Profile) {
+  $found = Get-ChildItem -Path "$env:APPDATA\zen\Profiles" -Directory -Filter "*.Default*" -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
+  if ($found) {
+    $Profile = $found
+  } else {
+    $Profile = "$env:APPDATA\zen\Profiles\r8ayobza.Default (release)-1"
+  }
+}
+
 $Repo = Split-Path -Parent $PSScriptRoot
 $Mods = Join-Path $Profile "chrome\sine-mods"
 $Target = Join-Path $Mods "Nebula"
@@ -58,12 +68,15 @@ $json = $mods | ConvertTo-Json -Depth 20
 Write-Host "mods.json updated (backup: mods.json.bak-plus)" -ForegroundColor Green
 
 # 3) bridge
-$bridge = Join-Path $Repo "bridge-dist\NebulaBridge.exe"
-if ((Test-Path $bridge) -and -not (Get-Process NebulaBridge -ErrorAction SilentlyContinue)) {
-  Start-Process $bridge
-  Write-Host "Nebula Bridge started"
+$BridgeExe = Join-Path $Repo "bridge-dist\NebulaBridge.exe"
+if (Test-Path $BridgeExe) {
+  Get-Process NebulaBridge -ErrorAction SilentlyContinue | Stop-Process -Force
+  Start-Process -FilePath $BridgeExe -WindowStyle Hidden
+  Write-Host "Nebula Bridge started." -ForegroundColor Green
 }
 
-# 4) relaunch
-Start-Process $ZenExe
-Write-Host "Zen relaunched. Enjoy ✨" -ForegroundColor Cyan
+# 4) relaunch Zen
+if (Test-Path $ZenExe) {
+  Start-Process -FilePath $ZenExe
+  Write-Host "Zen Browser launched." -ForegroundColor Green
+}

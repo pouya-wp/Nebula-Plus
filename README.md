@@ -1,285 +1,183 @@
-<h1 align="center">Nebula</h1>
-<div align="center">
-    <a href="https://zen-browser.app/">
-        <img width="120" alt="zen-badge-dark" src="https://github.com/user-attachments/assets/d6ab3ddf-6630-4062-92d0-22497d2a3f9a" />
-    </a>
-</div>
+<h1 align="center">✨ Nebula Plus</h1>
 
-###
-
-<div align="center">
-  <img src="https://github.com/user-attachments/assets/7583b74a-b551-4f7a-8c14-43e45e8d6593" width="800" />
-</div>
-
-###
-
-<h2 align="left">✨What is Nebula?</h2>
-
-###
-
-<p align="left">Nebula is a minimal theme made for Zen Browser which adds a lot of new animations, glass-like blur, UI changes, and more. It is inspired by glassmorphism and minimal gradients.<br><br>This is my personal userChrome which I made to personalize Zen to my own liking. ❤️<br>If some of you don't like the design choices I made, you can edit the userChrome yourself if you know how to code, and if you don't, you can use ChatGPT to customize it as per your preference.</p>
-
-###
-
-<h2 align="left">🪐Showcase :))</h2>
-
-<div align="center">
-  <img src="https://github.com/user-attachments/assets/6981d87f-8816-444b-a31e-7e12997c2bd6" width="400">
-  <img src="https://github.com/user-attachments/assets/cc44bfda-c690-45b3-b147-1304b84ea07d" width="400">
-  <img src="https://github.com/user-attachments/assets/b7065ad6-4162-4842-824a-79d4e5fcbd53" width="400">
-  <img src="https://github.com/user-attachments/assets/2e8b2de9-747e-477a-ab51-71fc2198d9be" width="400">
-  <img src="https://github.com/user-attachments/assets/8a5e3afd-e5f9-4f4a-8613-8c8843f68b9b" width="400">
-  <img src="https://github.com/user-attachments/assets/78528ae5-f119-409b-b881-f69ade03d299" width="400">
-</div>
-
-###
-
-<h2 align="left">🫶🏻Thanks for the support!</h2>
 <p align="center">
-  <a href="https://www.star-history.com/#JustAdumbPrsn/Zen-Nebula&greeeen-dev/natsumi-browser&Date">
-    <img src="https://api.star-history.com/svg?repos=JustAdumbPrsn/Zen-Nebula,greeeen-dev/natsumi-browser&type=Date" alt="Star History Chart" width="800">
-  </a>
+  <strong>An Intelligent, Glassmorphic Productivity & Native Media Suite for Zen Browser (Firefox Engine)</strong>
 </p>
 
-<p align="center">It is so crazy to me that Nebula has become one of the biggest mods for Zen Browser in such a short period of time! really appreciate it</p>
-
-###
-
-## 💫 Nebula with Sine Installation Guide
-
-Follow these steps to install and apply the **Nebula** theme to Zen Browser:
-
-1. 📝 **Install Sine**
-   - Go to [Sine's Github](https://github.com/CosmoCreeper/Sine/tree/main) and follow its installation process.
-   - This includes downloading and setting up FX-Autoconfig using the auto installer or manual installation.
-   - Then setting up Sine.
-2. 💎 **Installing Nebula through Sine's Marketplace**
-   - Go to settings and click **Sine**, from there a Marketplace will load where Nebula will be shown as a mod to install.
-   - Click the install button and Nebula should be installed as a mod.
-
-   ![image](https://github.com/user-attachments/assets/a6a88c52-011f-46aa-b4be-1f8fd147ac8c)
-
-3. ⚙️ **Enable Transparent Tabs**
-   - Go to `about:config` in Zen.
-   - Search for `browser.tabs.allow_transparent_browser`.
-   - If visible, set it to `true`.
-
-4. 🖼️ **Install Wallpapers (Optional)**
-   - Download `wallpapers.zip` from this [Link](https://github.com/JustAdumbPrsn/Zen-Nebula/releases/download/v3.1/Wallpapers.rar).
-
-   - Extract and use them as desired.
-
-###
-
-<h3 align="left">2. Customize Nebula through configs</h3>
-
-###
-
-- Nebula features a `Nebula-config.css` file inside the Nebula folder — it allows users to customize Nebula to their own liking!
-- Want to change/disable certain animations? You can do that as well by reading the clear instructions in the `Nebula-config.css` file.
-- There are lots of inbuilt mods which Nebula has baked in — for example, the `nogaps` mod removes the gap/border from the website window.
-- Here is a list of configs which you can change through `about:config`
-- **Note:** If you are on Sine version of Nebula, you can click this settings icon on Nebula mod to change its preferences ![image](https://github.com/user-attachments/assets/bad610a8-fc19-454d-acd3-6eb325e11959)
-
-<div align="center">
-    <img width="800" src="https://github.com/user-attachments/assets/19fa0fad-5d05-46d0-a517-e7f0ee3b8549" />
-</div>
-
-###
-
-<h3 align="left">3. Install Mica For Everyone (ONLY FOR WINDOWS 11 USERS)</h3>
-
-###
-
-<p align="left">
-• To get real backdrop filter transparency (note: that this method provides a better blur effect than the transparent zen extension by sameerasw), go to "https://github.com/MicaForEveryone/MicaForEveryone" and install the app.<br><br>
-• Click the "+ Add new Rule" at the bottom left and "Add process rule" for "zen".<br><br>
-• NOTE: If you have "Show Accent color on title bars and window borders" enabled in Windows 11 settings, please disable it for transparency to work.
+<p align="center">
+  <img src="https://img.shields.io/badge/Zen_Browser-Custom_Mod-7c3aed?style=for-the-badge&logo=firefox" alt="Zen Browser" />
+  <img src="https://img.shields.io/badge/.NET-Native_Bridge-512bd4?style=for-the-badge&logo=dotnet" alt=".NET" />
+  <img src="https://img.shields.io/badge/JavaScript-XPCOM_%26_ESNext-f7df1e?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
+  <img src="https://img.shields.io/badge/Google_Gemini-AI_Copilot-4285f4?style=for-the-badge&logo=google" alt="Gemini AI" />
+  <img src="https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge" alt="License" />
 </p>
-<img width="900" src="https://github.com/user-attachments/assets/e867a04e-a8ba-4795-bada-e22ca92fc657" />
-<br><br>
-<p align="left">
-• Also, please make sure your Zen theme color contrast is set to 0 for it to look transparent.
-</p>
-<img width="250" src="https://github.com/user-attachments/assets/aff8398c-9457-4842-bb44-32932cb99e23" />
-
-###
-
-<div align="left">
-  <img height="400" src="https://github.com/user-attachments/assets/34f6965c-1bdc-4ea1-8605-efde3b898d23"  />
-</div>
-
-###
-
-<p align="left">• Change the Backdrop type to Acrylic and enable blur behind in advanced options.<br><br>• Restart Zen and see how it looks.</p>
-
-###
-
-<h3 align="left">3. Install kwin-effects-better-blur-dx (ONLY FOR KDE LINUX)</h3>
-
-###
-
-<p align="left">• To get real backdrop filter transparency, go to "https://github.com/xarblu/kwin-effects-better-blur-dx" and install the app through the method specified for your distribution.<br><br>• Once you install 'kwin-effects-better-blur-dx' using your package manager, go to System Settings -> Windows -> Desktop Effecs, disable Blur and enable Better Blur DX. Then in Better Blur DX, settings go to 'Force blur' tab and add 'zen' to list of classes of windows.<br><br>• NOTE: If Zen was installed from AUR as "zen-browser-bin", then in Better Blur DX put the name "zen-browser" for blur Here is the blur configuration: </p>
-
-###
-
-<div align="center">
-  <img height="500" src="https://github.com/user-attachments/assets/8a19fcdd-acf9-4540-9833-ae0be3cce363"  />
-</div>
-
-###
-
-<h3 align="left">3. Install BlurMyShell (FOR GNOME LINUX)</h3>
-
-<p align="left">• First, make Zen transparent by setting <code>zen.widget.linux.transparency</code> to <code>true</code> in <code>about:config</code>.<br><br>• Next, install the <b>Blur My Shell</b> extension, open its settings, go to the <b>Application</b> tab, and enable <b>Application Blur</b>.<br><br>• Turn off <b>Opaque focused window</b> and set the <b>Opacity</b> slider to maximum to avoid weird artifacts.<br><br>• Add <code>zen</code> to the whitelist and you’re done — you now have a smooth, blurred Zen interface!<br><br>• (Optional) If you want the same look as my setup, you can copy my Blur My Shell configuration shown in the screenshot.</p>
-
-###
-
-<div align="center">
-  <img height="500" src="https://github.com/user-attachments/assets/9c624537-9612-4373-9d36-a558000ef8e6"  />
-</div>
-
-###
-
-<h3 align="left">4. Add the Firefox extension Bonjourrr</h3>
-
-###
-
-<p align="left">• Go to "https://addons.mozilla.org/en-US/firefox/addon/bonjourr-startpage/" and install this extension.<br><br>• The new tab must be replaced by this now. On the bottom right, you will see a settings button for new tab. Change the settings to these:</p>
-
-| ![image](https://github.com/user-attachments/assets/e7e27035-6e2b-4006-abf7-091a103536f9) | ![image](https://github.com/user-attachments/assets/d8fb107f-1247-4a3e-8026-619311e2dee5) | ![image](https://github.com/user-attachments/assets/724abcd8-a9f0-4d76-a054-3d76e3c7db60) |
-| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-
-###
-
-<p align="left">• In the section where it says "Add custom CSS", add this code to change font of newtab and make it transparent:</p>
-
-```css
-@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&display=swap");
-
-body,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-span,
-div {
-  font-family: "Comfortaa", sans-serif !important;
-  font-weight: 300 !important;
-  letter-spacing: 0.015em;
-  font-smooth: always;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  transition:
-    color 0.3s ease,
-    text-shadow 0.3s ease;
-}
-
-/* Light mode */
-@media (prefers-color-scheme: light) {
-  body,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  span,
-  div {
-    color: #222222;
-    text-shadow: 0 0 1px rgba(0, 0, 0, 0.15);
-  }
-}
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  body,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  span,
-  div {
-    color: #e0e0e0;
-    text-shadow: 0 0 1px rgba(255, 255, 255, 0.2);
-  }
-}
-
-h1 {
-  font-weight: 400 !important;
-  letter-spacing: 0.025em;
-}
-
-p {
-  font-weight: 300 !important;
-  line-height: 1.6;
-  letter-spacing: 0.015em;
-}
-#background {
-  background-color: transparent !important;
-}
-#background {
-  background-image: none !important;
-  background-color: transparent !important;
-}
-.tabbing {
-  background-color: transparent !important;
-}
-body {
-  background-color: transparent !important;
-}
-#background-wrapper {
-  opacity: 0 !important;
-}
-```
-
-###
-
-<h3 align="left">5.  Using pinned extensions</h3>
-
-###
-
-<p align="left">• First pin an extension normally, it should be somewhere in the top bar like default zen<br><br>• Now, right click on the sidebar and go to customize toolbar mode, from there drag the extension from the top bar to above essentials (or you can say below the URLbar) it would look a bit weird but press save changes and it should look perfect<br><br>• In my personal opinion, place the bonjourr extension above essentials so you can easily open a new tab by clicking it</p>
-
-<div align="center">
-
-<img height="400" src="https://github.com/user-attachments/assets/8121a9a4-e8ed-4c4e-8ed0-92bd775438bb" />
-
-</div>
-
-### 6. Add the extension [Zen Internet by Sameerasw](https://addons.mozilla.org/en-US/firefox/addon/zen-internet/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search) (Optional)
-
-> This extension makes web pages transparent
-
-###
-
-<h2 align="left">Re-distribution info:</h2>
-
-<p align="left">You are totally free to make forks of this or put this in your chrome file and create or modify it according to yourself. It is suggested to credit me if you use my theme. Thanks for using Nebula 🫶🏻</p>
-
-## 🙌 Credits
-
-Here are some awesome projects that inspired or contributed to this project:
-
-- 🔗 [Lacuna by Tanay-Kar](https://github.com/Tanay-Kar/Lacuna)
-- 🌐 [Natsumi Browser by greeeen-dev](https://github.com/greeeen-dev/natsumi-browser)
-- 🧠 [My Internet by sameerasw](https://github.com/sameerasw/my-internet)
-- 🍍 [Pineapple Fried by TheBigWazz](https://github.com/TheBigWazz/Pineapple-Fried)
-- 🧩 [Advanced Tab Groups by TFFC-Anoms12](https://github.com/TFFC-Anoms12/Advanced-Tab-Groups)
-- 💻 [NoGaps by Comp-Tech-Guy](https://github.com/Comp-Tech-Guy/No-Gaps)
 
 ---
 
-If I missed anyone, kindly let me know! 😊
+## 🌌 Overview
 
-###
+**Nebula Plus** is an advanced engineering fork and evolutionary leap of [Zen-Nebula](https://github.com/JustAdumbPrsn/Zen-Nebula). It re-architects the browser from a passive document viewer into an intelligent, hardware-accelerated workstation tailored for modern workflows.
 
-> [!NOTE]
-> There might be some issues with this theme, please report them to me if you experience something unusual, i will try to fix/clarify it. Also this mod has only been tested by me on a windows 11 computer so if Linux and MacOS versions are not working properly then i can't really do anything about it :(
+Nebula Plus pairs a deep **Firefox XPCOM/UserChrome runtime** with a dedicated **C# (.NET / Windows SDK) native Windows companion bridge**. It delivers real-time system media tracking, WASAPI loopback audio spectrum analysis, seamless Gemini AI assistance, native Persian & RTL cultural tooling, and a compositor-first UI that runs buttery-smooth on minimal battery and CPU.
+
+---
+
+## 📸 Showcase
+
+<div align="center">
+  <img src="assets/screenshots/browser-ui.png" alt="Nebula Plus Glass UI & Tabs" width="850" />
+  <p><em>Modern glassmorphic browser chrome with traveling comet glows and integrated media controls</em></p>
+</div>
+
+<br/>
+
+<div align="center">
+  <img src="assets/screenshots/newtab-dashboard.png" alt="Nebula Plus New Tab Dashboard" width="410" />
+  <img src="assets/screenshots/lyrics-stage.png" alt="Full Window Synced Lyrics Stage" width="410" />
+</div>
+<div align="center">
+  <img src="assets/screenshots/command-palette.png" alt="Dynamic Command Palette" width="410" />
+  <img src="assets/screenshots/pomodoro-focus.png" alt="Pomodoro & Focus Shield" width="410" />
+</div>
+
+---
+
+## 🏛️ System Architecture
+
+Nebula Plus bridges the gap between web content, browser chrome internals, and low-level Windows APIs:
+
+```mermaid
+flowchart TD
+    subgraph WindowsOS ["Windows Operating System"]
+        A["Spotify / Tidal / Desktop Players"] -->|GSMTC Sessions| B["Nebula Bridge (C# / WinRT)"]
+        C["WASAPI Loopback Audio"] -->|FFT Spectrum & Volume| B
+        D["System Battery & Power Events"] -->|Status Watcher| B
+    end
+
+    subgraph IPC ["Inter-Process Communication"]
+        B <-->|Local HTTP / WebSocket| E["Nebula Plus Event Bus (plus-core.uc.js)"]
+    end
+
+    subgraph ZenChrome ["Zen / Firefox Chrome Environment (XPCOM)"]
+        E --> F["Media & Lyrics Engine (plus-media, plus-lyrics)"]
+        E --> G["AI Copilot & Services (Gemini API & Web Chat)"]
+        E --> H["Regional Tooling (Jalali, Toman Lens, Kaizen Coach)"]
+        E --> I["Power Optimizer (Auto-Lean, Memory Compaction)"]
+        E --> J["UI & Visual Engine (Compositor Animations)"]
+    end
+
+    subgraph ContentDOM ["Web Pages & Dashboard"]
+        J --> K["Browser Windows & Glass Tabs"]
+        F --> L["Full-Window Lyrics Stage"]
+        G --> M["Selection Bubble, Smart Screenshot & Ask Bar"]
+        J --> N["Interactive New Tab Page (WebGL & Physics Canvas)"]
+    end
+```
+
+---
+
+## ⚡ Core Features
+
+### 🎵 1. Unified Media Hub & Native C# Bridge
+* **Native Windows Companion Service (`bridge/`)**: High-performance C# companion application utilizing `Windows.Media.Control` (WinRT) to read global media transport sessions (Spotify, Tidal, web players, YouTube) with zero latency.
+* **Live Audio Spectrum Analyzer (`Spectrum.cs`)**: Captures master audio via WASAPI Loopback, computes 16-band real-time FFT spectrum data with logarithmic frequency binning, and feeds fluid equalizer bars in the browser UI.
+* **Time-Synced Dynamic Lyrics**: Instant lyrics retrieval from [LRCLIB](https://lrclib.net) with millisecond-precision karaoke fill, depth-of-field blurring for upcoming lines, and native bidirectional (LTR/RTL) rendering.
+* **Full-Window Lyrics Stage (`Ctrl+Alt+M`)**: Drifting blurred album background, large synced lyrics in the Meem typeface, interactive seek-to-line, and vinyl record rotation physics.
+* **Ambilight & Dynamic Theming**: Ambient album-colored glow spills softly onto browser borders, with automatic brightness/saturation adaptation and gradual fade on pause.
+
+---
+
+### 🤖 2. Multimodal AI Copilot (Powered by Google Gemini)
+* **Voice Typing (`Ctrl+Alt+J`)**: Speech-to-text with contextual punctuation and accurate Persian/English transcription directly into any text field.
+* **Smart Screenshot (`Ctrl+Alt+S`)**: Crop any screen region for instant OCR, multi-language translation, code extraction, or AI explanation.
+* **Contextual Assistant (`Ctrl+Alt+A`)**: Instant summarization, key takeaway extraction, and multi-turn conversations grounded in the current page context.
+* **AI Tab Galaxy & Auto-Grouping**: Context-aware tab grouping that clusters open research tabs into logical folders based on page content semantics.
+* **AI Page Remix (`Ctrl+Alt+R`)**: Live generative restyling of websites via natural language prompt (custom CSS injection with instant undo and refinement).
+
+---
+
+### 🇮🇷 3. Native Persian & Cultural Productivity Suite
+* **Native Jalali (Solar Hijri) Engine**: Accurate Persian dates throughout the sidebar, status island, and new tab dashboard.
+* **Live Toman Currency Lens**: Real-time conversion of USD, EUR, and GBP prices on foreign shopping websites into Toman, powered by live Nobitex rates.
+* **Keyboard Mistype Fixer (`Ctrl+Alt+Space`)**: Automatically detects and corrects Persian-English layout mismatches on selected text or input fields.
+* **Kaizen Spelling Coach (`Ctrl+Alt+Q`)**: Intelligent typo correction that distinguishes between typos and deliberate slang, with an integrated spaced repetition flashcard review system.
+* **Persian Typography (Meem)**: Embedded typography engineered for readability across tab labels, panels, URL bar, and lyrics.
+* **Hafez Divination (فال حافظ)**: Daily fortune poetry retrieved directly from Ganjoor.
+
+---
+
+### 🎨 4. Compositor-First Visuals & Glassmorphism
+* **Zero-Thrash Motion Architecture**: Glows, comets, and light sweeps use compositor-accelerated CSS properties (`transform`, `opacity`, `filter`), avoiding browser layout recalculations and repaints.
+* **Intelligent Force Dark Mode (`Ctrl+Alt+D`)**: Single-click dark mode that preserves image and video color fidelity, automatically detects natively dark websites, and supports domain-level whitelisting.
+* **Live Weather Simulation**: Real-time Open-Meteo weather integration driving custom procedural rain, snow, and sunlight particle effects rendered on GPU canvases.
+
+---
+
+### 🔋 5. Power & Memory Engineering
+* **Auto-Lean Energy Throttle (`plus-autolean.uc.js`)**: Automatically detects battery status and high CPU loads via the bridge; drops background canvas frame rates from 60 FPS to 24 FPS or full suspension.
+* **Hardware Decoding Enforcement**: Prioritizes hardware-accelerated H.264 video decoding over software-intensive AV1/VP9 codecs.
+* **Active Memory Compaction**: Cleans up idle hidden tabs, releases cached textures, and shuts down dormant background observers when the browser is unfocused.
+
+---
+
+## ⌨️ Shortcuts Reference
+
+| Shortcut | Feature | Description |
+| :--- | :--- | :--- |
+| `Ctrl+Alt+Space` | **Media Play / Pause** | Toggle playback on active system media session |
+| `Ctrl+Alt+←` / `→` | **Previous / Next Track** | Skip tracks globally across all apps |
+| `Ctrl+Alt+M` | **Lyrics Stage** | Toggle full-window synced lyrics experience |
+| `Ctrl+Alt+L` | **Lyrics Panel** | Toggle compact lyrics under sidebar player |
+| `Ctrl+Alt+D` | **Force Dark Mode** | Toggle intelligent smart dark mode on current page |
+| `Ctrl+Alt+A` | **AI Assistant** | Open Gemini AI sidebar for page analysis |
+| `Ctrl+Alt+J` | **Voice Typing** | Start real-time speech transcription |
+| `Ctrl+Alt+T` | **To-Do Panel** | Open natural-language quick-add task list |
+| `Ctrl+Alt+B` | **Sticky Notes** | View and create text-anchored page notes |
+| `Ctrl+Alt+Q` | **Kaizen Coach** | Open vocabulary and spelling flashcards |
+| `Ctrl+Alt+P` | **Wormhole** | Send current link/selection to mobile |
+
+---
+
+## 🛠️ Tech Stack & Implementation Details
+
+| Layer | Technologies |
+| :--- | :--- |
+| **Browser Runtime** | Firefox Gecko / Zen Engine, XPCOM, UserChrome (`*.uc.js`), WebExtensions IPC |
+| **Styling & Shaders** | Modern CSS3 (Variables, Custom Properties, `@container`, Compositor Layers), WebGL, HTML5 Canvas 2D |
+| **Native Bridge** | C# 12, .NET (Windows SDK), WinRT (Windows.Media.Control GSMTC), NAudio (WASAPI Loopback Capture) |
+| **AI & APIs** | Google Gemini API (Flash/Pro), LRCLIB API, Open-Meteo, Nobitex API, Ganjoor API |
+| **Development** | Bun, Prettier, Stylelint, PowerShell Automation |
+
+---
+
+## 🚀 Installation & Development
+
+### Prerequisites
+* [Zen Browser](https://zen-browser.app/) installed.
+* [.NET 8.0 Runtime or SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (for compiling or running `bridge/`).
+
+### Quick Setup (Development Link)
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/pouya-wp/Nebula-Plus.git
+   cd Nebula-Plus
+   ```
+
+2. Link into your active Zen profile:
+   ```powershell
+   powershell -ExecutionPolicy Bypass -File scripts/install-dev.ps1
+   ```
+   *This automatically creates a directory junction in your Zen profile's `sine-mods/Nebula` directory, registers the modules, and initializes the companion bridge.*
+
+3. To build the C# Bridge from source (optional):
+   ```bash
+   dotnet publish bridge -c Release -o bridge-dist
+   ```
+
+---
+
+## 📄 License & Attribution
+
+* Nebula Plus is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
+* Built upon the foundational aesthetics of [Zen-Nebula](https://github.com/JustAdumbPrsn/Zen-Nebula) by JustAdumbPrsn.
+* Developed and engineered by **Pouya ([@pouya-wp](https://github.com/pouya-wp))**.
